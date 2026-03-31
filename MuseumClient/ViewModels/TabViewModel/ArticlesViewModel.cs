@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System;
 
 namespace MuseumClient.ViewModels
 {
@@ -13,22 +14,35 @@ namespace MuseumClient.ViewModels
     {
         private readonly ApiService _apiService;
 
-        // Коллекция документов
-        public ObservableCollection<DocumentDto> Documents { get; set; } = new();
+        // Коллекция документов (readonly — чтобы не заменили извне)
+        public ObservableCollection<DocumentDto> Documents { get; } = new();
 
         // View для группировки
-        private ICollectionView _documentsView;
-        public ICollectionView DocumentsView
+        private ICollectionView? _documentsView;
+        public ICollectionView? DocumentsView
         {
             get => _documentsView;
-            set
+            private set
             {
                 _documentsView = value;
                 OnPropertyChanged(nameof(DocumentsView));
             }
         }
 
+        // Состояние загрузки (для UI)
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+            }
+        }
+
         public RelayCommand LoadCommand { get; }
+        public RelayCommand OpenDocumentCommand { get; }
 
         public ArticlesViewModel()
         {
@@ -36,13 +50,16 @@ namespace MuseumClient.ViewModels
             _apiService = new ApiService(config, AuthService.Instance());
 
             LoadCommand = new RelayCommand(async _ => await LoadArticlesListAsync());
+            OpenDocumentCommand = new RelayCommand(async param => await OpenDocument(param));
         }
 
-        // агрузка списка документов
+        // 🔥 Загрузка списка документов
         public async Task LoadArticlesListAsync()
         {
             try
             {
+                IsLoading = true;
+
                 var response = await _apiService.GetAsync<DocumentsResponse>("Document");
 
                 Documents.Clear();
@@ -55,19 +72,47 @@ namespace MuseumClient.ViewModels
                     }
                 }
 
-                // Создаём CollectionView
-                DocumentsView = CollectionViewSource.GetDefaultView(Documents);
-
-                // Группировка по отделу
-                DocumentsView.GroupDescriptions.Clear();
-                DocumentsView.GroupDescriptions.Add(
-                    new PropertyGroupDescription(nameof(DocumentDto.DepartmentName))
-                );
+                SetupCollectionView();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки статей: {ex.Message}");
             }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        // Вынесли настройку View отдельно (чистота + переиспользование)
+        private void SetupCollectionView()
+        {
+            DocumentsView = CollectionViewSource.GetDefaultView(Documents);
+
+            if (DocumentsView != null)
+            {
+                using (DocumentsView.DeferRefresh())
+                {
+                    DocumentsView.GroupDescriptions.Clear();
+                    DocumentsView.GroupDescriptions.Add(
+                        new PropertyGroupDescription(nameof(DocumentDto.DepartmentName))
+                    );
+                }
+            }
+        }
+
+        // Клик по плитке
+        private async Task OpenDocument(object? parameter)
+        {
+            if (parameter is not DocumentDto doc)
+                return;
+
+            // пока заглушка — можно заменить на открытие файла позже
+            await Task.Run(() =>
+            {
+                // Заглушка
+                MessageBox.Show($"Открыть:\n{doc.Title}\nОтдел: {doc.DepartmentName}");
+            });
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
