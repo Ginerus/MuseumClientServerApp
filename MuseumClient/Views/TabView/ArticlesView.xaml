@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:local="clr-namespace:MuseumClient.Views"
              mc:Ignorable="d">
 
     <i:Interaction.Triggers>
@@ -13,7 +12,63 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
-    <Grid>
-        <TextBlock Text="Статьи"/>
+    <Grid Background="#F5F5F5">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Documents}">
+
+                <!-- Группировка -->
+                <ItemsControl.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           Margin="10,20,10,10"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ItemsControl.GroupStyle>
+
+                <!-- Панель плиток -->
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Margin="10"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <!-- Шаблон плитки -->
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="160"
+                                Height="160"
+                                Margin="8"
+                                Background="White"
+                                CornerRadius="10"
+                                Padding="10"
+                                BorderBrush="#DDD"
+                                BorderThickness="1">
+
+                            <StackPanel VerticalAlignment="Center">
+
+                                <!-- Иконка -->
+                                <TextBlock Text="{Binding FileType}"
+                                           FontSize="24"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,10,0,10"/>
+
+                                <!-- Название -->
+                                <TextBlock Text="{Binding Title}"
+                                           TextWrapping="Wrap"
+                                           TextAlignment="Center"
+                                           FontSize="12"
+                                           MaxHeight="60"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </UserControl>
