@@ -40,8 +40,13 @@
                 <!-- Шаблон плитки -->
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Width="160"
-                                Height="160"
+                        <Button Command="{Binding DataContext.OpenDocumentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                            CommandParameter="{Binding}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="0">
+                            <Border Width="160"
+                                Height="100"
                                 Margin="8"
                                 Background="White"
                                 CornerRadius="10"
@@ -49,22 +54,22 @@
                                 BorderBrush="#DDD"
                                 BorderThickness="1">
 
-                            <StackPanel VerticalAlignment="Center">
+                                <StackPanel VerticalAlignment="Center">
+                                    <!-- Иконка -->
+                                    <TextBlock Text="{Binding FileType}"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,10,0,10"/>
 
-                                <!-- Иконка -->
-                                <TextBlock Text="{Binding FileType}"
-                                           FontSize="24"
-                                           HorizontalAlignment="Center"
-                                           Margin="0,10,0,10"/>
-
-                                <!-- Название -->
-                                <TextBlock Text="{Binding Title}"
-                                           TextWrapping="Wrap"
-                                           TextAlignment="Center"
-                                           FontSize="12"
-                                           MaxHeight="60"/>
-                            </StackPanel>
-                        </Border>
+                                    <!-- Название -->
+                                    <TextBlock Text="{Binding Title}"
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center"
+                                       FontSize="12"
+                                       MaxHeight="60"/>
+                                </StackPanel>
+                            </Border>
+                        </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
 
