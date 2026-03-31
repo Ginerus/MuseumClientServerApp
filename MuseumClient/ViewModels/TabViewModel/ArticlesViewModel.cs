@@ -29,6 +29,8 @@ namespace MuseumClient.ViewModels
 
             // Создаём ApiService с токеном из AuthService
             _apiService = new ApiService(config, AuthService.Instance());
+
+            LoadCommand = new RelayCommand(async _ => await LoadArticlesListAsync());
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
