@@ -32,6 +32,8 @@ namespace MuseumServer
             app.UseSwagger();
             app.UseSwaggerUI();
 
+            app.UseStaticFiles();
+
             app.MapControllers();
 
             app.Run();

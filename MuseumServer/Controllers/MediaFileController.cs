@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using MuseumServer.Attributes;
+using MuseumServer.DTOs;
 using MuseumServer.Models;
 using MuseumServer.Services;
-using MuseumServer.DTOs;
-using MuseumServer.Attributes;
 
 namespace MuseumServer.Controllers
 {
@@ -81,6 +82,28 @@ namespace MuseumServer.Controllers
             return Ok(new { status = "ok", count = mediaFiles.Count });
         }
 
+        // GET: api/MediaFile/stream/{id}
+        [HttpGet("stream/{id}")]
+        public async Task<IActionResult> Stream([FromHeader] string token, int id)
+        {
+            var media = await _service.GetEntityAsync(id);
+
+            if (media == null || string.IsNullOrEmpty(media.FilePath))
+                return NotFound(new { status = "error", message = "Media file not found" });
+
+            // если путь относительный — собираем полный путь
+            var path = Path.IsPathRooted(media.FilePath)
+                ? media.FilePath
+                : Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", media.FilePath);
+
+            if (!System.IO.File.Exists(path))
+                return NotFound(new { status = "error", message = "File not found on disk" });
+
+            var contentType = GetContentType(media.FilePath);
+
+            return PhysicalFile(path, contentType, enableRangeProcessing: true);
+        }
+
         // Вспомогательный метод для определения типа медиа
         private string? GetMediaTypeFromPath(string path)
         {
@@ -97,6 +120,29 @@ namespace MuseumServer.Controllers
                 "mov" => "video",
                 "avi" => "video",
                 _ => null
+            };
+        }
+
+        // Определения MIME-типа (Content-Type) файла по его расширению.
+        private string GetContentType(string path)
+        {
+            var ext = Path.GetExtension(path)?.ToLowerInvariant();
+
+            return ext switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+
+                ".mp4" => "video/mp4",
+                ".mov" => "video/quicktime",
+                ".avi" => "video/x-msvideo",
+
+                ".pdf" => "application/pdf",
+                ".doc" => "application/msword",
+                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+
+                _ => "application/octet-stream"
             };
         }
     }

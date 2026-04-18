@@ -72,5 +72,12 @@ namespace MuseumServer.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        // Получение MediaFiles по id
+        public async Task<MediaFile?> GetEntityAsync(int id)
+        {
+            return await _context.MediaFiles
+                .FirstOrDefaultAsync(m => m.MediaFileId == id);
+        }
     }
 }
