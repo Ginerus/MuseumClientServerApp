@@ -13,10 +13,12 @@ namespace MuseumServer.Controllers
     public class MediaFileController : ControllerBase
     {
         private readonly MediaFileService _service;
+        private readonly IWebHostEnvironment _env;
 
-        public MediaFileController(MediaFileService service)
+        public MediaFileController(MediaFileService service, IWebHostEnvironment env)
         {
             _service = service;
+            _env = env;
         }
 
         // GET: api/MediaFiles
@@ -91,15 +93,19 @@ namespace MuseumServer.Controllers
             if (media == null || string.IsNullOrEmpty(media.FilePath))
                 return NotFound(new { status = "error", message = "Media file not found" });
 
-            // если путь относительный — собираем полный путь
             var path = Path.IsPathRooted(media.FilePath)
                 ? media.FilePath
-                : Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", media.FilePath);
+                : Path.Combine(_env.WebRootPath, media.FilePath);
 
             if (!System.IO.File.Exists(path))
                 return NotFound(new { status = "error", message = "File not found on disk" });
 
             var contentType = GetContentType(media.FilePath);
+
+            // Отключение кэша для статики
+            Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate";
+            Response.Headers["Pragma"] = "no-cache";
+            Response.Headers["Expires"] = "0";
 
             return PhysicalFile(path, contentType, enableRangeProcessing: true);
         }
@@ -137,10 +143,6 @@ namespace MuseumServer.Controllers
                 ".mp4" => "video/mp4",
                 ".mov" => "video/quicktime",
                 ".avi" => "video/x-msvideo",
-
-                ".pdf" => "application/pdf",
-                ".doc" => "application/msword",
-                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 
                 _ => "application/octet-stream"
             };
