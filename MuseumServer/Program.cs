@@ -43,8 +43,6 @@ namespace MuseumServer
 
             app.UseCors("AllowAll");
 
-            app.UseStaticFiles();
-
             app.MapControllers();
 
             app.Run();
