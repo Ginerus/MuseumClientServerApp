@@ -36,6 +36,7 @@ namespace MuseumServer.Services
             existing.Description = exhibit.Description;
             existing.Materials = exhibit.Materials;
             existing.IsPermanent = exhibit.IsPermanent;
+            existing.ImagePath = exhibit.ImagePath;
             existing.DepartmentId = exhibit.DepartmentId;
 
             await _context.SaveChangesAsync();
