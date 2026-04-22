@@ -9,7 +9,6 @@ namespace MuseumServer.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [SessionAuthorize]
-
     public class DocumentController : ControllerBase
     {
         private readonly DocumentService _service;
@@ -51,8 +50,8 @@ namespace MuseumServer.Controllers
         [SessionAuthorize(adminOnly: true)]
         public async Task<IActionResult> Create([FromHeader] string token, [FromBody] CreateDocumentRequest request)
         {
-            // Определяем тип файла по расширению
-            string fileType = GetFileTypeFromPath(request.FilePath);
+            string? fileType = GetFileTypeFromPath(request.FilePath);
+
             if (fileType == null)
                 return BadRequest(new { status = "error", message = "Unsupported file type" });
 
@@ -80,13 +79,41 @@ namespace MuseumServer.Controllers
             return Ok(new { status = "ok" });
         }
 
-        // Вспомогательный метод для определения типа файла
+        // GET: api/document/stream/{id}
+        [HttpGet("stream/{id}")]
+        public async Task<IActionResult> Stream([FromHeader] string token, int id)
+        {
+            var document = await _service.GetDocumentEntityAsync(id);
+
+            if (document == null || string.IsNullOrEmpty(document.FilePath))
+                return NotFound(new { status = "error", message = "Document not found" });
+
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+            var path = Path.IsPathRooted(document.FilePath)
+                ? document.FilePath
+                : Path.Combine(basePath, document.FilePath);
+
+            var fullPath = Path.GetFullPath(path);
+
+            if (!fullPath.StartsWith(basePath))
+                return BadRequest(new { status = "error", message = "Invalid file path" });
+
+            if (!System.IO.File.Exists(fullPath))
+                return NotFound(new { status = "error", message = "File not found on disk" });
+
+            var contentType = GetContentType(fullPath);
+
+            return PhysicalFile(fullPath, contentType, enableRangeProcessing: true);
+        }
+
+        // ===== Helpers =====
+
         private string? GetFileTypeFromPath(string path)
         {
             var ext = Path.GetExtension(path)?.ToLowerInvariant().TrimStart('.');
             if (ext == null) return null;
 
-            // Проверяем, поддерживается ли тип
             return ext switch
             {
                 "pdf" => "pdf",
@@ -95,6 +122,24 @@ namespace MuseumServer.Controllers
                 "txt" => "txt",
                 "md" => "md",
                 _ => null
+            };
+        }
+
+        private string GetContentType(string path)
+        {
+            var ext = Path.GetExtension(path)?.ToLowerInvariant();
+
+            return ext switch
+            {
+                ".pdf" => "application/pdf",
+
+                ".doc" => "application/msword",
+                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+
+                ".txt" => "text/plain",
+                ".md" => "text/markdown",
+
+                _ => "application/octet-stream"
             };
         }
     }
