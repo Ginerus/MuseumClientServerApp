@@ -78,5 +78,12 @@ namespace MuseumServer.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        // Получить сущность документа по id (для стриминга)
+        public async Task<Document?> GetDocumentEntityAsync(int id)
+        {
+            return await _context.Documents
+                .FirstOrDefaultAsync(d => d.DocumentId == id);
+        }
     }
 }
