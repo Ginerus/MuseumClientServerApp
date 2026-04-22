@@ -77,6 +77,7 @@ namespace MuseumServer.Controllers
                 Description = request.Description,
                 Materials = request.Materials,
                 IsPermanent = request.IsPermanent,
+                ImagePath= request.ImagePath,
                 DepartmentId = request.DepartmentId
             };
 
@@ -97,6 +98,53 @@ namespace MuseumServer.Controllers
                 return NotFound(new { status = "error", message = "Exhibit not found" });
 
             return Ok(new { status = "ok" });
+        }
+
+        // GET: api/exhibit/image/{id}
+        [HttpGet("image/{id}")]
+        public async Task<IActionResult> GetImage([FromHeader] string token, int id)
+        {
+            var exhibit = await _service.GetExhibitAsync(id);
+
+            if (exhibit == null || string.IsNullOrEmpty(exhibit.ImagePath))
+                return NotFound(new { status = "error", message = "Image not found" });
+
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var imagesRoot = Path.Combine(basePath, "exhibits", "images");
+
+            var path = Path.IsPathRooted(exhibit.ImagePath)
+                ? exhibit.ImagePath
+                : Path.Combine(imagesRoot, exhibit.ImagePath);
+
+            var fullPath = Path.GetFullPath(path);
+
+            Console.WriteLine(fullPath);
+
+            // защита от выхода за папку images
+            if (!fullPath.StartsWith(imagesRoot))
+                return BadRequest(new { status = "error", message = "Invalid file path" });
+
+            if (!System.IO.File.Exists(fullPath))
+                return NotFound(new { status = "error", message = "File not found on disk" });
+
+            var contentType = GetImageContentType(fullPath);
+
+            return PhysicalFile(fullPath, contentType, enableRangeProcessing: true);
+        }
+
+        // Определение типа данных
+        private string GetImageContentType(string path)
+        {
+            var ext = Path.GetExtension(path)?.ToLowerInvariant();
+
+            return ext switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".webp" => "image/webp",
+                ".gif" => "image/gif",
+                _ => "application/octet-stream"
+            };
         }
     }
 }
