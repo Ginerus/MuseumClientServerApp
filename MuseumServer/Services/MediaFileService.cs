@@ -18,18 +18,10 @@ namespace MuseumServer.Services
         public async Task<List<MediaFileResponse>> GetAllAsync()
         {
             return await _context.MediaFiles
-                .Include(m => m.Department)
                 .Select(m => new MediaFileResponse
                 {
                     MediaFileId = m.MediaFileId,
-                    FilePath = m.FilePath,
                     MediaType = m.MediaType,
-                    Description = m.Description,
-                    Department = new DepartmentInfo
-                    {
-                        DepartmentId = m.Department.DepartmentId,
-                        Name = m.Department.Name
-                    }
                 })
                 .ToListAsync();
         }
@@ -42,14 +34,7 @@ namespace MuseumServer.Services
                 .Select(m => new MediaFileResponse
                 {
                     MediaFileId = m.MediaFileId,
-                    FilePath = m.FilePath,
                     MediaType = m.MediaType,
-                    Description = m.Description,
-                    Department = new DepartmentInfo
-                    {
-                        DepartmentId = m.Department.DepartmentId,
-                        Name = m.Department.Name
-                    }
                 })
                 .FirstOrDefaultAsync();
         }

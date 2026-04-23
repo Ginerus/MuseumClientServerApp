@@ -18,18 +18,10 @@ namespace MuseumServer.Services
         public async Task<List<DocumentResponse>> GetAllDocumentsAsync()
         {
             return await _context.Documents
-                .Include(d => d.Department)
                 .Select(d => new DocumentResponse
                 {
                     DocumentId = d.DocumentId,
-                    Title = d.Title,
-                    FileType = d.FileType,
-                    Department = d.Department != null ? new DepartmentInfo
-                    {
-                        DepartmentId = d.Department.DepartmentId,
-                        Name = d.Department.Name,
-                    }
-                    : null // если отдела нет, оставляем null
+                    Title = d.Title
                 })
                 .ToListAsync();
         }
