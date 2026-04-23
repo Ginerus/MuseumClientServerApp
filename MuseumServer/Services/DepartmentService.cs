@@ -168,5 +168,10 @@ namespace MuseumServer.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<Department?> GetByIdAsync(int id)
+        {
+            return await _context.Departments.FindAsync(id);
+        }
     }
 }
