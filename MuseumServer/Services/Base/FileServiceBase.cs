@@ -4,30 +4,40 @@ namespace MuseumServer.Services.Base
 {
     public abstract class FileServiceBase
     {
-        protected string GenerateFileName(string extension, string prefix = "exh")
+        // Генерация имени (универсальная)
+        protected string GenerateFileName(string extension, string? prefix = null)
         {
-            var date = DateTime.UtcNow.ToString("ddMMyyyy");
+            var date = DateTime.UtcNow.ToString("yyyyMMdd");
             var random = Guid.NewGuid().ToString("N")[..8];
 
-            return $"{prefix}{date}{random}{extension}";
+            if (!string.IsNullOrWhiteSpace(prefix))
+            {
+                return $"{prefix}_{date}_{random}{extension}";
+            }
+
+            return $"{date}_{random}{extension}";
         }
 
-        protected string EnsureUniqueFileName(string fullFolderPath, string fileName)
+        // Проверка уникальности
+        protected string EnsureUniqueFileName(string folderPath, string fileName)
         {
-            var fullPath = Path.Combine(fullFolderPath, fileName);
+            var fullPath = Path.Combine(folderPath, fileName);
 
             while (File.Exists(fullPath))
             {
                 var ext = Path.GetExtension(fileName);
-                fileName = GenerateFileName(ext);
-                fullPath = Path.Combine(fullFolderPath, fileName);
+                fileName = GenerateFileName(ext); // без prefix при конфликте
+                fullPath = Path.Combine(folderPath, fileName);
             }
 
             return fileName;
         }
 
+        // Сохранение файла (универсально)
         protected async Task SaveToDiskAsync(string fullPath, IFormFile file)
         {
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+
             using var stream = new FileStream(fullPath, FileMode.Create);
             await file.CopyToAsync(stream);
         }

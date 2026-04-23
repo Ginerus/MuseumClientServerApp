@@ -8,10 +8,12 @@ namespace MuseumServer.Services
     public class DepartmentService
     {
         private readonly MuseumContext _context;
+        private readonly IFileService _fileService;
 
-        public DepartmentService(MuseumContext context)
+        public DepartmentService(MuseumContext context, IFileService fileService)
         {
             _context = context;
+            _fileService = fileService;
         }
 
         public async Task<int> GetCountAsync() => await _context.Departments.CountAsync();
@@ -99,16 +101,18 @@ namespace MuseumServer.Services
             return content;
         }
 
-        public async Task<Department> CreateAsync(CreateDepartmentRequest request)
+        public async Task<Department> CreateAsync(CreateDepartmentRequest request, string? imageName)
         {
             var dept = new Department
             {
                 Name = request.Name,
                 Description = request.Description,
-                ImagePath = request.ImagePath
+                ImagePath = imageName
             };
+
             _context.Departments.Add(dept);
             await _context.SaveChangesAsync();
+
             return dept;
         }
 
