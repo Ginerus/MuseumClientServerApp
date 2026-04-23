@@ -49,10 +49,30 @@ namespace MuseumServer.Controllers
         // POST: api/department
         [HttpPost]
         [SessionAuthorize(adminOnly: true)]
-        public async Task<IActionResult> Create([FromHeader] string token, [FromBody] CreateDepartmentRequest request)
+        public async Task<IActionResult> Create(
+            [FromHeader] string token,
+            [FromForm] CreateDepartmentRequest request,
+            [FromServices] ImageService imageService)
         {
-            var dept = await _service.CreateAsync(request);
-            return Ok(new { status = "ok", data = dept });
+            string? imageName = null;
+
+            if (request.Image != null)
+            {
+                var result = await imageService.SaveImageWithThumbnailAsync(
+                    request.Image,
+                    "departments"
+                );
+
+                imageName = result.fileName;
+            }
+
+            var dept = await _service.CreateAsync(request, imageName);
+
+            return Ok(new
+            {
+                status = "ok",
+                data = dept
+            });
         }
 
         // DELETE: api/department/{id}
