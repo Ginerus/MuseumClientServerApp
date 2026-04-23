@@ -25,7 +25,7 @@ namespace MuseumServer.Controllers
             return Ok(new { status = "ok", count });
         }
 
-        // GET: api/departments
+        // GET: api/department
         [HttpGet]
         [SessionAuthorize] // Guest + Admin
         public async Task<IActionResult> GetAll([FromHeader] string token)
@@ -34,7 +34,7 @@ namespace MuseumServer.Controllers
             return Ok(new { status = "ok", data = depts });
         }
 
-        // GET: api/departments/{id}?types=exhibits,mediafiles
+        // GET: api/department/{id}
         [HttpGet("{id}")]
         [SessionAuthorize] // Guest + Admin
         public async Task<IActionResult> GetContent([FromHeader] string token, int id, [FromQuery] string? types)
@@ -46,7 +46,7 @@ namespace MuseumServer.Controllers
             return Ok(new { status = "ok", data = content });
         }
 
-        // POST: api/departments
+        // POST: api/department
         [HttpPost]
         [SessionAuthorize(adminOnly: true)]
         public async Task<IActionResult> Create([FromHeader] string token, [FromBody] CreateDepartmentRequest request)
@@ -55,7 +55,7 @@ namespace MuseumServer.Controllers
             return Ok(new { status = "ok", data = dept });
         }
 
-        // DELETE: api/departments/{id}
+        // DELETE: api/department/{id}
         [HttpDelete("{id}")]
         [SessionAuthorize(adminOnly: true)]
         public async Task<IActionResult> Delete([FromHeader] string token, int id)
@@ -67,7 +67,7 @@ namespace MuseumServer.Controllers
             return Ok(new { status = "ok" });
         }
 
-        // PUT: api/departments/{id}
+        // PUT: api/department/{id}
         [HttpPut("{id}")]
         [SessionAuthorize(adminOnly: true)]
         public async Task<IActionResult> Update([FromHeader] string token, int id, [FromBody] UpdateDepartmentRequest request)
