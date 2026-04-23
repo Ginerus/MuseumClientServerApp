@@ -144,5 +144,61 @@ namespace MuseumServer.Controllers
 
             return Ok(new { status = "ok" });
         }
+
+        // GET: api/department/image/{id}
+        [HttpGet("image/{id}")]
+        [SessionAuthorize]
+        public async Task<IActionResult> GetImage(
+            [FromHeader] string token,
+            int id)
+        {
+            var dept = await _service.GetByIdAsync(id);
+
+            if (dept == null || string.IsNullOrEmpty(dept.ImagePath))
+                return NotFound(new
+                {
+                    status = "error",
+                    message = "Image not found"
+                });
+
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var imagesRoot = Path.Combine(basePath, "departments", "images");
+
+            var fullPath = Path.Combine(imagesRoot, dept.ImagePath);
+            fullPath = Path.GetFullPath(fullPath);
+
+            // 🔒 защита от выхода за папку
+            if (!fullPath.StartsWith(imagesRoot))
+                return BadRequest(new
+                {
+                    status = "error",
+                    message = "Invalid file path"
+                });
+
+            if (!System.IO.File.Exists(fullPath))
+                return NotFound(new
+                {
+                    status = "error",
+                    message = "File not found on disk"
+                });
+
+            var contentType = GetImageContentType(fullPath);
+
+            return PhysicalFile(fullPath, contentType, enableRangeProcessing: true);
+        }
+
+        private string GetImageContentType(string path)
+        {
+            var ext = Path.GetExtension(path)?.ToLowerInvariant();
+
+            return ext switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".webp" => "image/webp",
+                ".gif" => "image/gif",
+                _ => "application/octet-stream"
+            };
+        }
     }
 }
