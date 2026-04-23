@@ -3,6 +3,8 @@ using MuseumServer.DTOs;
 using MuseumServer.Models;
 using MuseumServer.Services;
 using MuseumServer.Attributes;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace MuseumServer.Controllers
 {
@@ -46,22 +48,52 @@ namespace MuseumServer.Controllers
             return Ok(new { status = "ok", count });
         }
 
-        // POST: api/exhibit
         [HttpPost]
         [SessionAuthorize(adminOnly: true)]
-        public async Task<IActionResult> Create([FromHeader] string token, [FromBody] CreateExhibitRequest request)
+        public async Task<IActionResult> Create( [FromHeader] string token, [FromForm] CreateExhibitRequest request)
         {
+            if (request.Image == null || request.Image.Length == 0)
+                return BadRequest("Image is required");
+
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var imagesPath = Path.Combine(basePath, "exhibits", "images");
+            var thumbsPath = Path.Combine(basePath, "exhibits", "thumbnails");
+
+            Directory.CreateDirectory(imagesPath);
+            Directory.CreateDirectory(thumbsPath);
+
+            var ext = Path.GetExtension(request.Image.FileName).ToLowerInvariant();
+            var fileName = GenerateFileName(ext);
+
+            var imageFullPath = Path.Combine(imagesPath, fileName);
+            var thumbFullPath = Path.Combine(thumbsPath, fileName);
+
+            // 1. Сохраняем оригинал
+            using (var stream = new FileStream(imageFullPath, FileMode.Create))
+            {
+                await request.Image.CopyToAsync(stream);
+            }
+
+            // 2. Делаем миниатюру
+            using (var image = await SixLabors.ImageSharp.Image.LoadAsync(request.Image.OpenReadStream()))
+            {
+                image.Mutate(x => x.Resize(200, 200));
+                await image.SaveAsync(thumbFullPath);
+            }
+
+            // 3. Сохраняем в БД
             var exhibit = new Exhibit
             {
                 Name = request.Name,
                 Description = request.Description,
                 Materials = request.Materials,
                 IsPermanent = request.IsPermanent,
-                ImagePath = request.ImagePath,
-                DepartmentId = request.DepartmentId
+                DepartmentId = request.DepartmentId,
+                ImagePath = fileName // одно имя для двух папок
             };
 
             var created = await _service.CreateExhibitAsync(exhibit);
+
             return Ok(new { status = "ok", data = created });
         }
 
@@ -145,6 +177,15 @@ namespace MuseumServer.Controllers
                 ".gif" => "image/gif",
                 _ => "application/octet-stream"
             };
+        }
+
+        // Генерация уникального имени файла
+        private string GenerateFileName(string extension)
+        {
+            var date = DateTime.UtcNow.ToString("ddMMyyyy");
+            var random = new Random().Next(10000000, 99999999);
+
+            return $"exh{date}{random}{extension}";
         }
     }
 }
