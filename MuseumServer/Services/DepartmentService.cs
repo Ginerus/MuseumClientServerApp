@@ -65,9 +65,10 @@ namespace MuseumServer.Services
 
                 Documents = await _context.Documents
                     .Where(d => d.DepartmentId == departmentId)
-                    .Select(d => new DocumentFullResponse
+                    .Select(d => new DocumentResponse
                     {
                         DocumentId = d.DocumentId,
+                        Title = d.Title,
                         FileType = d.FileType,
                     })
                     .ToListAsync()
