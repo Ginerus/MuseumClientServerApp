@@ -17,7 +17,6 @@ namespace MuseumServer.Services
             if (file == null || file.Length == 0)
                 throw new ArgumentException("File is empty");
 
-            // 🔒 защита от кривых путей
             folder = folder.Replace("..", "").Trim('/', '\\');
 
             var folderPath = Path.Combine(_rootPath, folder);
@@ -28,7 +27,10 @@ namespace MuseumServer.Services
             var fileName = GenerateFileName(ext);
             fileName = EnsureUniqueFileName(folderPath, fileName);
 
-            var fullPath = Path.Combine(folderPath, fileName);
+            var fullPath = Path.GetFullPath(Path.Combine(folderPath, fileName));
+
+            if (!fullPath.StartsWith(_rootPath))
+                throw new Exception("Invalid path");
 
             await SaveToDiskAsync(fullPath, file);
 
@@ -38,8 +40,12 @@ namespace MuseumServer.Services
         public Task<bool> DeleteFileAsync(string folder, string fileName)
         {
             folder = folder.Replace("..", "").Trim('/', '\\');
+            fileName = Path.GetFileName(fileName);
 
-            var fullPath = Path.Combine(_rootPath, folder, fileName);
+            var fullPath = Path.GetFullPath(Path.Combine(_rootPath, folder, fileName));
+
+            if (!fullPath.StartsWith(_rootPath))
+                return Task.FromResult(false);
 
             if (!File.Exists(fullPath))
                 return Task.FromResult(false);

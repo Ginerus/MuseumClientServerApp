@@ -8,10 +8,14 @@ namespace MuseumServer.Services
     public class DepartmentService
     {
         private readonly MuseumContext _context;
+        private readonly IFileService _fileService;
+        private readonly ImageProcessor _imageProcessor;
 
-        public DepartmentService(MuseumContext context)
+        public DepartmentService(MuseumContext context, IFileService fileService, ImageProcessor imageProcessor)
         {
             _context = context;
+            _fileService = fileService;
+            _imageProcessor = imageProcessor;
         }
 
         public async Task<int> GetCountAsync()
@@ -96,6 +100,16 @@ namespace MuseumServer.Services
             if (dept == null)
                 return false;
 
+            // Удаление файла, если есть
+            if (!string.IsNullOrEmpty(dept.ImagePath))
+            {
+                await _fileService.DeleteFileAsync(
+                    "departments/images",
+                    dept.ImagePath
+                );
+            }
+
+            // Удаление записи из БД
             _context.Departments.Remove(dept);
             await _context.SaveChangesAsync();
 
@@ -105,18 +119,53 @@ namespace MuseumServer.Services
         public async Task<bool> UpdateAsync(int id, UpdateDepartmentRequest request)
         {
             var dept = await _context.Departments.FindAsync(id);
+            if (dept == null) return false;
 
-            if (dept == null)
-                return false;
-
+            // обновление текста
             if (!string.IsNullOrWhiteSpace(request.Name))
                 dept.Name = request.Name;
 
             if (request.Description != null)
                 dept.Description = request.Description;
 
-            await _context.SaveChangesAsync();
+            // 🔥 обновление картинки
+            if (request.Image != null)
+            {
+                // 1. удалить старую
+                if (!string.IsNullOrEmpty(dept.ImagePath))
+                {
+                    await _fileService.DeleteFileAsync(
+                        "departments/images",
+                        dept.ImagePath
+                    );
+                }
 
+                // 2. сохранить новую
+                var newFileName = await _fileService.SaveFileAsync(
+                    request.Image,
+                    "departments/images"
+                );
+
+                // 3. сделать thumbnail (перезаписать)
+                var fullPath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    "departments",
+                    "images",
+                    newFileName
+                );
+
+                await _imageProcessor.SaveAsThumbnailAsync(
+                    request.Image,
+                    fullPath,
+                    200,
+                    200
+                );
+
+                dept.ImagePath = newFileName;
+            }
+
+            await _context.SaveChangesAsync();
             return true;
         }
     }

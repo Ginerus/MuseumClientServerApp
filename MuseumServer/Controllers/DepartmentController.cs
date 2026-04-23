@@ -129,9 +129,9 @@ namespace MuseumServer.Controllers
         [HttpPut("{id}")]
         [SessionAuthorize(adminOnly: true)]
         public async Task<IActionResult> Update(
-            [FromHeader] string token,
-            int id,
-            [FromBody] UpdateDepartmentRequest request)
+        [FromHeader] string token,
+        int id,
+        [FromForm] UpdateDepartmentRequest request)
         {
             var updated = await _service.UpdateAsync(id, request);
 
