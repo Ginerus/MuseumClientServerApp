@@ -15,11 +15,14 @@ namespace MuseumServer.Controllers
     public class ExhibitController : ControllerBase
     {
         private readonly ExhibitService _service;
+        private readonly IFileService _fileService;
 
-        public ExhibitController(ExhibitService service)
+        public ExhibitController(ExhibitService service, IFileService fileService)
         {
             _service = service;
+            _fileService = fileService;
         }
+
 
         // GET: api/exhibit
         [HttpGet]
@@ -50,38 +53,17 @@ namespace MuseumServer.Controllers
 
         [HttpPost]
         [SessionAuthorize(adminOnly: true)]
-        public async Task<IActionResult> Create( [FromHeader] string token, [FromForm] CreateExhibitRequest request)
+        public async Task<IActionResult> Create([FromHeader] string token, [FromForm] CreateExhibitRequest request, [FromServices] ImageService imageService)
         {
             if (request.Image == null || request.Image.Length == 0)
                 return BadRequest("Image is required");
 
-            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-            var imagesPath = Path.Combine(basePath, "exhibits", "images");
-            var thumbsPath = Path.Combine(basePath, "exhibits", "thumbnails");
+            // сохраняем изображение + thumbnail через сервис
+            var result = await imageService.SaveImageWithThumbnailAsync(
+                request.Image,
+                "exhibits"
+            );
 
-            Directory.CreateDirectory(imagesPath);
-            Directory.CreateDirectory(thumbsPath);
-
-            var ext = Path.GetExtension(request.Image.FileName).ToLowerInvariant();
-            var fileName = GenerateFileName(ext);
-
-            var imageFullPath = Path.Combine(imagesPath, fileName);
-            var thumbFullPath = Path.Combine(thumbsPath, fileName);
-
-            // 1. Сохраняем оригинал
-            using (var stream = new FileStream(imageFullPath, FileMode.Create))
-            {
-                await request.Image.CopyToAsync(stream);
-            }
-
-            // 2. Делаем миниатюру
-            using (var image = await SixLabors.ImageSharp.Image.LoadAsync(request.Image.OpenReadStream()))
-            {
-                image.Mutate(x => x.Resize(200, 200));
-                await image.SaveAsync(thumbFullPath);
-            }
-
-            // 3. Сохраняем в БД
             var exhibit = new Exhibit
             {
                 Name = request.Name,
@@ -89,7 +71,9 @@ namespace MuseumServer.Controllers
                 Materials = request.Materials,
                 IsPermanent = request.IsPermanent,
                 DepartmentId = request.DepartmentId,
-                ImagePath = fileName // одно имя для двух папок
+
+                // одинаковое имя для images + thumbnails
+                ImagePath = result.fileName
             };
 
             var created = await _service.CreateExhibitAsync(exhibit);
