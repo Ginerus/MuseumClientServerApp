@@ -6,12 +6,18 @@ namespace MuseumServer.Services.Base
     {
         protected string GenerateFileName(string extension, string? prefix = null)
         {
-            var date = DateTime.UtcNow.ToString("yyyyMMdd");
-            var random = Guid.NewGuid().ToString("N")[..8];
+            var date = DateTime.UtcNow.ToString("ddMMyyyy");
+
+            var random = Guid.NewGuid()
+                .ToString("N")[..8];
+
+            var cleanExt = extension.StartsWith('.')
+                ? extension
+                : "." + extension;
 
             return string.IsNullOrWhiteSpace(prefix)
-                ? $"{date}_{random}{extension}"
-                : $"{prefix}_{date}_{random}{extension}";
+                ? $"{date}{random}{cleanExt}"
+                : $"{prefix}{date}{random}{cleanExt}";
         }
 
         protected string EnsureUniqueFileName(string folderPath, string fileName)
