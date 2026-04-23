@@ -16,15 +16,13 @@ namespace MuseumServer.Services
 
         public async Task<int> GetCountAsync() => await _context.Departments.CountAsync();
 
-        public async Task<List<DepartmentResponse>> GetAllAsync()
+        public async Task<List<DepartmentInfo>> GetAllAsync()
         {
             return await _context.Departments
-                .Select(d => new DepartmentResponse
+                .Select(d => new DepartmentInfo
                 {
                     DepartmentId = d.DepartmentId,
-                    Name = d.Name,
-                    Description = d.Description,
-                    ImagePath = d.ImagePath
+                    Name = d.Name
                 }).ToListAsync();
         }
 
