@@ -8,15 +8,14 @@ namespace MuseumServer.Services
     public class DepartmentService
     {
         private readonly MuseumContext _context;
-        private readonly IFileService _fileService;
 
-        public DepartmentService(MuseumContext context, IFileService fileService)
+        public DepartmentService(MuseumContext context)
         {
             _context = context;
-            _fileService = fileService;
         }
 
-        public async Task<int> GetCountAsync() => await _context.Departments.CountAsync();
+        public async Task<int> GetCountAsync()
+            => await _context.Departments.CountAsync();
 
         public async Task<List<DepartmentInfo>> GetAllAsync()
         {
@@ -25,82 +24,55 @@ namespace MuseumServer.Services
                 {
                     DepartmentId = d.DepartmentId,
                     Name = d.Name
-                }).ToListAsync();
+                })
+                .ToListAsync();
         }
 
-        public async Task<DepartmentContentResponse?> GetContentAsync(int departmentId, string? types)
+        public async Task<DepartmentContentResponse?> GetContentAsync(int departmentId)
         {
-            var department = await _context.Departments.FindAsync(departmentId);
-            if (department == null) return null;
+            var department = await _context.Departments
+                .FirstOrDefaultAsync(d => d.DepartmentId == departmentId);
 
-            var typeList = types?.Split(',').Select(t => t.Trim().ToLower()).ToList();
+            if (department == null)
+                return null;
 
-            var content = new DepartmentContentResponse
+            return new DepartmentContentResponse
             {
                 Department = new DepartmentResponse
                 {
                     DepartmentId = department.DepartmentId,
                     Name = department.Name,
-                    Description = department.Description,
-                    ImagePath = department.ImagePath
-                }
-            };
+                    Description = department.Description
+                },
 
-            if (typeList == null || typeList.Contains("exhibits"))
-            {
-                content.Exhibits = await _context.Exhibits
+                Exhibits = await _context.Exhibits
                     .Where(e => e.DepartmentId == departmentId)
                     .Select(e => new ExhibitResponse
                     {
                         ExhibitId = e.ExhibitId,
                         Name = e.Name,
-                        Description = e.Description,
-                        Materials = e.Materials,
-                        IsPermanent = e.IsPermanent,
-                        ImagePath = e.ImagePath,
-                        DepartmentId = e.DepartmentId
-                    }).ToListAsync();
-            }
+                    })
+                    .ToListAsync(),
 
-            if (typeList == null || typeList.Contains("mediafiles"))
-            {
-                content.MediaFiles = await _context.MediaFiles
+                MediaFiles = await _context.MediaFiles
                     .Where(m => m.DepartmentId == departmentId)
                     .Select(m => new MediaFileResponse
                     {
                         MediaFileId = m.MediaFileId,
-                        FilePath = m.FilePath,
                         MediaType = m.MediaType,
-                        Description = m.Description,
-                        Department = new DepartmentInfo
-                        {
-                            DepartmentId = m.Department.DepartmentId,
-                            Name = m.Department.Name
-                        }
-                    }).ToListAsync();
-            }
+                    })
+                    .ToListAsync(),
 
-            if (typeList == null || typeList.Contains("documents"))
-            {
-                content.Documents = await _context.Documents
+                Documents = await _context.Documents
                     .Where(d => d.DepartmentId == departmentId)
                     .Select(d => new DocumentFullResponse
                     {
                         DocumentId = d.DocumentId,
-                        FilePath = d.FilePath,
                         FileType = d.FileType,
-                        ExhibitId = d.ExhibitId,
-                        Department = new DepartmentInfo
-                        {
-                            DepartmentId = department.DepartmentId,
-                            Name = department.Name
-                        }
-                    }).ToListAsync();
-            }
-
-            return content;
+                    })
+                    .ToListAsync()
+            };
         }
-
         public async Task<Department> CreateAsync(CreateDepartmentRequest request, string? imageName)
         {
             var dept = new Department
@@ -119,23 +91,31 @@ namespace MuseumServer.Services
         public async Task<bool> DeleteAsync(int id)
         {
             var dept = await _context.Departments.FindAsync(id);
-            if (dept == null) return false;
+
+            if (dept == null)
+                return false;
 
             _context.Departments.Remove(dept);
             await _context.SaveChangesAsync();
+
             return true;
         }
 
         public async Task<bool> UpdateAsync(int id, UpdateDepartmentRequest request)
         {
             var dept = await _context.Departments.FindAsync(id);
-            if (dept == null) return false;
 
-            if (!string.IsNullOrEmpty(request.Name)) dept.Name = request.Name;
-            if (request.Description != null) dept.Description = request.Description;
-            if (request.ImagePath != null) dept.ImagePath = request.ImagePath;
+            if (dept == null)
+                return false;
+
+            if (!string.IsNullOrWhiteSpace(request.Name))
+                dept.Name = request.Name;
+
+            if (request.Description != null)
+                dept.Description = request.Description;
 
             await _context.SaveChangesAsync();
+
             return true;
         }
     }

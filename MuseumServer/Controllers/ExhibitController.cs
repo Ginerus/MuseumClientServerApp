@@ -51,35 +51,35 @@ namespace MuseumServer.Controllers
             return Ok(new { status = "ok", count });
         }
 
-        [HttpPost]
-        [SessionAuthorize(adminOnly: true)]
-        public async Task<IActionResult> Create([FromHeader] string token, [FromForm] CreateExhibitRequest request, [FromServices] ImageService imageService)
-        {
-            if (request.Image == null || request.Image.Length == 0)
-                return BadRequest("Image is required");
+        //[HttpPost]
+        //[SessionAuthorize(adminOnly: true)]
+        //public async Task<IActionResult> Create([FromHeader] string token, [FromForm] CreateExhibitRequest request, [FromServices] ImageService imageService)
+        //{
+        //    if (request.Image == null || request.Image.Length == 0)
+        //        return BadRequest("Image is required");
 
-            // сохраняем изображение + thumbnail через сервис
-            var result = await imageService.SaveImageWithThumbnailAsync(
-                request.Image,
-                "exhibits"
-            );
+        //    // сохраняем изображение + thumbnail через сервис
+        //    var result = await imageService.SaveImageWithThumbnailAsync(
+        //        request.Image,
+        //        "exhibits"
+        //    );
 
-            var exhibit = new Exhibit
-            {
-                Name = request.Name,
-                Description = request.Description,
-                Materials = request.Materials,
-                IsPermanent = request.IsPermanent,
-                DepartmentId = request.DepartmentId,
+        //    var exhibit = new Exhibit
+        //    {
+        //        Name = request.Name,
+        //        Description = request.Description,
+        //        Materials = request.Materials,
+        //        IsPermanent = request.IsPermanent,
+        //        DepartmentId = request.DepartmentId,
 
-                // одинаковое имя для images + thumbnails
-                ImagePath = result.fileName
-            };
+        //        // одинаковое имя для images + thumbnails
+        //        ImagePath = result.fileName
+        //    };
 
-            var created = await _service.CreateExhibitAsync(exhibit);
+        //    var created = await _service.CreateExhibitAsync(exhibit);
 
-            return Ok(new { status = "ok", data = created });
-        }
+        //    return Ok(new { status = "ok", data = created });
+        //}
 
         // PUT: api/exhibit/{id}
         [HttpPut("{id}")]

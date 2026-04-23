@@ -12,24 +12,18 @@ namespace MuseumServer.Services
             _rootPath = env.WebRootPath;
         }
 
-        public async Task CreateThumbnailAsync(
-            string folder,
-            string fileName,
+        public async Task SaveAsThumbnailAsync(
+            IFormFile file,
+            string fullPath,
             int width,
             int height)
         {
-            var fullFolder = Path.Combine(_rootPath, folder);
-            var fullPath = Path.Combine(fullFolder, fileName);
+            if (file == null || file.Length == 0)
+                throw new ArgumentException("File is empty");
 
-            if (!File.Exists(fullPath))
-                throw new FileNotFoundException("Image not found");
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
 
-            var thumbFolder = Path.Combine(fullFolder, "thumbnails");
-            Directory.CreateDirectory(thumbFolder);
-
-            var thumbPath = Path.Combine(thumbFolder, fileName);
-
-            using var image = await Image.LoadAsync(fullPath);
+            using var image = await Image.LoadAsync(file.OpenReadStream());
 
             image.Mutate(x => x.Resize(new ResizeOptions
             {
@@ -37,7 +31,7 @@ namespace MuseumServer.Services
                 Mode = ResizeMode.Max
             }));
 
-            await image.SaveAsync(thumbPath);
+            await image.SaveAsync(fullPath);
         }
     }
 }
