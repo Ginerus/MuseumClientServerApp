@@ -56,7 +56,7 @@ namespace MuseumServer.Services
             await _context.Documents.CountAsync();
 
         // Загрузить документ
-        public async Task<Document> CreateDocumentAsync(CreateDocumentRequest request)
+        public async Task<DocumentFullResponse> CreateDocumentAsync(CreateDocumentRequest request)
         {
             if (request.File == null || request.File.Length == 0)
                 throw new ArgumentException("File is required");
@@ -68,15 +68,13 @@ namespace MuseumServer.Services
             if (ext == null || !allowedExtensions.Contains(ext))
                 throw new ArgumentException("Unsupported file type");
 
-            // После проверки сохраняем файл
-
             var fileName = await _fileService.SaveFileAsync(request.File, "documents");
 
             var document = new Document
             {
                 Title = request.Title,
                 FilePath = Path.Combine("documents", fileName).Replace("\\", "/"),
-                FileType = Path.GetExtension(fileName).TrimStart('.'),
+                FileType = ext.TrimStart('.'),
                 ExhibitId = request.ExhibitId,
                 DepartmentId = request.DepartmentId
             };
@@ -84,7 +82,15 @@ namespace MuseumServer.Services
             _context.Documents.Add(document);
             await _context.SaveChangesAsync();
 
-            return document;
+            return new DocumentFullResponse
+            {
+                DocumentId = document.DocumentId,
+                Title = document.Title,
+                FilePath = document.FilePath,
+                FileType = document.FileType,
+                ExhibitId = document.ExhibitId,
+                Department = null
+            };
         }
 
         // Удалить документ
