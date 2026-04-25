@@ -8,10 +8,12 @@ namespace MuseumServer.Services
     public class DocumentService
     {
         private readonly MuseumContext _context;
+        private readonly IFileService _fileService;
 
-        public DocumentService(MuseumContext context)
+        public DocumentService(MuseumContext context, IFileService fileService)
         {
             _context = context;
+            _fileService = fileService;
         }
 
         // Получить все документы
@@ -53,22 +55,56 @@ namespace MuseumServer.Services
         public async Task<int> GetDocumentCountAsync() =>
             await _context.Documents.CountAsync();
 
-        // Создать документ
-        public async Task<Document> CreateDocumentAsync(Document document)
+        // Загрузить документ
+        public async Task<Document> CreateDocumentAsync(CreateDocumentRequest request)
         {
+            if (request.File == null || request.File.Length == 0)
+                throw new ArgumentException("File is required");
+
+            var ext = Path.GetExtension(request.File.FileName)?.ToLowerInvariant();
+
+            var allowedExtensions = new[] { ".pdf", ".doc", ".docx", ".txt", ".md" };
+
+            if (ext == null || !allowedExtensions.Contains(ext))
+                throw new ArgumentException("Unsupported file type");
+
+            // После проверки сохраняем файл
+
+            var fileName = await _fileService.SaveFileAsync(request.File, "documents");
+
+            var document = new Document
+            {
+                Title = request.Title,
+                FilePath = Path.Combine("documents", fileName).Replace("\\", "/"),
+                FileType = Path.GetExtension(fileName).TrimStart('.'),
+                ExhibitId = request.ExhibitId,
+                DepartmentId = request.DepartmentId
+            };
+
             _context.Documents.Add(document);
             await _context.SaveChangesAsync();
+
             return document;
         }
 
         // Удалить документ
-        public async Task<bool> DeleteDocumentAsync(int id)
+        public async Task<bool> DeleteDocumentWithFileAsync(int id)
         {
             var document = await _context.Documents.FindAsync(id);
             if (document == null) return false;
 
+            if (!string.IsNullOrEmpty(document.FilePath))
+            {
+                var folder = Path.GetDirectoryName(document.FilePath);
+                var fileName = Path.GetFileName(document.FilePath);
+
+                if (folder != null && fileName != null)
+                    await _fileService.DeleteFileAsync(folder, fileName);
+            }
+
             _context.Documents.Remove(document);
             await _context.SaveChangesAsync();
+
             return true;
         }
 
