@@ -12,10 +12,12 @@ namespace MuseumServer.Controllers
     public class DocumentController : ControllerBase
     {
         private readonly DocumentService _service;
+        private readonly IFileService _fileService;
 
-        public DocumentController(DocumentService service)
+        public DocumentController(DocumentService service, IFileService fileService)
         {
             _service = service;
+            _fileService = fileService;
         }
 
         // GET: api/document
@@ -48,31 +50,26 @@ namespace MuseumServer.Controllers
         // POST: api/document
         [HttpPost]
         [SessionAuthorize(adminOnly: true)]
-        public async Task<IActionResult> Create([FromHeader] string token, [FromBody] CreateDocumentRequest request)
+        public async Task<IActionResult> Create([FromHeader] string token, [FromForm] CreateDocumentRequest request)
         {
-            string? fileType = GetFileTypeFromPath(request.FilePath);
-
-            if (fileType == null)
-                return BadRequest(new { status = "error", message = "Unsupported file type" });
-
-            var document = new Document
+            try
             {
-                FilePath = request.FilePath,
-                FileType = fileType,
-                ExhibitId = request.ExhibitId,
-                DepartmentId = request.DepartmentId
-            };
-
-            var created = await _service.CreateDocumentAsync(document);
-            return Ok(new { status = "ok", data = created });
+                var document = await _service.CreateDocumentAsync(request);
+                return Ok(new { status = "ok", data = document });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { status = "error", message = ex.Message });
+            }
         }
 
         // DELETE: api/document/{id}
         [HttpDelete("{id}")]
         [SessionAuthorize(adminOnly: true)]
-        public async Task<IActionResult> Delete([FromHeader] string token,int id)
+        public async Task<IActionResult> Delete([FromHeader] string token, int id)
         {
-            var deleted = await _service.DeleteDocumentAsync(id);
+            var deleted = await _service.DeleteDocumentWithFileAsync(id);
+
             if (!deleted)
                 return NotFound(new { status = "error", message = "Document not found" });
 
@@ -108,22 +105,6 @@ namespace MuseumServer.Controllers
         }
 
         // ===== Helpers =====
-
-        private string? GetFileTypeFromPath(string path)
-        {
-            var ext = Path.GetExtension(path)?.ToLowerInvariant().TrimStart('.');
-            if (ext == null) return null;
-
-            return ext switch
-            {
-                "pdf" => "pdf",
-                "doc" => "doc",
-                "docx" => "docx",
-                "txt" => "txt",
-                "md" => "md",
-                _ => null
-            };
-        }
 
         private string GetContentType(string path)
         {
