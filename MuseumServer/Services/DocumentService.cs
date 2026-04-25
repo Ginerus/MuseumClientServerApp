@@ -21,7 +21,8 @@ namespace MuseumServer.Services
                 .Select(d => new DocumentResponse
                 {
                     DocumentId = d.DocumentId,
-                    Title = d.Title
+                    Title = d.Title,
+                    FileType = d.FileType
                 })
                 .ToListAsync();
         }
