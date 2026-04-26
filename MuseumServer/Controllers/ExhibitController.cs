@@ -16,11 +16,16 @@ namespace MuseumServer.Controllers
     {
         private readonly ExhibitService _service;
         private readonly IFileService _fileService;
+        private readonly ImageProcessor _imageProcessor;
 
-        public ExhibitController(ExhibitService service, IFileService fileService)
+        public ExhibitController(
+            ExhibitService service,
+            IFileService fileService,
+            ImageProcessor imageProcessor)
         {
             _service = service;
             _fileService = fileService;
+            _imageProcessor = imageProcessor;
         }
 
 
@@ -51,35 +56,56 @@ namespace MuseumServer.Controllers
             return Ok(new { status = "ok", count });
         }
 
-        //[HttpPost]
-        //[SessionAuthorize(adminOnly: true)]
-        //public async Task<IActionResult> Create([FromHeader] string token, [FromForm] CreateExhibitRequest request, [FromServices] ImageService imageService)
-        //{
-        //    if (request.Image == null || request.Image.Length == 0)
-        //        return BadRequest("Image is required");
+        // POST: api/exhibit
+        [HttpPost]
+        [SessionAuthorize(adminOnly: true)]
+        public async Task<IActionResult> Create(
+            [FromHeader] string token,
+            [FromForm] CreateExhibitRequest request)
+        {
+            if (request.Image == null || request.Image.Length == 0)
+                return BadRequest(new { status = "error", message = "Image is required" });
 
-        //    // сохраняем изображение + thumbnail через сервис
-        //    var result = await imageService.SaveImageWithThumbnailAsync(
-        //        request.Image,
-        //        "exhibits"
-        //    );
+            var ext = Path.GetExtension(request.Image.FileName)?.ToLowerInvariant();
+            var allowed = new[] { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
 
-        //    var exhibit = new Exhibit
-        //    {
-        //        Name = request.Name,
-        //        Description = request.Description,
-        //        Materials = request.Materials,
-        //        IsPermanent = request.IsPermanent,
-        //        DepartmentId = request.DepartmentId,
+            if (ext == null || !allowed.Contains(ext))
+                return BadRequest(new { status = "error", message = "Unsupported image type" });
 
-        //        // одинаковое имя для images + thumbnails
-        //        ImagePath = result.fileName
-        //    };
+            // 📁 сохраняем оригинал
+            var fileName = await _fileService.SaveFileAsync(request.Image, "exhibits/images");
 
-        //    var created = await _service.CreateExhibitAsync(exhibit);
+            // 📁 путь до thumbnail
+            var thumbFolder = Path.Combine("exhibits", "thumbnails");
+            var thumbFullPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                thumbFolder,
+                fileName
+            );
 
-        //    return Ok(new { status = "ok", data = created });
-        //}
+            // Создаём thumbnail
+            await _imageProcessor.SaveAsThumbnailAsync(
+                request.Image,
+                thumbFullPath,
+                width: 300,
+                height: 300
+            );
+
+            var exhibit = new Exhibit
+            {
+                Name = request.Name,
+                Description = request.Description,
+                Materials = request.Materials,
+                IsPermanent = request.IsPermanent,
+                DepartmentId = request.DepartmentId,
+                ImagePath = fileName
+            };
+
+            var created = await _service.CreateExhibitAsync(exhibit);
+
+            return Ok(new { status = "ok", data = created });
+        }
 
         // PUT: api/exhibit/{id}
         [HttpPut("{id}")]
