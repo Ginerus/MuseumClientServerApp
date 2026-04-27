@@ -16,7 +16,7 @@ namespace MuseumServer.Services
             while (!stoppingToken.IsCancellationRequested)
             {
                 _sessionService.CleanupOldSessions();
-                await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(12), stoppingToken); // Удалять устаревшие сиссии каждые 12 часов
             }
         }
     }
