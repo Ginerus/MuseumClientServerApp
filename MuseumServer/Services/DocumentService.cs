@@ -91,15 +91,25 @@ namespace MuseumServer.Services
             _context.Documents.Add(document);
             await _context.SaveChangesAsync();
 
-            return new DocumentFullResponse
-            {
-                DocumentId = document.DocumentId,
-                Title = document.Title,
-                FilePath = document.FilePath,
-                FileType = document.FileType,
-                ExhibitId = document.ExhibitId,
-                Department = null
-            };
+            return await _context.Documents
+                .Where(d => d.DocumentId == document.DocumentId)
+                .Select(d => new DocumentFullResponse
+                {
+                    DocumentId = d.DocumentId,
+                    Title = d.Title,
+                    FilePath = d.FilePath,
+                    FileType = d.FileType,
+                    ExhibitId = d.ExhibitId,
+
+                    Department = d.Department != null
+                        ? new DepartmentInfo
+                        {
+                            DepartmentId = d.Department.DepartmentId,
+                            Name = d.Department.Name
+                        }
+                        : null
+                })
+                .FirstAsync();
         }
 
         // Удалить документ
