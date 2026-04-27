@@ -2,6 +2,7 @@
 using MuseumServer.Data;
 using MuseumServer.DTOs;
 using MuseumServer.Models;
+using static MuseumServer.DTOs.DocumentFullResponse;
 
 namespace MuseumServer.Services
 {
@@ -17,14 +18,22 @@ namespace MuseumServer.Services
         }
 
         // Получить все документы
-        public async Task<List<DocumentResponse>> GetAllDocumentsAsync()
+        public async Task<List<DocumentWithDepartmentResponse>> GetAllDocumentsAsync()
         {
             return await _context.Documents
-                .Select(d => new DocumentResponse
+                .Select(d => new DocumentWithDepartmentResponse
                 {
                     DocumentId = d.DocumentId,
                     Title = d.Title,
-                    FileType = d.FileType
+                    FileType = d.FileType,
+
+                    Department = d.Department != null
+                        ? new DepartmentInfo
+                        {
+                            DepartmentId = d.Department.DepartmentId,
+                            Name = d.Department.Name
+                        }
+                        : null
                 })
                 .ToListAsync();
         }
