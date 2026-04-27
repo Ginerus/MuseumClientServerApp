@@ -1,6 +1,7 @@
 ﻿using MuseumServer.Data;
 using MuseumServer.Models;
 using Microsoft.EntityFrameworkCore;
+using MuseumServer.DTOs;
 
 namespace MuseumServer.Services
 {
@@ -13,12 +14,47 @@ namespace MuseumServer.Services
             _context = context;
         }
 
-        public async Task<List<Exhibit>> GetAllExhibitsAsync() =>
-            await _context.Exhibits.Include(e => e.Department).ToListAsync();
+        public async Task<List<ExhibitWithDepartmentResponse>> GetAllExhibitsAsync()
+        {
+            return await _context.Exhibits
+                .Select(e => new ExhibitWithDepartmentResponse
+                {
+                    ExhibitId = e.ExhibitId,
+                    Name = e.Name,
 
-        public async Task<Exhibit?> GetExhibitAsync(int id) =>
-            await _context.Exhibits.Include(e => e.Department)
-                                   .FirstOrDefaultAsync(e => e.ExhibitId == id);
+                    Department = e.Department != null
+                        ? new DepartmentInfo
+                        {
+                            DepartmentId = e.Department.DepartmentId,
+                            Name = e.Department.Name
+                        }
+                        : null
+                })
+                .ToListAsync();
+        }
+
+        public async Task<ExhibitFullResponse?> GetExhibitAsync(int id)
+        {
+            return await _context.Exhibits
+                .Where(e => e.ExhibitId == id)
+                .Select(e => new ExhibitFullResponse
+                {
+                    ExhibitId = e.ExhibitId,
+                    Name = e.Name,
+                    Description = e.Description,
+                    Materials = e.Materials,
+                    IsPermanent = e.IsPermanent,
+
+                    Department = e.Department != null
+                        ? new DepartmentInfo
+                        {
+                            DepartmentId = e.Department.DepartmentId,
+                            Name = e.Department.Name
+                        }
+                        : null
+                })
+                .FirstOrDefaultAsync();
+        }
 
         public async Task<Exhibit> CreateExhibitAsync(Exhibit exhibit)
         {
@@ -55,5 +91,11 @@ namespace MuseumServer.Services
 
         public async Task<int> GetExhibitCountAsync() =>
             await _context.Exhibits.CountAsync();
+
+        public async Task<Exhibit?> GetExhibitEntityAsync(int id)
+        {
+            return await _context.Exhibits
+                .FirstOrDefaultAsync(e => e.ExhibitId == id);
+        }
     }
 }
