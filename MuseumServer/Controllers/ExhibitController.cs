@@ -188,14 +188,5 @@ namespace MuseumServer.Controllers
                 _ => "application/octet-stream"
             };
         }
-
-        // Генерация уникального имени файла
-        private string GenerateFileName(string extension)
-        {
-            var date = DateTime.UtcNow.ToString("ddMMyyyy");
-            var random = new Random().Next(10000000, 99999999);
-
-            return $"exh{date}{random}{extension}";
-        }
     }
 }
