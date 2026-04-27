@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MuseumServer.Services;
 
-namespace MuseumServe.Controllers
+namespace MuseumServer.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

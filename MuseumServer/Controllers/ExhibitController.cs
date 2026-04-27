@@ -146,7 +146,7 @@ namespace MuseumServer.Controllers
         [HttpGet("image/{id}")]
         public async Task<IActionResult> GetImage([FromHeader] string token, int id)
         {
-            var exhibit = await _service.GetExhibitAsync(id);
+            var exhibit = await _service.GetExhibitEntityAsync(id);
 
             if (exhibit == null || string.IsNullOrEmpty(exhibit.ImagePath))
                 return NotFound(new { status = "error", message = "Image not found" });
