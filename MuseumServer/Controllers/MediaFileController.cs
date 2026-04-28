@@ -50,13 +50,11 @@ namespace MuseumServer.Controllers
         [HttpPost]
         [SessionAuthorize(adminOnly: true)]
         public async Task<IActionResult> Create(
-    [FromHeader] string token,
-    [FromForm] CreateMediaFileRequest request)
+            [FromHeader] string token,
+            [FromForm] CreateMediaFileRequest request)
         {
             if (request.File == null || request.File.Length == 0)
                 return BadRequest(new { status = "error", message = "File is required" });
-
-            var ext = Path.GetExtension(request.File.FileName)?.ToLowerInvariant();
 
             var mediaType = GetMediaTypeFromPath(request.File.FileName);
             if (mediaType == null)
@@ -70,12 +68,12 @@ namespace MuseumServer.Controllers
             };
 
             // Используем FileService
-            var fileName = await _service.SaveFileAsync(request.File, folder);
+            var fileName = await _fileService.SaveFileAsync(request.File, folder);
 
             var media = new MediaFile
             {
                 Title = request.Title,
-                FilePath = Path.Combine(folder, fileName).Replace("\\", "/"),
+                FilePath = $"{folder}/{fileName}",
                 MediaType = mediaType,
                 Description = request.Description,
                 DepartmentId = request.DepartmentId
