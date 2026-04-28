@@ -9,14 +9,14 @@
     <!-- Загрузка данных -->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+            <i:InvokeCommandAction Command="{Binding LoadImagesCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
     <Grid Background="#F5F5F5">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
 
-            <ItemsControl ItemsSource="{Binding MediaFiles}">
+            <ItemsControl ItemsSource="{Binding Images}">
 
                 <!-- Группировка -->
                 <ItemsControl.GroupStyle>
@@ -42,7 +42,7 @@
                 <!-- Элемент медиа -->
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Command="{Binding DataContext.OpenMediaCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                        <Button Command="{Binding DataContext.OpenImageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                 CommandParameter="{Binding}"
                                 Background="Transparent"
                                 BorderThickness="0"
@@ -65,7 +65,7 @@
                                             Margin="10,10,10,5"
                                             ClipToBounds="True">
 
-                                        <Image Source="{Binding Thumbnail}"
+                                        <Image Source="{Binding ThumbnailImage}"
                                                Stretch="Uniform"/>
                                     </Border>
 
