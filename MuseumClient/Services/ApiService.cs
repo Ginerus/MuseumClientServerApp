@@ -68,5 +68,17 @@ namespace MuseumClient.Services
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<T>();
         }
+
+        // Поддержка Stream
+        public async Task<byte[]> GetBytesAsync(string endpoint)
+        {
+            using var client = CreateClient();
+            var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
+
+            var response = await client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
     }
 }
