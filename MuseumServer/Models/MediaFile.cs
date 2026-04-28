@@ -8,6 +8,10 @@ namespace MuseumServer.Models
         public int MediaFileId { get; private set; }
 
         [Required]
+        [MaxLength(200)]
+        public string Title { get; set; } = string.Empty;
+
+        [Required]
         [MaxLength(500)]
         public string FilePath { get; set; } = string.Empty;
 
