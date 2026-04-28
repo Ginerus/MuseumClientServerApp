@@ -49,7 +49,7 @@
                                 Padding="0">
 
                             <Border Width="180"
-                                    Height="180"
+                                    Height="200"
                                     Margin="8"
                                     Background="White"
                                     CornerRadius="10"
@@ -58,22 +58,25 @@
 
                                 <StackPanel>
 
-                                    <!-- Миниатюра -->
+                                    <!-- Картинка -->
                                     <Border Height="120"
                                             Background="#EEE"
                                             CornerRadius="8"
-                                            Margin="10,10,10,5">
+                                            Margin="10,10,10,5"
+                                            ClipToBounds="True">
 
                                         <Image Source="{Binding ThumbnailImage}"
-                                               Stretch="Uniform"/>
+                                               Stretch="UniformToFill"/>
                                     </Border>
 
                                     <!-- Название -->
-                                    <TextBlock Text="{Binding Title}"
+                                    <TextBlock Text="{Binding Name}"
                                                TextWrapping="Wrap"
                                                TextAlignment="Center"
                                                FontSize="12"
-                                               Margin="5"/>
+                                               Margin="5"
+                                               MaxHeight="40"/>
+
                                 </StackPanel>
                             </Border>
                         </Button>
