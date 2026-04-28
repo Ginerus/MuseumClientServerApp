@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System;
-using System.IO;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace MuseumClient.ViewModels
 {
@@ -17,8 +14,10 @@ namespace MuseumClient.ViewModels
     {
         private readonly ApiService _apiService;
 
+        // Коллекция видео
         public ObservableCollection<MediaFileDto> Videos { get; } = new();
 
+        // View (если позже понадобится группировка/сортировка)
         private ICollectionView? _videosView;
         public ICollectionView? VideosView
         {
@@ -30,6 +29,7 @@ namespace MuseumClient.ViewModels
             }
         }
 
+        // Загрузка
         private bool _isLoading;
         public bool IsLoading
         {
@@ -41,7 +41,7 @@ namespace MuseumClient.ViewModels
             }
         }
 
-        public RelayCommand LoadVideosCommand { get; }
+        public RelayCommand LoadCommand { get; }
         public RelayCommand OpenVideoCommand { get; }
 
         public MediaVideosViewModel()
@@ -49,11 +49,12 @@ namespace MuseumClient.ViewModels
             var config = new ConfigService().Server;
             _apiService = new ApiService(config, AuthService.Instance());
 
-            LoadVideosCommand = new RelayCommand(async _ => await LoadVideosAsync());
-            OpenVideoCommand = new RelayCommand(async p => await OpenVideo(p));
+            LoadCommand = new RelayCommand(async _ => await LoadVideosListAsync());
+            OpenVideoCommand = new RelayCommand(async param => await OpenVideo(param));
         }
 
-        public async Task LoadVideosAsync()
+        // 🔥 загрузка списка видео
+        public async Task LoadVideosListAsync()
         {
             try
             {
@@ -84,17 +85,22 @@ namespace MuseumClient.ViewModels
             }
         }
 
+        // настройка View (как в ArticlesViewModel)
         private void SetupCollectionView()
         {
             VideosView = CollectionViewSource.GetDefaultView(Videos);
         }
 
+        // клик по видео
         private async Task OpenVideo(object? parameter)
         {
             if (parameter is not MediaFileDto video)
                 return;
 
-            MessageBox.Show($"Видео:\n{video.Title}\nID: {video.MediaFileId}");
+            await Task.Run(() =>
+            {
+                MessageBox.Show($"Видео:\n{video.Title}\nID: {video.MediaFileId}");
+            });
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
