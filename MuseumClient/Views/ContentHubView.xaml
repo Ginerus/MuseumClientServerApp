@@ -12,7 +12,7 @@
             <views:ArticlesView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:ExhibitsViewModel}">
-            <views:ArticlesView/>
+            <views:ExhibitsView/>
         </DataTemplate>
     </UserControl.Resources>
 
