@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="MuseumClient.Views.MediaVideosView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadVideosCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid Background="#F5F5F5">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+            <ItemsControl ItemsSource="{Binding Videos}">
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Margin="10"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Command="{Binding DataContext.OpenVideoCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                Background="Transparent"
+                                BorderThickness="0">
+
+                            <Border Width="220"
+                                    Height="200"
+                                    Margin="8"
+                                    Background="White"
+                                    CornerRadius="10"
+                                    BorderBrush="#DDD"
+                                    BorderThickness="1">
+
+                                <StackPanel>
+
+                                    <!-- Video preview (thumbnail или poster) -->
+                                    <Border Height="120"
+                                            Background="Black"
+                                            CornerRadius="8"
+                                            Margin="10,10,10,5"
+                                            ClipToBounds="True">
+
+                                        <Image Source="{Binding Thumbnail}"
+                                               Stretch="UniformToFill"/>
+                                    </Border>
+
+                                    <!-- Title -->
+                                    <TextBlock Text="{Binding Title}"
+                                               TextWrapping="Wrap"
+                                               TextAlignment="Center"
+                                               FontSize="12"
+                                               Margin="5"
+                                               MaxHeight="40"/>
+
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
