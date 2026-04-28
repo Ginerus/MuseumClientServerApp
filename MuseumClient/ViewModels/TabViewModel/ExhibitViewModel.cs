@@ -145,8 +145,6 @@ namespace MuseumClient.ViewModels
 
                     exhibit.ThumbnailImage = image;
 
-                    // уведомляем UI
-                    OnPropertyChanged(nameof(Exhibits));
                 }
                 catch
                 {

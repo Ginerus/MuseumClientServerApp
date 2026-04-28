@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 using System.Windows.Media;
 
 namespace MuseumClient.Models
@@ -12,7 +13,7 @@ namespace MuseumClient.Models
         public List<ExhibitDto> Data { get; set; } = new();
     }
 
-    public class ExhibitDto
+    public class ExhibitDto : INotifyPropertyChanged
     {
         [JsonPropertyName("exhibitId")]
         public int ExhibitId { get; set; }
@@ -23,7 +24,20 @@ namespace MuseumClient.Models
         [JsonPropertyName("department")]
         public DepartmentDto? Department { get; set; }
 
-        public ImageSource ThumbnailImage { get; set; }
         public string DepartmentName => Department?.Name ?? "Без отдела";
+
+        private ImageSource? _thumbnailImage;
+
+        public ImageSource? ThumbnailImage
+        {
+            get => _thumbnailImage;
+            set
+            {
+                _thumbnailImage = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ThumbnailImage)));
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
     }
 }
