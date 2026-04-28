@@ -63,6 +63,7 @@ namespace MuseumServer.Services
                     .Select(m => new MediaFileResponse
                     {
                         MediaFileId = m.MediaFileId,
+                        Title = m.Title,
                         MediaType = m.MediaType,
                     })
                     .ToListAsync(),
