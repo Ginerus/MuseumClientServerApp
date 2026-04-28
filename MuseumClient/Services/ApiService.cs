@@ -10,23 +10,28 @@ namespace MuseumClient.Services
     {
         private readonly ServerConfig _serverConfig;
         private readonly AuthService _authService;
+        private readonly HttpClient _client;
 
         public ApiService(ServerConfig config, AuthService authService)
         {
             _serverConfig = config;
             _authService = authService;
+
+            _client = new HttpClient();
         }
 
         private HttpClient CreateClient()
         {
-            var client = new HttpClient();
+            _client.DefaultRequestHeaders.Clear();
+
             var token = _authService.CurrentToken;
 
             if (!string.IsNullOrEmpty(token))
             {
-                client.DefaultRequestHeaders.Add("token", token);
+                _client.DefaultRequestHeaders.Add("token", token);
             }
-            return client;
+
+            return _client;
         }
 
         // Универсальный GET
