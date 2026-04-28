@@ -8,10 +8,17 @@ namespace MuseumServer.Services
     public class ExhibitService
     {
         private readonly MuseumContext _context;
+        private readonly IFileService _fileService;
+        private readonly ImageProcessor _imageProcessor;
 
-        public ExhibitService(MuseumContext context)
+        public ExhibitService(
+            MuseumContext context,
+            IFileService fileService,
+            ImageProcessor imageProcessor)
         {
             _context = context;
+            _fileService = fileService;
+            _imageProcessor = imageProcessor;
         }
 
         public async Task<List<ExhibitWithDepartmentResponse>> GetAllExhibitsAsync()
@@ -63,20 +70,53 @@ namespace MuseumServer.Services
             return exhibit;
         }
 
-        public async Task<bool> UpdateExhibitAsync(Exhibit exhibit)
+        public async Task<Exhibit?> UpdateExhibitAsync(int id, UpdateExhibitRequest request)
         {
-            var existing = await _context.Exhibits.FindAsync(exhibit.ExhibitId);
-            if (existing == null) return false;
+            var existing = await _context.Exhibits.FindAsync(id);
+            if (existing == null) return null;
 
-            existing.Name = exhibit.Name;
-            existing.Description = exhibit.Description;
-            existing.Materials = exhibit.Materials;
-            existing.IsPermanent = exhibit.IsPermanent;
-            existing.ImagePath = exhibit.ImagePath;
-            existing.DepartmentId = exhibit.DepartmentId;
+            if (request.Image != null && request.Image.Length > 0)
+            {
+                // удалить старые файлы
+                if (!string.IsNullOrEmpty(existing.ImagePath))
+                {
+                    await _fileService.DeleteFileAsync("exhibits/images", existing.ImagePath);
+                    await _fileService.DeleteFileAsync("exhibits/thumbnails", existing.ImagePath);
+                }
+
+                // сохранить оригинал
+                var fileName = await _fileService.SaveFileAsync(request.Image, "exhibits/images");
+
+                // путь для thumbnail
+                var thumbFullPath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    "exhibits",
+                    "thumbnails",
+                    fileName
+                );
+
+                // создать thumbnail
+                await _imageProcessor.SaveAsThumbnailAsync(
+                    request.Image,
+                    thumbFullPath,
+                    width: 300,
+                    height: 300
+                );
+
+                existing.ImagePath = fileName;
+            }
+
+            // обновление остальных полей
+            existing.Name = request.Name;
+            existing.Description = request.Description;
+            existing.Materials = request.Materials;
+            existing.IsPermanent = request.IsPermanent;
+            existing.DepartmentId = request.DepartmentId;
 
             await _context.SaveChangesAsync();
-            return true;
+
+            return existing;
         }
 
         public async Task<bool> DeleteExhibitAsync(int id)
