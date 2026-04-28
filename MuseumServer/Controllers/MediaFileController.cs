@@ -15,16 +15,19 @@ namespace MuseumServer.Controllers
         private readonly MediaFileService _service;
         private readonly IWebHostEnvironment _env;
         private readonly IFileService _fileService;
+        private readonly ImageProcessor _imageProcessor;
 
         // Конструктор
         public MediaFileController(
             MediaFileService service,
             IWebHostEnvironment env,
-            IFileService fileService)
+            IFileService fileService,
+            ImageProcessor imageProcessor)
         {
             _service = service;
             _env = env;
             _fileService = fileService;
+            _imageProcessor = imageProcessor;
         }
 
         // GET: api/MediaFiles
@@ -62,13 +65,31 @@ namespace MuseumServer.Controllers
 
             var folder = mediaType switch
             {
-                "image" => "media/images",
+                "image" => "media/images/original",
                 "video" => "media/videos",
                 _ => "media/other"
             };
 
             // Используем FileService
             var fileName = await _fileService.SaveFileAsync(request.File, folder);
+
+            if (mediaType == "image")
+            {
+                var thumbnailFolder = "media/images/thumbnails";
+
+                var thumbnailFullPath = Path.Combine(
+                    _env.WebRootPath,
+                    thumbnailFolder,
+                    fileName
+                );
+
+                await _imageProcessor.SaveAsThumbnailAsync(
+                    request.File,
+                    thumbnailFullPath,
+                    300,
+                    300
+                );
+            }
 
             var media = new MediaFile
             {
