@@ -1,5 +1,7 @@
-﻿using System.Text.Json.Serialization;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
+using System.Windows.Media;
 
 namespace MuseumClient.Models
 {
@@ -28,14 +30,5 @@ namespace MuseumClient.Models
 
         // 🔥 Для группировки
         public string DepartmentName => Department?.Name ?? "Без отдела";
-    }
-
-    public class DepartmentDto
-    {
-        [JsonPropertyName("departmentId")]
-        public int DepartmentId { get; set; }
-
-        [JsonPropertyName("name")]
-        public string Name { get; set; } = string.Empty;
     }
 }
