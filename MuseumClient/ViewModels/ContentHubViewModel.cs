@@ -22,7 +22,8 @@ namespace MuseumClient.ViewModels
         public ArticlesViewModel ArticlesVM { get; }
         public ExhibitsViewModel ExhibitsVM { get; }
         public DepartmentsViewModel DepartmentsVM { get; }
-        //public DocumentViewModel DocumentVM { get; }
+        public MediaImagesViewModel MediaImagesVM { get; }
+        public MediaVideosViewModel MediaVideosVM { get; }
         private readonly MainViewModel _mainVM;
 
         // Команды для кнопок
@@ -44,7 +45,8 @@ namespace MuseumClient.ViewModels
             ArticlesVM = new ArticlesViewModel();
             ExhibitsVM = new ExhibitsViewModel();
             DepartmentsVM = new DepartmentsViewModel();
-            //DocumentVM = new DocumentViewModel();
+            MediaImagesVM = new MediaImagesViewModel();
+            MediaVideosVM = new MediaVideosViewModel();
 
             // Команды
             ShowAboutMuseumCommand = new RelayCommand(async _ =>
@@ -73,15 +75,13 @@ namespace MuseumClient.ViewModels
 
             ShowIllustrationsCommand = new RelayCommand(async _ =>
             {
-                MessageBox.Show("Иллюстрации");
-                //CurrentTabView = DepartmentVM;
+                CurrentTabView = MediaImagesVM;
                 //await Task.CompletedTask;
             });
 
             ShowVideosCommand = new RelayCommand(async _ =>
             {
-                MessageBox.Show("Видео");
-                //CurrentTabView = DepartmentVM;
+                CurrentTabView = MediaVideosVM;
                 //await Task.CompletedTask;
             });
 
