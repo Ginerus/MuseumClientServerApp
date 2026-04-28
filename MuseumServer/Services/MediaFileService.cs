@@ -28,15 +28,24 @@ namespace MuseumServer.Services
         }
 
         // Получить один медиафайл по id
-        public async Task<MediaFileResponse?> GetAsync(int id)
+        public async Task<MediaFileFullResponse?> GetAsync(int id)
         {
             return await _context.MediaFiles
                 .Where(m => m.MediaFileId == id)
-                .Select(m => new MediaFileResponse
+                .Select(m => new MediaFileFullResponse
                 {
                     MediaFileId = m.MediaFileId,
                     Title = m.Title,
                     MediaType = m.MediaType,
+                    Description = m.Description,
+
+                    Department = m.Department != null
+                        ? new DepartmentInfo
+                        {
+                            DepartmentId = m.Department.DepartmentId,
+                            Name = m.Department.Name
+                        }
+                        : null
                 })
                 .FirstOrDefaultAsync();
         }
