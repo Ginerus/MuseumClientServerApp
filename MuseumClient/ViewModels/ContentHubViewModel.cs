@@ -24,6 +24,7 @@ namespace MuseumClient.ViewModels
         public DepartmentsViewModel DepartmentsVM { get; }
         public MediaImagesViewModel MediaImagesVM { get; }
         public MediaVideosViewModel MediaVideosVM { get; }
+
         private readonly MainViewModel _mainVM;
 
         // Команды для кнопок
