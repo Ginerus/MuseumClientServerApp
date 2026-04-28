@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MuseumClient.Views.TabView
+namespace MuseumClient.Views
 {
     /// <summary>
     /// Логика взаимодействия для ExhibitsView.xaml

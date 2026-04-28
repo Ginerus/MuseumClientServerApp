@@ -20,70 +20,70 @@ namespace MuseumClient.Services
             _client = new HttpClient();
         }
 
-        private HttpClient CreateClient()
+        private void ApplyHeaders()
         {
             _client.DefaultRequestHeaders.Clear();
 
             var token = _authService.CurrentToken;
-
             if (!string.IsNullOrEmpty(token))
             {
                 _client.DefaultRequestHeaders.Add("token", token);
             }
-
-            return _client;
         }
 
-        // Универсальный GET
         public async Task<T> GetAsync<T>(string endpoint)
         {
-            using var client = CreateClient();
+            ApplyHeaders();
+
             var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
-            var response = await client.GetAsync(url);
+            var response = await _client.GetAsync(url);
+
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<T>();
         }
 
-        // Универсальный POST
-        public async Task<T> PostAsync<T>(string endpoint, object payload)
-        {
-            using var client = CreateClient();
-            var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
-            var response = await client.PostAsJsonAsync(url, payload);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>();
-        }
-
-        // Универсальный PUT
-        public async Task<T> PutAsync<T>(string endpoint, object payload)
-        {
-            using var client = CreateClient();
-            var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
-            var response = await client.PutAsJsonAsync(url, payload);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>();
-        }
-
-        // Универсальный DELETE
-        public async Task<T> DeleteAsync<T>(string endpoint)
-        {
-            using var client = CreateClient();
-            var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
-            var response = await client.DeleteAsync(url);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>();
-        }
-
-        // Поддержка Stream
         public async Task<byte[]> GetBytesAsync(string endpoint)
         {
-            using var client = CreateClient();
+            ApplyHeaders();
+
             var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
+            var response = await _client.GetAsync(url);
 
-            var response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
-
             return await response.Content.ReadAsByteArrayAsync();
+        }
+
+        public async Task<T> PostAsync<T>(string endpoint, object payload)
+        {
+            ApplyHeaders();
+
+            var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
+            var response = await _client.PostAsJsonAsync(url, payload);
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<T>();
+        }
+
+        public async Task<T> PutAsync<T>(string endpoint, object payload)
+        {
+            ApplyHeaders();
+
+            var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
+            var response = await _client.PutAsJsonAsync(url, payload);
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<T>();
+        }
+
+        public async Task<T> DeleteAsync<T>(string endpoint)
+        {
+            ApplyHeaders();
+
+            var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
+            var response = await _client.DeleteAsync(url);
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<T>();
         }
     }
 }
