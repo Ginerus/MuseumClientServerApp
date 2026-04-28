@@ -127,23 +127,32 @@ namespace MuseumServer.Controllers
 
         // GET: api/MediaFile/stream/{id}
         [HttpGet("stream/{id}")]
-        public async Task<IActionResult> Stream([FromHeader] string token, int id)
+        public async Task<IActionResult> Stream([FromHeader] string token, int id, [FromQuery] string? size = null)
         {
             var media = await _service.GetEntityAsync(id);
 
             if (media == null || string.IsNullOrEmpty(media.FilePath))
                 return NotFound(new { status = "error", message = "Media file not found" });
 
-            var path = Path.IsPathRooted(media.FilePath)
-                ? media.FilePath
-                : Path.Combine(_env.WebRootPath, media.FilePath);
+            string relativePath = media.FilePath;
+
+            // 📌 если запросили thumbnail
+            if (media.MediaType == "image" && size == "thumb")
+            {
+                relativePath = media.FilePath
+                    .Replace("original", "thumbnails");
+            }
+
+            var path = Path.IsPathRooted(relativePath)
+                ? relativePath
+                : Path.Combine(_env.WebRootPath, relativePath);
 
             if (!System.IO.File.Exists(path))
                 return NotFound(new { status = "error", message = "File not found on disk" });
 
-            var contentType = GetContentType(media.FilePath);
+            var contentType = GetContentType(relativePath);
 
-            // Отключение кэша для статики
+            // кеш отключаем
             Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate";
             Response.Headers["Pragma"] = "no-cache";
             Response.Headers["Expires"] = "0";
