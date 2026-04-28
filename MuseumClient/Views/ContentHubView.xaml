@@ -17,6 +17,12 @@
         <DataTemplate DataType="{x:Type vm:DepartmentsViewModel}">
             <views:DepartmentsView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MediaImagesViewModel}">
+            <views:MediaImagesView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MediaVideosViewModel}">
+            <views:MediaVideosView/>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
