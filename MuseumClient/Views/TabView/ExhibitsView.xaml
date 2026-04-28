@@ -64,8 +64,8 @@
                                             CornerRadius="8"
                                             Margin="10,10,10,5">
 
-                                        <Image Source="{Binding ThumbnailUrl}"
-                                               Stretch="UniformToFill"/>
+                                        <Image Source="{Binding ThumbnailImage}"
+                                            Stretch="UniformToFill"/>
                                     </Border>
 
                                     <!-- Название -->

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using System.Windows.Media;
 
 namespace MuseumClient.Models
 {
@@ -22,9 +23,7 @@ namespace MuseumClient.Models
         [JsonPropertyName("department")]
         public DepartmentDto? Department { get; set; }
 
-        // 🔥 URL для миниатюры (формируем на клиенте)
-        public string ThumbnailUrl => $"/api/Exhibit/thumbnail/{ExhibitId}";
-
+        public ImageSource ThumbnailImage { get; set; }
         public string DepartmentName => Department?.Name ?? "Без отдела";
     }
 }

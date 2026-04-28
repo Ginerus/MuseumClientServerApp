@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System;
+using System.IO;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace MuseumClient.ViewModels
 {
@@ -67,6 +70,9 @@ namespace MuseumClient.ViewModels
                     {
                         Exhibits.Add(item);
                     }
+
+                    // Загрузка картинок
+                    _ = LoadThumbnailsAsync();
                 }
 
                 SetupCollectionView();
@@ -116,5 +122,37 @@ namespace MuseumClient.ViewModels
 
         private void OnPropertyChanged(string name)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        // Загрузка картинок с header
+        private async Task LoadThumbnailsAsync()
+        {
+            foreach (var exhibit in Exhibits)
+            {
+                try
+                {
+                    var bytes = await _apiService.GetBytesAsync($"Exhibit/thumbnail/{exhibit.ExhibitId}");
+
+                    var image = new BitmapImage();
+
+                    using (var ms = new MemoryStream(bytes))
+                    {
+                        image.BeginInit();
+                        image.CacheOption = BitmapCacheOption.OnLoad;
+                        image.StreamSource = ms;
+                        image.EndInit();
+                        image.Freeze();
+                    }
+
+                    exhibit.ThumbnailImage = image;
+
+                    // уведомляем UI
+                    OnPropertyChanged(nameof(Exhibits));
+                }
+                catch
+                {
+                    // можно позже заменить на placeholder
+                }
+            }
+        }
     }
 }
