@@ -153,8 +153,6 @@ namespace MuseumServer.Controllers
 
             var fullPath = Path.GetFullPath(path);
 
-            Console.WriteLine(fullPath);
-
             // защита от выхода за папку images
             if (!fullPath.StartsWith(imagesRoot))
                 return BadRequest(new { status = "error", message = "Invalid file path" });
