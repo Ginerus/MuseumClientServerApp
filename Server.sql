@@ -76,7 +76,7 @@ CREATE TABLE Documents
         ON DELETE NO ACTION,
 
     CONSTRAINT CHK_Documents_FileType
-        CHECK (FileType IN ('pdf', 'doc', 'docx', 'txt', 'md'))
+        CHECK (FileType IN ('pdf', 'doc', 'docx', 'txt', 'md', 'ppt', 'pptx'))
 );
 GO
 
@@ -86,6 +86,7 @@ GO
 CREATE TABLE MediaFiles
 (
     MediaFileId INT IDENTITY(1,1) PRIMARY KEY,
+    Title NVARCHAR(200) NOT NULL,
     FilePath NVARCHAR(500) NOT NULL,
     MediaType NVARCHAR(20) NOT NULL,
     Description NVARCHAR(300) NULL,
