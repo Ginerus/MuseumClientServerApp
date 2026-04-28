@@ -165,6 +165,35 @@ namespace MuseumServer.Controllers
             return PhysicalFile(fullPath, contentType, enableRangeProcessing: true);
         }
 
+        // GET: api/exhibit/thumbnail/{id}
+        [HttpGet("thumbnail/{id}")]
+        public async Task<IActionResult> GetThumbnail([FromHeader] string token, int id)
+        {
+            var exhibit = await _service.GetExhibitEntityAsync(id);
+
+            if (exhibit == null || string.IsNullOrEmpty(exhibit.ImagePath))
+                return NotFound(new { status = "error", message = "Thumbnail not found" });
+
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var thumbsRoot = Path.Combine(basePath, "exhibits", "thumbnails");
+
+            var path = Path.Combine(thumbsRoot, exhibit.ImagePath);
+            var fullPath = Path.GetFullPath(path);
+
+            // защита
+            if (!fullPath.StartsWith(thumbsRoot))
+                return BadRequest(new { status = "error", message = "Invalid file path" });
+
+            if (!System.IO.File.Exists(fullPath))
+                //return NotFound(new { status = "error", message = "Thumbnail file not found" });
+                // fallback на оригинал
+                return await GetImage(token, id);
+
+            var contentType = GetImageContentType(fullPath);
+
+            return PhysicalFile(fullPath, contentType, enableRangeProcessing: true);
+        }
+
         // Определение типа данных
         private string GetImageContentType(string path)
         {
