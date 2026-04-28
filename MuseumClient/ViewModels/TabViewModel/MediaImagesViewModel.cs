@@ -1,0 +1,136 @@
+﻿using MuseumClient.Services;
+using MuseumClient.Commands;
+using MuseumClient.Models;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Data;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+
+namespace MuseumClient.ViewModels
+{
+    public class MediaImagesViewModel : INotifyPropertyChanged
+    {
+        private readonly ApiService _apiService;
+
+        public ObservableCollection<MediaFileDto> Images { get; } = new();
+
+        private ICollectionView? _imagesView;
+        public ICollectionView? ImagesView
+        {
+            get => _imagesView;
+            private set
+            {
+                _imagesView = value;
+                OnPropertyChanged(nameof(ImagesView));
+            }
+        }
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+            }
+        }
+
+        public RelayCommand LoadImagesCommand { get; }
+        public RelayCommand OpenImageCommand { get; }
+
+        public MediaImagesViewModel()
+        {
+            var config = new ConfigService().Server;
+            _apiService = new ApiService(config, AuthService.Instance());
+
+            LoadImagesCommand = new RelayCommand(async _ => await LoadImagesAsync());
+            OpenImageCommand = new RelayCommand(async p => await OpenImage(p));
+        }
+
+        public async Task LoadImagesAsync()
+        {
+            try
+            {
+                IsLoading = true;
+
+                var response = await _apiService.GetAsync<MediaFilesResponse>("MediaFile");
+
+                Images.Clear();
+
+                if (response?.Data != null)
+                {
+                    foreach (var item in response.Data)
+                    {
+                        if (item.MediaType == "image")
+                            Images.Add(item);
+                    }
+
+                    _ = LoadThumbnailsAsync();
+                }
+
+                SetupCollectionView();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки изображений: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        private void SetupCollectionView()
+        {
+            ImagesView = CollectionViewSource.GetDefaultView(Images);
+        }
+
+        private async Task OpenImage(object? parameter)
+        {
+            if (parameter is not MediaFileDto image)
+                return;
+
+            MessageBox.Show($"Изображение:\n{image.Title}\nID: {image.MediaFileId}");
+        }
+
+        private async Task LoadThumbnailsAsync()
+        {
+            foreach (var imageItem in Images)
+            {
+                try
+                {
+                    var bytes = await _apiService.GetBytesAsync(
+                        $"MediaFile/stream/{imageItem.MediaFileId}?size=thumb"
+                    );
+
+                    var image = new BitmapImage();
+
+                    using (var ms = new MemoryStream(bytes))
+                    {
+                        image.BeginInit();
+                        image.CacheOption = BitmapCacheOption.OnLoad;
+                        image.StreamSource = ms;
+                        image.EndInit();
+                        image.Freeze();
+                    }
+
+                    imageItem.ThumbnailImage = image;
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnPropertyChanged(string name)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
+}
