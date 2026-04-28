@@ -14,11 +14,17 @@ namespace MuseumServer.Controllers
     {
         private readonly MediaFileService _service;
         private readonly IWebHostEnvironment _env;
+        private readonly IFileService _fileService;
 
-        public MediaFileController(MediaFileService service, IWebHostEnvironment env)
+        // Конструктор
+        public MediaFileController(
+            MediaFileService service,
+            IWebHostEnvironment env,
+            IFileService fileService)
         {
             _service = service;
             _env = env;
+            _fileService = fileService;
         }
 
         // GET: api/MediaFiles
@@ -43,24 +49,40 @@ namespace MuseumServer.Controllers
         // POST: api/MediaFiles
         [HttpPost]
         [SessionAuthorize(adminOnly: true)]
-        public async Task<IActionResult> Create([FromHeader] string token, [FromBody] CreateMediaFileRequest request)
+        public async Task<IActionResult> Create(
+    [FromHeader] string token,
+    [FromForm] CreateMediaFileRequest request)
         {
-            // Определяем тип медиа по расширению файла
-            string? mediaType = GetMediaTypeFromPath(request.FilePath);
+            if (request.File == null || request.File.Length == 0)
+                return BadRequest(new { status = "error", message = "File is required" });
+
+            var ext = Path.GetExtension(request.File.FileName)?.ToLowerInvariant();
+
+            var mediaType = GetMediaTypeFromPath(request.File.FileName);
             if (mediaType == null)
-            {
                 return BadRequest(new { status = "error", message = "Unsupported media type" });
-            }
+
+            var folder = mediaType switch
+            {
+                "image" => "media/images",
+                "video" => "media/videos",
+                _ => "media/other"
+            };
+
+            // Используем FileService
+            var fileName = await _service.SaveFileAsync(request.File, folder);
 
             var media = new MediaFile
             {
-                FilePath = request.FilePath,
+                Title = request.Title,
+                FilePath = Path.Combine(folder, fileName).Replace("\\", "/"),
                 MediaType = mediaType,
                 Description = request.Description,
                 DepartmentId = request.DepartmentId
             };
 
             var created = await _service.CreateAsync(media);
+
             return Ok(new { status = "ok", data = created });
         }
 
