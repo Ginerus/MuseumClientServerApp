@@ -20,6 +20,7 @@ namespace MuseumClient.ViewModels
         // Внутренние ViewModels
         public AboutMuseumViewModel AboutMuseumVM { get; }
         public ArticlesViewModel ArticlesVM { get; }
+        public ExhibitsViewModel ExhibitsVM { get; }
         //public DepartmentViewModel DepartmentVM { get; }
         //public DocumentViewModel DocumentVM { get; }
         private readonly MainViewModel _mainVM;
@@ -41,6 +42,7 @@ namespace MuseumClient.ViewModels
             // Инициализация внутренних ViewModel
             AboutMuseumVM = new AboutMuseumViewModel();
             ArticlesVM = new ArticlesViewModel();
+            ExhibitsVM = new ExhibitsViewModel();
             //DepartmentVM = new DepartmentViewModel();
             //DocumentVM = new DocumentViewModel();
 
@@ -59,8 +61,7 @@ namespace MuseumClient.ViewModels
 
             ShowExhibitsCommand = new RelayCommand(async _ =>
             {
-                MessageBox.Show("Экспонаты");
-                //CurrentTabView = DepartmentVM;
+                CurrentTabView = ExhibitsVM;
                 //await Task.CompletedTask;
             });
 
