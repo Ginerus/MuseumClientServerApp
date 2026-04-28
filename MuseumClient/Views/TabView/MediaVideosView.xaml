@@ -8,7 +8,7 @@
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadVideosCommand}" />
+            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
@@ -47,8 +47,33 @@
                                             Margin="10,10,10,5"
                                             ClipToBounds="True">
 
-                                        <Image Source="{Binding Thumbnail}"
-                                               Stretch="UniformToFill"/>
+                                        <Grid>
+
+                                            <Image Source="{Binding ThumbnailImage}"
+                                                    Stretch="UniformToFill"/>
+
+                                            <TextBlock Text="Видео"
+                                                       Foreground="White"
+                                                       FontSize="16"
+                                                       FontWeight="Bold"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center">
+
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ThumbnailImage}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+
+                                            </TextBlock>
+
+                                        </Grid>
                                     </Border>
 
                                     <!-- Title -->
