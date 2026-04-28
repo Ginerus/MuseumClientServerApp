@@ -110,24 +110,17 @@ namespace MuseumServer.Controllers
         // PUT: api/exhibit/{id}
         [HttpPut("{id}")]
         [SessionAuthorize(adminOnly: true)]
-        public async Task<IActionResult> Update([FromHeader] string token, int id, [FromBody] UpdateExhibitRequest request)
+        public async Task<IActionResult> Update(
+            [FromHeader] string token,
+            int id,
+            [FromForm] UpdateExhibitRequest request)
         {
-            var exhibit = new Exhibit
-            {
-                ExhibitId = id, // id берём из URL
-                Name = request.Name,
-                Description = request.Description,
-                Materials = request.Materials,
-                IsPermanent = request.IsPermanent,
-                ImagePath= request.ImagePath,
-                DepartmentId = request.DepartmentId
-            };
+            var updated = await _service.UpdateExhibitAsync(id, request);
 
-            var updated = await _service.UpdateExhibitAsync(exhibit);
-            if (!updated)
+            if (updated == null)
                 return NotFound(new { status = "error", message = "Exhibit not found" });
 
-            return Ok(new { status = "ok", data = exhibit });
+            return Ok(new { status = "ok", data = updated });
         }
 
         // DELETE: api/exhibit/{id}
