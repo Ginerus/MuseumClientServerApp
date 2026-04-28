@@ -124,8 +124,16 @@ namespace MuseumServer.Services
             var exhibit = await _context.Exhibits.FindAsync(id);
             if (exhibit == null) return false;
 
+            // Удаление файлов
+            if (!string.IsNullOrEmpty(exhibit.ImagePath))
+            {
+                await _fileService.DeleteFileAsync("exhibits/images", exhibit.ImagePath);
+                await _fileService.DeleteFileAsync("exhibits/thumbnails", exhibit.ImagePath);
+            }
+
             _context.Exhibits.Remove(exhibit);
             await _context.SaveChangesAsync();
+
             return true;
         }
 
