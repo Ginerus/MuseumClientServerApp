@@ -23,6 +23,7 @@ namespace MuseumServer
             builder.Services.AddScoped<DepartmentService>();
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<ImageProcessor>();
+            builder.Services.AddScoped<VideoProcessor>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();

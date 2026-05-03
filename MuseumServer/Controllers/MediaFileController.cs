@@ -16,18 +16,21 @@ namespace MuseumServer.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly IFileService _fileService;
         private readonly ImageProcessor _imageProcessor;
+        private readonly VideoProcessor _videoProcessor;
 
         // Конструктор
         public MediaFileController(
             MediaFileService service,
             IWebHostEnvironment env,
             IFileService fileService,
-            ImageProcessor imageProcessor)
+            ImageProcessor imageProcessor,
+            VideoProcessor videoProcessor)
         {
             _service = service;
             _env = env;
             _fileService = fileService;
             _imageProcessor = imageProcessor;
+            _videoProcessor = videoProcessor;
         }
 
         // GET: api/MediaFiles
@@ -66,7 +69,7 @@ namespace MuseumServer.Controllers
             var folder = mediaType switch
             {
                 "image" => "media/images/original",
-                "video" => "media/videos",
+                "video" => "media/videos/original",
                 _ => "media/other"
             };
 
@@ -88,6 +91,40 @@ namespace MuseumServer.Controllers
                     thumbnailFullPath,
                     300,
                     300
+                );
+            }
+
+            if (mediaType == "video")
+            {
+                var originalPath = Path.Combine(_env.WebRootPath, folder, fileName);
+
+                // Thumbnail (jpg)
+                var thumbnailFolder = "media/videos/thumbnails";
+                var thumbnailPath = Path.Combine(
+                    _env.WebRootPath,
+                    thumbnailFolder,
+                    Path.ChangeExtension(fileName, ".jpg")
+                );
+
+                await _videoProcessor.CreateThumbnailAsync(
+                    originalPath,
+                    thumbnailPath,
+                    300
+                );
+
+                // Preview (mp4)
+                var previewFolder = "media/videos/previews";
+                var previewPath = Path.Combine(
+                    _env.WebRootPath,
+                    previewFolder,
+                    Path.GetFileNameWithoutExtension(fileName) + "_preview.mp4"
+                );
+
+                await _videoProcessor.CreatePreviewAsync(
+                    originalPath,
+                    previewPath,
+                    320,
+                    4
                 );
             }
 
@@ -137,10 +174,32 @@ namespace MuseumServer.Controllers
             string relativePath = media.FilePath;
 
             // Если запрощен thumbnail
+            // Image thumbnail
             if (media.MediaType == "image" && size == "thumb")
             {
                 relativePath = media.FilePath
                     .Replace("original", "thumbnails");
+            }
+
+            // Video thumbnail
+            if (media.MediaType == "video" && size == "thumb")
+            {
+                relativePath = media.FilePath
+                    .Replace("original", "thumbnails");
+
+                relativePath = Path.ChangeExtension(relativePath, ".jpg");
+            }
+
+            // Video preview
+            if (media.MediaType == "video" && size == "preview")
+            {
+                relativePath = media.FilePath
+                    .Replace("original", "previews");
+
+                relativePath = Path.Combine(
+                    Path.GetDirectoryName(relativePath)!,
+                    Path.GetFileNameWithoutExtension(relativePath) + "_preview.mp4"
+                );
             }
 
             var path = Path.IsPathRooted(relativePath)
