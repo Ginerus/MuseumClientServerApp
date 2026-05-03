@@ -64,8 +64,42 @@ namespace MuseumServer.Services
             var media = await _context.MediaFiles.FindAsync(id);
             if (media == null) return false;
 
+            var fullPath = Path.Combine("wwwroot", media.FilePath.Replace("/", Path.DirectorySeparatorChar.ToString()));
+
+            // 🧠 базовая папка
+            var webRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+            if (media.MediaType == "image")
+            {
+                DeleteFileSafe(Path.Combine(webRoot, media.FilePath)); // original
+
+                var thumbPath = media.FilePath.Replace("original", "thumbnails");
+                DeleteFileSafe(Path.Combine(webRoot, thumbPath));
+            }
+
+            if (media.MediaType == "video")
+            {
+                // 🎥 original
+                DeleteFileSafe(Path.Combine(webRoot, media.FilePath));
+
+                // 🖼 thumbnail
+                var thumbPath = media.FilePath
+                    .Replace("original", "thumbnails")
+                    .Replace(".mp4", ".jpg");
+
+                DeleteFileSafe(Path.Combine(webRoot, thumbPath));
+
+                // 🎞 preview
+                var previewPath = media.FilePath
+                    .Replace("original", "previews")
+                    .Replace(".mp4", "_preview.mp4");
+
+                DeleteFileSafe(Path.Combine(webRoot, previewPath));
+            }
+
             _context.MediaFiles.Remove(media);
             await _context.SaveChangesAsync();
+
             return true;
         }
 
@@ -74,6 +108,21 @@ namespace MuseumServer.Services
         {
             return await _context.MediaFiles
                 .FirstOrDefaultAsync(m => m.MediaFileId == id);
+        }
+
+        private void DeleteFileSafe(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch
+            {
+                // можно логировать, но не валим API
+            }
         }
     }
 }

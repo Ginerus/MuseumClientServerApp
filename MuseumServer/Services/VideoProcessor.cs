@@ -38,7 +38,7 @@ namespace MuseumServer.Services
 
             var args =
                 $"-y -ss 00:00:02 -i \"{inputPath}\" -t {durationSeconds} " +
-                $"-vf scale={width}:-1 -an -c:v libx264 -preset veryfast " +
+                $"-vf scale={width}:-2 -an -c:v libx264 -preset veryfast " +
                 $"-crf 28 \"{outputPath}\"";
 
             await RunFFmpegAsync(args);
