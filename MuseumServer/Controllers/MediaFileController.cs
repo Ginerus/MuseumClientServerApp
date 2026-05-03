@@ -136,7 +136,7 @@ namespace MuseumServer.Controllers
 
             string relativePath = media.FilePath;
 
-            // 📌 если запросили thumbnail
+            // Если запрощен thumbnail
             if (media.MediaType == "image" && size == "thumb")
             {
                 relativePath = media.FilePath
