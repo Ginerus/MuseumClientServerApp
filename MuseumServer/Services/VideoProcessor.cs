@@ -50,7 +50,7 @@ namespace MuseumServer.Services
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "ffmpeg", // должен быть в PATH
+                    FileName = GetFFmpegPath(), // Путь из метода для конкретной ОС (Linux || win)
                     Arguments = arguments,
                     RedirectStandardError = true,
                     UseShellExecute = false,
