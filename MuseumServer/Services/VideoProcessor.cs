@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace MuseumServer.Services
 {
@@ -67,6 +68,19 @@ namespace MuseumServer.Services
             {
                 throw new Exception($"FFmpeg error: {error}");
             }
+        }
+
+        // Определение пути хранения ffmpeg для конкретных ОС
+        private string GetFFmpegPath()
+        {
+            var basePath = AppContext.BaseDirectory;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return Path.Combine(basePath, "Tools", "ffmpeg", "win", "ffmpeg.exe");
+            }
+
+            return Path.Combine(basePath, "Tools", "ffmpeg", "linux", "ffmpeg");
         }
     }
 }
