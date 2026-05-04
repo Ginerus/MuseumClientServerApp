@@ -6,6 +6,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d">
 
+    <!-- Load -->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadCommand}" />
@@ -13,6 +14,7 @@
     </i:Interaction.Triggers>
 
     <Grid Background="#F5F5F5">
+
         <ScrollViewer VerticalScrollBarVisibility="Auto">
 
             <ItemsControl ItemsSource="{Binding Videos}">
@@ -24,7 +26,9 @@
                 </ItemsControl.ItemsPanel>
 
                 <ItemsControl.ItemTemplate>
+
                     <DataTemplate>
+
                         <Button Command="{Binding DataContext.OpenVideoCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                 CommandParameter="{Binding}"
                                 Background="Transparent"
@@ -40,7 +44,7 @@
 
                                 <StackPanel>
 
-                                    <!-- Video preview (thumbnail или poster) -->
+                                    <!-- VIDEO PREVIEW BLOCK -->
                                     <Border Height="120"
                                             Background="Black"
                                             CornerRadius="8"
@@ -49,9 +53,18 @@
 
                                         <Grid>
 
+                                            <!-- THUMBNAIL -->
                                             <Image Source="{Binding ThumbnailImage}"
-                                                    Stretch="UniformToFill"/>
+                                                   Stretch="UniformToFill"/>
 
+                                            <!-- HOVER VIDEO PREVIEW -->
+                                            <MediaElement x:Name="PreviewPlayer"
+                                                          LoadedBehavior="Manual"
+                                                          UnloadedBehavior="Stop"
+                                                          Stretch="UniformToFill"
+                                                          Visibility="Collapsed"/>
+
+                                            <!-- fallback text -->
                                             <TextBlock Text="Видео"
                                                        Foreground="White"
                                                        FontSize="16"
@@ -74,9 +87,52 @@
                                             </TextBlock>
 
                                         </Grid>
+
+                                        <!-- HOVER LOGIC -->
+                                        <Border.Triggers>
+
+                                            <!-- Mouse Enter -->
+                                            <EventTrigger RoutedEvent="MouseEnter">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+
+                                                        <!-- show video -->
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PreviewPlayer"
+                                                                                       Storyboard.TargetProperty="Visibility">
+                                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                                <DiscreteObjectKeyFrame.Value>
+                                                                    <Visibility>Visible</Visibility>
+                                                                </DiscreteObjectKeyFrame.Value>
+                                                            </DiscreteObjectKeyFrame>
+                                                        </ObjectAnimationUsingKeyFrames>
+
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+
+                                            <!-- Mouse Leave -->
+                                            <EventTrigger RoutedEvent="MouseLeave">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PreviewPlayer"
+                                                                                       Storyboard.TargetProperty="Visibility">
+                                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                                <DiscreteObjectKeyFrame.Value>
+                                                                    <Visibility>Collapsed</Visibility>
+                                                                </DiscreteObjectKeyFrame.Value>
+                                                            </DiscreteObjectKeyFrame>
+                                                        </ObjectAnimationUsingKeyFrames>
+
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+
+                                        </Border.Triggers>
+
                                     </Border>
 
-                                    <!-- Title -->
+                                    <!-- TITLE -->
                                     <TextBlock Text="{Binding Title}"
                                                TextWrapping="Wrap"
                                                TextAlignment="Center"
@@ -87,10 +143,14 @@
                                 </StackPanel>
                             </Border>
                         </Button>
+
                     </DataTemplate>
+
                 </ItemsControl.ItemTemplate>
 
             </ItemsControl>
+
         </ScrollViewer>
+
     </Grid>
 </UserControl>
