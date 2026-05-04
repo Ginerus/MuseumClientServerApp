@@ -14,23 +14,50 @@
     </i:Interaction.Triggers>
 
     <Grid>
-        <StackPanel Orientation="Horizontal">
-            <StackPanel Margin="20" Orientation="Horizontal">
-                <TextBlock Text="Отделов:" FontWeight="Bold"/>
-                <TextBox Text="{Binding DepartmentCount, Mode=OneWay}" />
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel Margin="20" Orientation="Horizontal">
+                    <TextBlock Text="Отделов:" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding DepartmentCount, Mode=OneWay}" Margin="5 0 0 0"/>
+                </StackPanel>
+                <StackPanel Margin="20" Orientation="Horizontal">
+                    <TextBlock Text="Статей:" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding DocumentCount, Mode=OneWay}" Margin="5 0 0 0"/>
+                </StackPanel>
+                <StackPanel Margin="20" Orientation="Horizontal">
+                    <TextBlock Text="Экспонатов:" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding ExhibitCount, Mode=OneWay}" Margin="5 0 0 0"/>
+                </StackPanel>
+                <StackPanel Margin="20" Orientation="Horizontal">
+                    <TextBlock Text="Медиафайлов:" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding MediaFileCount, Mode=OneWay}" Margin="5 0 0 0"/>
+                </StackPanel>
             </StackPanel>
-            <StackPanel Margin="20" Orientation="Horizontal">
-                <TextBlock Text="Статей:" FontWeight="Bold"/>
-                <TextBox Text="{Binding DocumentCount, Mode=OneWay}" />
-            </StackPanel>
-            <StackPanel Margin="20" Orientation="Horizontal">
-                <TextBlock Text="Экспонатов:" FontWeight="Bold"/>
-                <TextBox Text="{Binding ExhibitCount, Mode=OneWay}" />
-            </StackPanel>
-            <StackPanel Margin="20" Orientation="Horizontal">
-                <TextBlock Text="Медиафайлов:" FontWeight="Bold"/>
-                <TextBox Text="{Binding MediaFileCount, Mode=OneWay}" />
-            </StackPanel>
+
+            <!-- TEXT BLOCK -->
+            <Border Margin="20"
+                    Padding="15"
+                    Background="#F5F5F5"
+                    CornerRadius="10"
+                    BorderBrush="#DDD"
+                    BorderThickness="1">
+
+                <TextBlock TextWrapping="Wrap"
+                           FontSize="14"
+                           LineHeight="20">
+
+                    В 2023 году Министерством финансов Республики Крым был реализован конкурс-проект "Школьное инициативное бюджетирование".<LineBreak/>
+                    Наша школа стала одной из школ республики, которые стали участниками проекта.<LineBreak/>
+                    Учащиеся заявили проект Краеведческий музей "Память времен" и стали победителями.<LineBreak/>
+                    В рамках реализации проекта в школе готовится к открытию краеведческий музей. Установлено приобретенное оборудование. Оформлена экспозиция истории школы, история села, Наши соотечественники - герои войны. Продолжается работа по оформлению экспозиций трудовые династии села и т.д.<LineBreak/>
+                    Планируемая дата торжественного открытия - май 2024г.<LineBreak/>
+                    Наш музей " Память времен" представляет собой инициативу, направленную на сохранение и популяризацию наследия наших односельчан, чьи заслуги оказали непередаваемое влияние на развитие нашего села и школы. Этот проект представляет прекрасную возможность увековечить в памяти потомков и восхититься жизненной силой и преданностью своему делу.<LineBreak/>
+                    Целевая аудитория проекта: обучающиеся 1-11 классов, классные руководители, руководитель музея, родители, жители села.<LineBreak/>
+                    На данный момент учителя и школьники активно используют музей для проведения мероприятий, "уроков мужества", круглых столов и других интересных мероприятий.<LineBreak/>
+
+                </TextBlock>
+
+            </Border>
         </StackPanel>
     </Grid>
 
