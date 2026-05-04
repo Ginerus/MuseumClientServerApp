@@ -27,6 +27,18 @@ namespace MuseumClient.Models
             }
         }
 
+        private string? _previewTempPath;
+
+        public string? PreviewTempPath
+        {
+            get => _previewTempPath;
+            set
+            {
+                _previewTempPath = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PreviewTempPath)));
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 }

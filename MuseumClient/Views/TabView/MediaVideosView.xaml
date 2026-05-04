@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:MuseumClient.Behaviors"
              mc:Ignorable="d">
 
     <!-- Load -->
@@ -32,7 +33,8 @@
                         <Button Command="{Binding DataContext.OpenVideoCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                 CommandParameter="{Binding}"
                                 Background="Transparent"
-                                BorderThickness="0">
+                                BorderThickness="0"
+                                Padding="0">
 
                             <Border Width="220"
                                     Height="200"
@@ -44,7 +46,7 @@
 
                                 <StackPanel>
 
-                                    <!-- VIDEO PREVIEW BLOCK -->
+                                    <!-- VIDEO BLOCK -->
                                     <Border Height="120"
                                             Background="Black"
                                             CornerRadius="8"
@@ -53,29 +55,33 @@
 
                                         <Grid>
 
-                                            <!-- THUMBNAIL -->
+                                            <!-- THUMBNAIL (всегда снизу) -->
                                             <Image Source="{Binding ThumbnailImage}"
                                                    Stretch="UniformToFill"/>
 
-                                            <!-- HOVER VIDEO PREVIEW -->
-                                            <MediaElement x:Name="PreviewPlayer"
-                                                          LoadedBehavior="Manual"
+                                            <!-- VIDEO PREVIEW -->
+                                            <MediaElement LoadedBehavior="Manual"
                                                           UnloadedBehavior="Stop"
                                                           Stretch="UniformToFill"
-                                                          Visibility="Collapsed"/>
+                                                          Opacity="0"
+                                                          IsHitTestVisible="False">
 
-                                            <!-- fallback text -->
+                                                <i:Interaction.Behaviors>
+                                                    <behaviors:VideoHoverBehavior/>
+                                                </i:Interaction.Behaviors>
+
+                                            </MediaElement>
+
+                                            <!-- FALLBACK -->
                                             <TextBlock Text="Видео"
                                                        Foreground="White"
                                                        FontSize="16"
                                                        FontWeight="Bold"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center">
-
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
                                                         <Setter Property="Visibility" Value="Collapsed"/>
-
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding ThumbnailImage}" Value="{x:Null}">
                                                                 <Setter Property="Visibility" Value="Visible"/>
@@ -83,52 +89,9 @@
                                                         </Style.Triggers>
                                                     </Style>
                                                 </TextBlock.Style>
-
                                             </TextBlock>
 
                                         </Grid>
-
-                                        <!-- HOVER LOGIC -->
-                                        <Border.Triggers>
-
-                                            <!-- Mouse Enter -->
-                                            <EventTrigger RoutedEvent="MouseEnter">
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-
-                                                        <!-- show video -->
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PreviewPlayer"
-                                                                                       Storyboard.TargetProperty="Visibility">
-                                                            <DiscreteObjectKeyFrame KeyTime="0">
-                                                                <DiscreteObjectKeyFrame.Value>
-                                                                    <Visibility>Visible</Visibility>
-                                                                </DiscreteObjectKeyFrame.Value>
-                                                            </DiscreteObjectKeyFrame>
-                                                        </ObjectAnimationUsingKeyFrames>
-
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger>
-
-                                            <!-- Mouse Leave -->
-                                            <EventTrigger RoutedEvent="MouseLeave">
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PreviewPlayer"
-                                                                                       Storyboard.TargetProperty="Visibility">
-                                                            <DiscreteObjectKeyFrame KeyTime="0">
-                                                                <DiscreteObjectKeyFrame.Value>
-                                                                    <Visibility>Collapsed</Visibility>
-                                                                </DiscreteObjectKeyFrame.Value>
-                                                            </DiscreteObjectKeyFrame>
-                                                        </ObjectAnimationUsingKeyFrames>
-
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger>
-
-                                        </Border.Triggers>
 
                                     </Border>
 
