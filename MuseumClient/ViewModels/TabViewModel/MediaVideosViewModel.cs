@@ -1,12 +1,14 @@
-﻿using MuseumClient.Services;
-using MuseumClient.Commands;
+﻿using MuseumClient.Commands;
 using MuseumClient.Models;
+using MuseumClient.Services;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using System;
+using System.Windows.Media.Imaging;
 
 namespace MuseumClient.ViewModels
 {
@@ -71,6 +73,8 @@ namespace MuseumClient.ViewModels
                         if (item.MediaType == "video")
                             Videos.Add(item);
                     }
+
+                    _ = LoadThumbnailsAsync();
                 }
 
                 SetupCollectionView();
@@ -85,7 +89,6 @@ namespace MuseumClient.ViewModels
             }
         }
 
-        // настройка View (как в ArticlesViewModel)
         private void SetupCollectionView()
         {
             VideosView = CollectionViewSource.GetDefaultView(Videos);
@@ -107,5 +110,35 @@ namespace MuseumClient.ViewModels
 
         private void OnPropertyChanged(string name)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        private async Task LoadThumbnailsAsync()
+        {
+            foreach (var video in Videos)
+            {
+                try
+                {
+                    var bytes = await _apiService.GetBytesAsync(
+                        $"MediaFile/stream/{video.MediaFileId}?size=thumb"
+                    );
+
+                    var image = new BitmapImage();
+
+                    using (var ms = new MemoryStream(bytes))
+                    {
+                        image.BeginInit();
+                        image.CacheOption = BitmapCacheOption.OnLoad;
+                        image.StreamSource = ms;
+                        image.EndInit();
+                        image.Freeze();
+                    }
+
+                    video.ThumbnailImage = image;
+                }
+                catch
+                {
+                    // можно поставить дефолтную картинку
+                }
+            }
+        }
     }
 }
