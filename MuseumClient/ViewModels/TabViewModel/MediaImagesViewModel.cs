@@ -100,7 +100,7 @@ namespace MuseumClient.ViewModels
             if (parameter is not MediaFileDto image)
                 return;
 
-            MessageBox.Show($"Изображение:\n{image.Title}\nID: {image.MediaFileId}");
+            _hub.ShowIllustration(image.MediaFileId);
         }
 
         private async Task LoadThumbnailsAsync()
