@@ -2,7 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:MuseumClient.ViewModels"
-             xmlns:views="clr-namespace:MuseumClient.Views">
+             xmlns:views="clr-namespace:MuseumClient.Views"
+             xmlns:vmDetails="clr-namespace:MuseumClient.ViewModels.Details"
+             xmlns:viewsDetails="clr-namespace:MuseumClient.Views.Details">
 
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type vm:AboutMuseumViewModel}">
@@ -22,6 +24,10 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:MediaVideosViewModel}">
             <views:MediaVideosView/>
+        </DataTemplate>
+        <!-- Открытие илюстраций -->
+        <DataTemplate DataType="{x:Type vmDetails:IllustrationViewModel}">
+            <viewsDetails:IllustrationView/>
         </DataTemplate>
     </UserControl.Resources>
 
