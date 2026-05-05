@@ -28,13 +28,4 @@ namespace MuseumClient.Models
         [JsonPropertyName("department")]
         public DepartmentDto? Department { get; set; }
     }
-
-    public class DepartmentDto
-    {
-        [JsonPropertyName("departmentId")]
-        public int DepartmentId { get; set; }
-
-        [JsonPropertyName("name")]
-        public string Name { get; set; } = "";
-    }
 }
