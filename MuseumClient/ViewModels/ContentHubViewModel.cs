@@ -47,7 +47,7 @@ namespace MuseumClient.ViewModels
             ArticlesVM = new ArticlesViewModel();
             ExhibitsVM = new ExhibitsViewModel();
             DepartmentsVM = new DepartmentsViewModel();
-            MediaImagesVM = new MediaImagesViewModel();
+            MediaImagesVM = new MediaImagesViewModel(this);
             MediaVideosVM = new MediaVideosViewModel();
 
             // Команды
