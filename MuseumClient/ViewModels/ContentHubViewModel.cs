@@ -1,6 +1,7 @@
-﻿using System.ComponentModel;
+﻿using MuseumClient.Commands;
+using MuseumClient.ViewModels.Details;
+using System.ComponentModel;
 using System.Windows;
-using MuseumClient.Commands;
 
 namespace MuseumClient.ViewModels
 {
@@ -93,6 +94,11 @@ namespace MuseumClient.ViewModels
 
             // Стартовая вкладка
             CurrentTabView = AboutMuseumVM;
+        }
+
+        public void ShowIllustration(int id)
+        {
+            CurrentTabView = new IllustrationViewModel(id);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
