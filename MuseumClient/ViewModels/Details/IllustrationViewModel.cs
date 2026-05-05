@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using Microsoft.Win32;
 
 namespace MuseumClient.ViewModels.Details
 {
@@ -96,10 +97,27 @@ namespace MuseumClient.ViewModels.Details
 
         private async Task DownloadAsync()
         {
-            var bytes = await _apiService.GetBytesAsync($"MediaFile/stream/{_id}");
+            try
+            {
+                var bytes = await _apiService.GetBytesAsync($"MediaFile/stream/{_id}");
 
-            var fileName = $"{Title}_{_id}.jpg";
-            File.WriteAllBytes(fileName, bytes);
+                var dialog = new SaveFileDialog
+                {
+                    FileName = $"{Title}_{_id}",
+                    Filter = "Image files (*.jpg)|*.jpg|PNG (*.png)|*.png|All files (*.*)|*.*",
+                    DefaultExt = ".jpg",
+                    AddExtension = true
+                };
+
+                if (dialog.ShowDialog() == true)
+                {
+                    File.WriteAllBytes(dialog.FileName, bytes);
+                }
+            }
+            catch
+            {
+                // можно потом заменить на нормальный UI toast
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
