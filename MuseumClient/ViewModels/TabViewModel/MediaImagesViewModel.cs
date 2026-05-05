@@ -44,8 +44,12 @@ namespace MuseumClient.ViewModels
         public RelayCommand LoadImagesCommand { get; }
         public RelayCommand OpenImageCommand { get; }
 
-        public MediaImagesViewModel()
+        private readonly ContentHubViewModel _hub;
+
+        public MediaImagesViewModel(ContentHubViewModel hub)
         {
+            _hub = hub;
+
             var config = new ConfigService().Server;
             _apiService = new ApiService(config, AuthService.Instance());
 
