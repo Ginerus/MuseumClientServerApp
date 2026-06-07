@@ -45,7 +45,7 @@ namespace MuseumClient.Services
             // 1. пробуем локальный сервер
             try
             {
-                var localTestUrl = $"{_serverConfig.LocalUrl}/api/Session/register";
+                var localTestUrl = $"{_serverConfig.LocalUrl}/api/health";
 
                 var response = await client.GetAsync(localTestUrl);
 
