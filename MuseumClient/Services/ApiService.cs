@@ -1,23 +1,27 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using System.Windows;
 using MuseumClient.Models;
 
 namespace MuseumClient.Services
 {
     public class ApiService
     {
-        private readonly ServerConfig _serverConfig;
         private readonly AuthService _authService;
         private readonly HttpClient _client;
 
         public ApiService(ServerConfig config, AuthService authService)
         {
-            _serverConfig = config;
             _authService = authService;
 
-            _client = new HttpClient();
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback =
+        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+
+            _client = new HttpClient(handler);
         }
 
         private void ApplyHeaders()
@@ -25,20 +29,26 @@ namespace MuseumClient.Services
             _client.DefaultRequestHeaders.Clear();
 
             var token = _authService.CurrentToken;
+
             if (!string.IsNullOrEmpty(token))
             {
                 _client.DefaultRequestHeaders.Add("token", token);
             }
         }
 
+        private string BuildUrl(string endpoint)
+        {
+            return $"{_authService.BaseUrl}/api/{endpoint}";
+        }
+
         public async Task<T> GetAsync<T>(string endpoint)
         {
             ApplyHeaders();
 
-            var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
-            var response = await _client.GetAsync(url);
+            var response = await _client.GetAsync(BuildUrl(endpoint));
 
             response.EnsureSuccessStatusCode();
+
             return await response.Content.ReadFromJsonAsync<T>();
         }
 
@@ -46,10 +56,10 @@ namespace MuseumClient.Services
         {
             ApplyHeaders();
 
-            var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
-            var response = await _client.GetAsync(url);
+            var response = await _client.GetAsync(BuildUrl(endpoint));
 
             response.EnsureSuccessStatusCode();
+
             return await response.Content.ReadAsByteArrayAsync();
         }
 
@@ -57,10 +67,10 @@ namespace MuseumClient.Services
         {
             ApplyHeaders();
 
-            var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
-            var response = await _client.PostAsJsonAsync(url, payload);
+            var response = await _client.PostAsJsonAsync(BuildUrl(endpoint), payload);
 
             response.EnsureSuccessStatusCode();
+
             return await response.Content.ReadFromJsonAsync<T>();
         }
 
@@ -68,10 +78,10 @@ namespace MuseumClient.Services
         {
             ApplyHeaders();
 
-            var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
-            var response = await _client.PutAsJsonAsync(url, payload);
+            var response = await _client.PutAsJsonAsync(BuildUrl(endpoint), payload);
 
             response.EnsureSuccessStatusCode();
+
             return await response.Content.ReadFromJsonAsync<T>();
         }
 
@@ -79,10 +89,10 @@ namespace MuseumClient.Services
         {
             ApplyHeaders();
 
-            var url = $"{_serverConfig.Protocol}://{_serverConfig.Host}:{_serverConfig.Port}/api/{endpoint}";
-            var response = await _client.DeleteAsync(url);
+            var response = await _client.DeleteAsync(BuildUrl(endpoint));
 
             response.EnsureSuccessStatusCode();
+
             return await response.Content.ReadFromJsonAsync<T>();
         }
     }

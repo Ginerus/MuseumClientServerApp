@@ -7,6 +7,12 @@
         <TextBox Text="{Binding UserType, UpdateSourceTrigger=PropertyChanged}" />
         <PasswordBox local:PasswordBoxHelper.BoundPassword="{Binding UserPassword, Mode=TwoWay}" />
         <Button Content="Register" Command="{Binding RegisterCommand}" />
+
+        <TextBlock
+            Text="{Binding ErrorMessage}"
+            Foreground="Red"
+            Margin="0,10,0,0"
+            TextWrapping="Wrap"/>
     </StackPanel>
     
 </UserControl>

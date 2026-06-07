@@ -1,9 +1,10 @@
-﻿using System.ComponentModel;
+﻿using MuseumClient.Commands;
+using MuseumClient.Helpers;
+using MuseumClient.Models;
+using MuseumClient.Services;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
-using MuseumClient.Commands;
-using MuseumClient.Services;
-using MuseumClient.Helpers;
 
 namespace MuseumClient.ViewModels
 {
@@ -30,6 +31,19 @@ namespace MuseumClient.ViewModels
             }
         }
 
+        private string _errorMessage;
+
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set
+            {
+                _errorMessage = value;
+                PropertyChanged?.Invoke(this,
+                    new PropertyChangedEventArgs(nameof(ErrorMessage)));
+            }
+        }
+
         public LoginViewModel(MainViewModel mainVM)
         {
             _mainVM = mainVM;
@@ -40,15 +54,25 @@ namespace MuseumClient.ViewModels
 
             RegisterCommand = new RelayCommand(async _ =>
             {
-                bool success = await AuthService.Instance().RegisterAsync(UserType, UserPassword);
-                if (success)
-                {
-                    _mainVM.ShowContentHubView();
+                var result = await AuthService.Instance().RegisterAsync(UserType, UserPassword);
 
-                }
-                else
+                switch (result)
                 {
-                    MessageBox.Show("Registration failed");
+                    case AuthResult.Success:
+
+                        ErrorMessage = "";
+                        _mainVM.ShowContentHubView();
+                        break;
+
+                    case AuthResult.InvalidCredentials:
+
+                        ErrorMessage = "Неверный пароль.";
+                        break;
+
+                    case AuthResult.ServerUnavailable:
+
+                        ErrorMessage = "Нет доступа к серверу.";
+                        break;
                 }
             });
         }
