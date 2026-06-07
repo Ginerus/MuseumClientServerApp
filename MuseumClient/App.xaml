@@ -20,6 +20,8 @@
             <!-- BoolToVisibilityConverter -->
             <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
+            <local:EyeGlyphConverter x:Key="EyeGlyphConverter"/>
+            
         </ResourceDictionary>
 
     </Application.Resources>
