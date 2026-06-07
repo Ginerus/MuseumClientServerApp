@@ -42,7 +42,7 @@ namespace MuseumClient.Services
 
             client.Timeout = TimeSpan.FromSeconds(2);
 
-            // 👉 1. пробуем локальный сервер
+            // 1. пробуем локальный сервер
             try
             {
                 var localTestUrl = $"{_serverConfig.LocalUrl}/api/Session/register";
@@ -59,7 +59,7 @@ namespace MuseumClient.Services
                 System.Diagnostics.Debug.WriteLine("LOCAL FAIL: " + ex.Message);
             }
 
-            // 👉 2. fallback на удалённый
+            // 2. fallback на удалённый
             System.Diagnostics.Debug.WriteLine("USING REMOTE: " + _serverConfig.RemoteUrl);
 
             return _serverConfig.RemoteUrl;
