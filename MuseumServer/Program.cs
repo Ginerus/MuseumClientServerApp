@@ -41,6 +41,31 @@ namespace MuseumServer
 
             var app = builder.Build();
 
+            // Проверка подключения к БД
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbFactory = scope.ServiceProvider
+                    .GetRequiredService<IDbContextFactory<MuseumContext>>();
+
+                using var db = dbFactory.CreateDbContext();
+
+                try
+                {
+                    if (!db.Database.CanConnect())
+                    {
+                        Console.WriteLine("Ошибка: база данных недоступна.");
+                        return;
+                    }
+
+                    Console.WriteLine("Подключение к базе данных успешно.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка подключения к БД: {ex.Message}");
+                    return;
+                }
+            }
+
             app.UseSwagger();
             app.UseSwaggerUI();
 
