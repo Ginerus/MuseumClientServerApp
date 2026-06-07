@@ -13,8 +13,6 @@ namespace MuseumClient.ViewModels
         private readonly MainViewModel _mainVM;
         private readonly AuthService _authService;
 
-        public string UserType { get; set; }
-
         public RelayCommand RegisterCommand { get; }
 
         private string _userPassword;
@@ -60,9 +58,37 @@ namespace MuseumClient.ViewModels
 
         public RelayCommand TogglePasswordVisibilityCommand { get; }
 
+        public List<UserTypeItem> UserTypes { get; } = new()
+        {
+            new UserTypeItem { Display = "Гость", Value = "guest" },
+            new UserTypeItem { Display = "Администратор", Value = "admin" }
+        };
+
+        public class UserTypeItem
+        {
+            public string Display { get; set; }
+            public string Value { get; set; }
+        }
+
+        public string UserType { get; set; }
+
+        private UserTypeItem _selectedUserType;
+        public UserTypeItem SelectedUserType
+        {
+            get => _selectedUserType;
+            set
+            {
+                _selectedUserType = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedUserType)));
+            }
+        }
+
         public LoginViewModel(MainViewModel mainVM)
         {
             _mainVM = mainVM;
+
+
+            SelectedUserType = UserTypes.First();
 
             // Инициализация Singleton AuthService с конфигом
             var config = new Services.ConfigService().Server;
@@ -76,7 +102,7 @@ namespace MuseumClient.ViewModels
 
             RegisterCommand = new RelayCommand(async _ =>
             {
-                var result = await AuthService.Instance().RegisterAsync(UserType, UserPassword);
+                var result = await AuthService.Instance().RegisterAsync(SelectedUserType.Value, UserPassword);
 
                 switch (result)
                 {
