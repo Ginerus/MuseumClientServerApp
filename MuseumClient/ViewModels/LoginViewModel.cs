@@ -64,6 +64,8 @@ namespace MuseumClient.ViewModels
             new UserTypeItem { Display = "Администратор", Value = "admin" }
         };
 
+        public bool IsPasswordRequired => SelectedUserType?.Value == "admin";
+
         public class UserTypeItem
         {
             public string Display { get; set; }
@@ -79,7 +81,9 @@ namespace MuseumClient.ViewModels
             set
             {
                 _selectedUserType = value;
+
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedUserType)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsPasswordRequired)));
             }
         }
 
@@ -102,7 +106,9 @@ namespace MuseumClient.ViewModels
 
             RegisterCommand = new RelayCommand(async _ =>
             {
-                var result = await AuthService.Instance().RegisterAsync(SelectedUserType.Value, UserPassword);
+                var result = await AuthService.Instance().RegisterAsync(
+                    SelectedUserType.Value,
+                    SelectedUserType.Value == "guest" ? " " : UserPassword);
 
                 switch (result)
                 {

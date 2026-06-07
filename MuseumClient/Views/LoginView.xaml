@@ -8,8 +8,8 @@
     <Grid Background="#F5F6FA">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="5*" />
         </Grid.ColumnDefinitions>
 
         <!-- LEFT -->
@@ -20,26 +20,26 @@
                         VerticalAlignment="Center">
 
                 <Image Source="pack://application:,,,/Resources/logo.png"
-                       Width="160"
-                       Height="160"
+                       Width="200"
+                       Height="200"
                        Margin="0,0,0,20"/>
 
                 <TextBlock Text="Добро пожаловать"
                            Foreground="White"
-                           FontSize="26"
+                           FontSize="33"
                            FontWeight="SemiBold"
                            HorizontalAlignment="Center"/>
 
                 <TextBlock Text="Музей &quot;Память времён&quot;"
                            Foreground="White"
-                           FontSize="14"
+                           FontSize="18"
                            Opacity="0.9"
                            HorizontalAlignment="Center"
                            Margin="0,8,0,0"/>
 
                 <TextBlock Text="Система управления экспонатами"
                            Foreground="White"
-                           FontSize="12"
+                           FontSize="16"
                            Opacity="0.7"
                            HorizontalAlignment="Center"
                            Margin="0,10,0,0"/>
@@ -55,47 +55,69 @@
             <StackPanel VerticalAlignment="Center"
                         Width="320">
 
+                <TextBlock Text="Вход в музей"
+                           FontSize="26"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,25"
+                           HorizontalAlignment="Center"/>
+
                 <!-- USER TYPE заменён -->
                 <ComboBox ItemsSource="{Binding UserTypes}"
                           SelectedItem="{Binding SelectedUserType, Mode=TwoWay}"
                           DisplayMemberPath="Display"
                           Margin="0,0,0,10"
-                          Height="35"/>
+                          Height="42"
+                          FontSize="16"/>
 
-                <Grid>
+                <StackPanel Visibility="{Binding IsPasswordRequired, Converter={StaticResource BoolToVisibilityConverter}}">
 
-                    <PasswordBox
-                        local:PasswordBoxHelper.BoundPassword="{Binding UserPassword, Mode=TwoWay}"
-                        Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}" />
+                    <Grid>
 
-                    <TextBox
-                        Text="{Binding UserPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <PasswordBox local:PasswordBoxHelper.BoundPassword="{Binding UserPassword, Mode=TwoWay}"
+                                     Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}" 
+                                     FontSize="16"
+                                     Height="42"/>
 
-                    <Button
-                        Command="{Binding TogglePasswordVisibilityCommand}"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Margin="0,0,8,0"
-                        Panel.ZIndex="10">
+                        <TextBox Height="42"
+                                 FontSize="16"
+                                 Text="{Binding UserPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                        <iconPacks:PackIconMaterial
-                            Width="18"
-                            Height="18"
-                            Kind="{Binding IsPasswordVisible, Converter={StaticResource EyeGlyphConverter}}"/>
-                    </Button>
+                        <Button Command="{Binding TogglePasswordVisibilityCommand}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Margin="0,0,8,0"
+                                Panel.ZIndex="10">
 
-                </Grid>
+                            <iconPacks:PackIconMaterial
+                                Width="18"
+                                Height="18"
+                                Kind="{Binding IsPasswordVisible, Converter={StaticResource EyeGlyphConverter}}"/>
+
+                        </Button>
+
+                    </Grid>
+
+                </StackPanel>
 
                 <Button Content="Войти"
                         Command="{Binding RegisterCommand}"
-                        Margin="0,15,0,0"/>
+                        Margin="0,15,0,0"
+                        Height="42"
+                        Width="100"
+                        Background="#4A90E2"
+                        Foreground="White"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        BorderThickness="0"/>
 
                 <TextBlock Text="{Binding ErrorMessage}"
-                           Foreground="Red"
-                           Margin="0,10,0,0"/>
+                           Foreground="#E74C3C"
+                           Margin="0,15,0,0"
+                           TextAlignment="Center"
+                           FontSize="16"/>
 
             </StackPanel>
         </Border>
