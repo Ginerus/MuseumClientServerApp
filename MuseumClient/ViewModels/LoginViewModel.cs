@@ -44,6 +44,22 @@ namespace MuseumClient.ViewModels
             }
         }
 
+        private bool _isPasswordVisible;
+        public bool IsPasswordVisible
+        {
+            get => _isPasswordVisible;
+            set
+            {
+                if (_isPasswordVisible != value)
+                {
+                    _isPasswordVisible = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsPasswordVisible)));
+                }
+            }
+        }
+
+        public RelayCommand TogglePasswordVisibilityCommand { get; }
+
         public LoginViewModel(MainViewModel mainVM)
         {
             _mainVM = mainVM;
@@ -51,6 +67,12 @@ namespace MuseumClient.ViewModels
             // Инициализация Singleton AuthService с конфигом
             var config = new Services.ConfigService().Server;
             AuthService.Instance(config);
+
+            TogglePasswordVisibilityCommand = new RelayCommand(async _ =>
+            {
+                IsPasswordVisible = !IsPasswordVisible;
+                await Task.CompletedTask;
+            });
 
             RegisterCommand = new RelayCommand(async _ =>
             {

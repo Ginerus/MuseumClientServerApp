@@ -1,18 +1,45 @@
 ﻿<UserControl x:Class="MuseumClient.Views.LoginView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
              xmlns:local="clr-namespace:MuseumClient.Helpers">
-    
-    <StackPanel Margin="20">
-        <TextBox Text="{Binding UserType, UpdateSourceTrigger=PropertyChanged}" />
-        <PasswordBox local:PasswordBoxHelper.BoundPassword="{Binding UserPassword, Mode=TwoWay}" />
-        <Button Content="Register" Command="{Binding RegisterCommand}" />
 
-        <TextBlock
-            Text="{Binding ErrorMessage}"
-            Foreground="Red"
-            Margin="0,10,0,0"
-            TextWrapping="Wrap"/>
+    <StackPanel Margin="20">
+
+        <TextBox Text="{Binding UserType, UpdateSourceTrigger=PropertyChanged}"
+                 hc:InfoElement.Placeholder="User type"/>
+
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="40"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- скрытый -->
+            <PasswordBox
+        local:PasswordBoxHelper.BoundPassword="{Binding UserPassword, Mode=TwoWay}"
+        Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}" />
+
+            <!-- открытый -->
+            <TextBox
+        Text="{Binding UserPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+            <!-- глаз -->
+            <Button Grid.Column="1"
+            Content="👁"
+            Command="{Binding TogglePasswordVisibilityCommand}" />
+
+        </Grid>
+
+        <Button Content="Войти"
+                Command="{Binding RegisterCommand}"
+                Margin="0,10,0,0"/>
+
+        <TextBlock Text="{Binding ErrorMessage}"
+                   Foreground="Red"
+                   Margin="0,10,0,0"/>
     </StackPanel>
-    
+
 </UserControl>
