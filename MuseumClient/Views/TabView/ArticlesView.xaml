@@ -1,7 +1,7 @@
 ﻿<UserControl x:Class="MuseumClient.Views.ArticlesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d">
@@ -12,11 +12,83 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
-    <Grid Background="#F5F5F5">
+    <UserControl.Resources>
+
+        <!-- ========================= -->
+        <!-- CARD BUTTON STYLE -->
+        <!-- ========================= -->
+
+        <Style x:Key="DocumentCardButtonStyle" TargetType="Button">
+
+            <!-- убираем HandyControl / default WPF styling -->
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="Root"
+                                Background="Transparent">
+
+                            <ContentPresenter/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <!-- hover -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root"
+                                        Property="Opacity"
+                                        Value="0.92"/>
+                            </Trigger>
+
+                            <!-- click -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root"
+                                        Property="Opacity"
+                                        Value="0.85"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+        </Style>
+
+        <!-- ========================= -->
+        <!-- CARD STYLE -->
+        <!-- ========================= -->
+
+        <Style x:Key="DocumentCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="BorderBrush" Value="#DDD"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+
+    </UserControl.Resources>
+
+    <!-- ========================= -->
+    <!-- MAIN BACKGROUND -->
+    <!-- ========================= -->
+
+    <Grid Background="White">
+
         <ScrollViewer VerticalScrollBarVisibility="Auto">
+
             <ItemsControl ItemsSource="{Binding Documents}">
 
-                <!-- Группировка -->
+                <!-- ========================= -->
+                <!-- GROUP HEADER -->
+                <!-- ========================= -->
+
                 <ItemsControl.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>
@@ -24,56 +96,77 @@
                                 <TextBlock Text="{Binding Name}"
                                            FontSize="18"
                                            FontWeight="Bold"
-                                           Margin="10,20,10,10"/>
+                                           Margin="16,20,16,10"
+                                           Foreground="#334155"/>
                             </DataTemplate>
                         </GroupStyle.HeaderTemplate>
                     </GroupStyle>
                 </ItemsControl.GroupStyle>
 
-                <!-- Панель плиток -->
+                <!-- ========================= -->
+                <!-- WRAP PANEL -->
+                <!-- ========================= -->
+
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Margin="10"/>
+                        <WrapPanel Margin="12"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
-                <!-- Шаблон плитки -->
+                <!-- ========================= -->
+                <!-- ITEM TEMPLATE -->
+                <!-- ========================= -->
+
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Command="{Binding DataContext.OpenDocumentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                            CommandParameter="{Binding}"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Padding="0">
-                            <Border Width="160"
-                                Height="100"
-                                Margin="8"
-                                Background="White"
-                                CornerRadius="10"
-                                Padding="10"
-                                BorderBrush="#DDD"
-                                BorderThickness="1">
+
+                        <Button Command="{Binding DataContext.OpenDocumentCommand,
+                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                Style="{StaticResource DocumentCardButtonStyle}">
+
+                            <Border Style="{StaticResource DocumentCardStyle}"
+                                    Width="160"
+                                    Height="110"
+                                    Margin="8"
+                                    Padding="10">
+
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="12"
+                                                      ShadowDepth="2"
+                                                      Opacity="0.08"/>
+                                </Border.Effect>
 
                                 <StackPanel VerticalAlignment="Center">
-                                    <!-- Иконка -->
-                                    <TextBlock Text="{Binding FileType}"
-                                       FontSize="24"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,10,0,10"/>
 
-                                    <!-- Название -->
+                                    <!-- ICON -->
+                                    <TextBlock Text="{Binding FileType}"
+                                               FontSize="22"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,5,0,6"
+                                               Foreground="#4A90E2"/>
+
+                                    <!-- TITLE -->
                                     <TextBlock Text="{Binding Title}"
-                                       TextWrapping="Wrap"
-                                       TextAlignment="Center"
-                                       FontSize="12"
-                                       MaxHeight="60"/>
+                                               TextWrapping="Wrap"
+                                               TextAlignment="Center"
+                                               FontSize="12"
+                                               Foreground="#374151"
+                                               MaxHeight="60"/>
+
                                 </StackPanel>
+
                             </Border>
+
                         </Button>
+
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
 
             </ItemsControl>
+
         </ScrollViewer>
+
     </Grid>
+
 </UserControl>
