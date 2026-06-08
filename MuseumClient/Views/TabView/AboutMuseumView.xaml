@@ -1,10 +1,9 @@
 ﻿<UserControl x:Class="MuseumClient.Views.AboutMuseumView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:local="clr-namespace:MuseumClient.Views"
              mc:Ignorable="d">
 
     <i:Interaction.Triggers>
@@ -13,52 +12,173 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
-    <Grid>
-        <StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <StackPanel Margin="20" Orientation="Horizontal">
-                    <TextBlock Text="Отделов:" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding DepartmentCount, Mode=OneWay}" Margin="5 0 0 0"/>
-                </StackPanel>
-                <StackPanel Margin="20" Orientation="Horizontal">
-                    <TextBlock Text="Статей:" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding DocumentCount, Mode=OneWay}" Margin="5 0 0 0"/>
-                </StackPanel>
-                <StackPanel Margin="20" Orientation="Horizontal">
-                    <TextBlock Text="Экспонатов:" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding ExhibitCount, Mode=OneWay}" Margin="5 0 0 0"/>
-                </StackPanel>
-                <StackPanel Margin="20" Orientation="Horizontal">
-                    <TextBlock Text="Медиафайлов:" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding MediaFileCount, Mode=OneWay}" Margin="5 0 0 0"/>
-                </StackPanel>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+        <Grid Background="White">
+
+            <StackPanel>
+
+                <!-- Статистика -->
+
+                <UniformGrid Rows="1"
+                             Columns="4"
+                             Margin="15,0,15,10">
+
+                    <!-- Отделы -->
+
+                    <Border Margin="5"
+                            Padding="15"
+                            Background="White"
+                            CornerRadius="12"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="2">
+
+                        <StackPanel>
+                            <TextBlock Text="🏢"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="{Binding DepartmentCount}"
+                                       FontSize="26"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="Отделов"
+                                       Foreground="#6B7280"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                    </Border>
+
+                    <!-- Статьи -->
+
+                    <Border Margin="5"
+                            Padding="15"
+                            Background="White"
+                            CornerRadius="12"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="2">
+
+                        <StackPanel>
+                            <TextBlock Text="📄"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="{Binding DocumentCount}"
+                                       FontSize="26"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="Статей"
+                                       Foreground="#6B7280"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                    </Border>
+
+                    <!-- Экспонаты -->
+
+                    <Border Margin="5"
+                            Padding="15"
+                            Background="White"
+                            CornerRadius="12"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="2">
+
+                        <StackPanel>
+                            <TextBlock Text="🏺"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="{Binding ExhibitCount}"
+                                       FontSize="26"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="Экспонатов"
+                                       Foreground="#6B7280"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                    </Border>
+
+                    <!-- Медиа -->
+
+                    <Border Margin="5"
+                            Padding="15"
+                            Background="White"
+                            CornerRadius="12"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="2">
+
+                        <StackPanel>
+                            <TextBlock Text="🖼"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="{Binding MediaFileCount}"
+                                       FontSize="26"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="Медиафайлов"
+                                       Foreground="#6B7280"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                    </Border>
+
+                </UniformGrid>
+
+                <!-- История музея -->
+
+                <Border Margin="20"
+                        Padding="25"
+                        Background="White"
+                        CornerRadius="16"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2">
+
+                    <StackPanel>
+
+                        <TextBlock Text="О музее"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Margin="0,0,0,15"/>
+
+                        <TextBlock TextWrapping="Wrap"
+                                   FontSize="14"
+                                   Foreground="#374151"
+                                   LineHeight="24">
+
+                            В 2023 году Министерством финансов Республики Крым был реализован конкурс-проект «Школьное инициативное бюджетирование».
+
+                            Наша школа стала одной из школ республики, которые приняли участие в проекте.
+
+                            Учащиеся представили проект краеведческого музея «Память времён» и стали победителями конкурса.
+
+                            В рамках реализации проекта в школе готовится к открытию краеведческий музей. Установлено приобретённое оборудование, оформлена экспозиция истории школы, история села, а также раздел «Наши соотечественники — герои войны».
+
+                            Продолжается работа по оформлению экспозиций, посвящённых трудовым династиям села и другим важным страницам его истории.
+
+                            Планируемая дата торжественного открытия музея — май 2024 года.
+
+                            Музей «Память времён» направлен на сохранение и популяризацию исторического наследия наших односельчан, чьи достижения внесли значительный вклад в развитие школы и села.
+
+                            Целевая аудитория проекта: обучающиеся 1–11 классов, классные руководители, руководитель музея, родители и жители села.
+
+                            На сегодняшний день учителя и школьники активно используют музей для проведения мероприятий, уроков мужества, круглых столов и других образовательных событий.
+
+                        </TextBlock>
+
+                    </StackPanel>
+
+                </Border>
+
             </StackPanel>
 
-            <!-- TEXT BLOCK -->
-            <Border Margin="20"
-                    Padding="15"
-                    Background="#F5F5F5"
-                    CornerRadius="10"
-                    BorderBrush="#DDD"
-                    BorderThickness="1">
+        </Grid>
 
-                <TextBlock TextWrapping="Wrap"
-                           FontSize="14"
-                           LineHeight="20">
-
-                    В 2023 году Министерством финансов Республики Крым был реализован конкурс-проект "Школьное инициативное бюджетирование".<LineBreak/>
-                    Наша школа стала одной из школ республики, которые стали участниками проекта.<LineBreak/>
-                    Учащиеся заявили проект Краеведческий музей "Память времен" и стали победителями.<LineBreak/>
-                    В рамках реализации проекта в школе готовится к открытию краеведческий музей. Установлено приобретенное оборудование. Оформлена экспозиция истории школы, история села, Наши соотечественники - герои войны. Продолжается работа по оформлению экспозиций трудовые династии села и т.д.<LineBreak/>
-                    Планируемая дата торжественного открытия - май 2024г.<LineBreak/>
-                    Наш музей " Память времен" представляет собой инициативу, направленную на сохранение и популяризацию наследия наших односельчан, чьи заслуги оказали непередаваемое влияние на развитие нашего села и школы. Этот проект представляет прекрасную возможность увековечить в памяти потомков и восхититься жизненной силой и преданностью своему делу.<LineBreak/>
-                    Целевая аудитория проекта: обучающиеся 1-11 классов, классные руководители, руководитель музея, родители, жители села.<LineBreak/>
-                    На данный момент учителя и школьники активно используют музей для проведения мероприятий, "уроков мужества", круглых столов и других интересных мероприятий.<LineBreak/>
-
-                </TextBlock>
-
-            </Border>
-        </StackPanel>
-    </Grid>
+    </ScrollViewer>
 
 </UserControl>
