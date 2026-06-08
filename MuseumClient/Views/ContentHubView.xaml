@@ -109,7 +109,8 @@
                             HorizontalContentAlignment="Center"
                             FontSize="18"
                             Command="{Binding ExitCommand}"
-                            Style="{StaticResource SidebarButtonStyle}"/>
+                            Style="{StaticResource SidebarButtonStyle}"
+                            Margin="10, 15"/>
 
                     <StackPanel>
 
