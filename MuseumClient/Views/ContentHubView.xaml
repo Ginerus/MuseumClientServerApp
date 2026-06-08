@@ -1,57 +1,187 @@
-﻿<UserControl x:Class="MuseumClient.Views.ContentHubView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="clr-namespace:MuseumClient.ViewModels"
-             xmlns:views="clr-namespace:MuseumClient.Views"
-             xmlns:vmDetails="clr-namespace:MuseumClient.ViewModels.Details"
-             xmlns:viewsDetails="clr-namespace:MuseumClient.Views.Details">
+﻿    <UserControl x:Class="MuseumClient.Views.ContentHubView"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:vm="clr-namespace:MuseumClient.ViewModels"
+                 xmlns:views="clr-namespace:MuseumClient.Views"
+                 xmlns:vmDetails="clr-namespace:MuseumClient.ViewModels.Details"
+                 xmlns:viewsDetails="clr-namespace:MuseumClient.Views.Details">
 
-    <UserControl.Resources>
-        <DataTemplate DataType="{x:Type vm:AboutMuseumViewModel}">
-            <views:AboutMuseumView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:ArticlesViewModel}">
-            <views:ArticlesView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:ExhibitsViewModel}">
-            <views:ExhibitsView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:DepartmentsViewModel}">
-            <views:DepartmentsView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:MediaImagesViewModel}">
-            <views:MediaImagesView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:MediaVideosViewModel}">
-            <views:MediaVideosView/>
-        </DataTemplate>
-        <!-- Открытие илюстраций -->
-        <DataTemplate DataType="{x:Type vmDetails:IllustrationViewModel}">
-            <viewsDetails:IllustrationView/>
-        </DataTemplate>
-    </UserControl.Resources>
+        <UserControl.Resources>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <!-- Кнопки -->
-            <ColumnDefinition Width="*"/>
+        <Style x:Key="SidebarButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Margin" Value="10,4"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                        Background="Transparent"
+                        BorderBrush="#55FFFFFF"
+                        BorderThickness="2"
+                        CornerRadius="8">
+
+                            <ContentPresenter VerticalAlignment="Center"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      Margin="{TemplateBinding Padding}"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border"
+                                Property="Background"
+                                Value="#22FFFFFF"/>
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border"
+                                Property="Background"
+                                Value="#44FFFFFF"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- DataTemplates -->
+
+            <DataTemplate DataType="{x:Type vm:AboutMuseumViewModel}">
+                <views:AboutMuseumView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:ArticlesViewModel}">
+                <views:ArticlesView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:ExhibitsViewModel}">
+                <views:ExhibitsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:DepartmentsViewModel}">
+                <views:DepartmentsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:MediaImagesViewModel}">
+                <views:MediaImagesView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:MediaVideosViewModel}">
+                <views:MediaVideosView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vmDetails:IllustrationViewModel}">
+                <viewsDetails:IllustrationView/>
+            </DataTemplate>
+
+        </UserControl.Resources>
+
+        <Grid Background="White">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Левая панель -->
+
+            <Border Grid.Column="0"
+                    Background="#4A90E2"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="0,0,1,0">
+
+                <DockPanel>
+
+                    <!-- Выход -->
+
+                    <Button DockPanel.Dock="Bottom"
+                            Content="Выйти"
+                            HorizontalContentAlignment="Center"
+                            FontSize="18"
+                            Command="{Binding ExitCommand}"
+                            Style="{StaticResource SidebarButtonStyle}"/>
+
+                    <StackPanel>
+
+                        <!-- Шапка -->
+
+                        <Border Margin="15"
+                                Padding="10"
+                                Background="White"
+                                CornerRadius="12">
+
+                            <StackPanel>
+
+                                <TextBlock Text="🏛"
+                                           FontSize="36"
+                                           HorizontalAlignment="Center"/>
+
+                                <TextBlock Text="Память времён"
+                                           FontWeight="Bold"
+                                           FontSize="20"
+                                           Foreground="#1F2937"
+                                           HorizontalAlignment="Center"/>
+
+                                <TextBlock Text="Школьный музей"
+                                           Foreground="#6B7280"
+                                           FontSize="14"
+                                           HorizontalAlignment="Center"/>
+
+                            </StackPanel>
+
+                        </Border>
+
+                        <Button Content="🏠  О музее"
+                                Command="{Binding ShowAboutMuseumCommand}"
+                                Style="{StaticResource SidebarButtonStyle}"/>
+
+                        <Button Content="📰  Статьи"
+                                Command="{Binding ShowArticlesCommand}"
+                                Style="{StaticResource SidebarButtonStyle}"/>
+
+                        <Button Content="🏺  Экспонаты"
+                                Command="{Binding ShowExhibitsCommand}"
+                                Style="{StaticResource SidebarButtonStyle}"/>
+
+                        <Button Content="🏢  Отделы"
+                                Command="{Binding ShowDepartmentsCommand}"
+                                Style="{StaticResource SidebarButtonStyle}"/>
+
+                        <Button Content="🖼  Иллюстрации"
+                                Command="{Binding ShowIllustrationsCommand}"
+                                Style="{StaticResource SidebarButtonStyle}"/>
+
+                        <Button Content="🎥  Видео"
+                                Command="{Binding ShowVideosCommand}"
+                                Style="{StaticResource SidebarButtonStyle}"/>
+
+                    </StackPanel>
+
+                </DockPanel>
+
+            </Border>
+
             <!-- Контент -->
-        </Grid.ColumnDefinitions>
 
-        <!-- Панель кнопок для вкладок -->
-        <StackPanel Orientation="Vertical" Grid.Column="0" Background="LightGray">
-            <Button Content="О музее" Command="{Binding ShowAboutMuseumCommand}" Margin="5"/>
-            <Button Content="Статьи" Command="{Binding ShowArticlesCommand}" Margin="5"/>
-            <Button Content="Экспонаты" Command="{Binding ShowExhibitsCommand}" Margin="5"/>
-            <Button Content="Отделы" Command="{Binding ShowDepartmentsCommand}" Margin="5"/>
-            <Button Content="Иллюстрации" Command="{Binding ShowIllustrationsCommand}" Margin="5"/>
-            <Button Content="Видео" Command="{Binding ShowVideosCommand}" Margin="5"/>
-            <Button Content="Выйти" Command="{Binding ExitCommand}" Margin="5"/>
-        </StackPanel>
+            <Border Grid.Column="1"
+                    Margin="20"
+                    Background="White"
+                    CornerRadius="16">
 
-        <!-- Контейнер для текущей вкладки -->
-        <ContentControl Grid.Column="1" Content="{Binding CurrentTabView}"/>
-    </Grid>
+                <ContentControl Content="{Binding CurrentTabView}"/>
 
-</UserControl>
+            </Border>
+
+        </Grid>
+
+    </UserControl>
