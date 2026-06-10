@@ -196,7 +196,7 @@
                             <Button Content="✕"
                                     Width="22"
                                     Height="22"
-                                    FontSize="12"
+                                    FontSize="14"
                                     FontWeight="Bold"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
