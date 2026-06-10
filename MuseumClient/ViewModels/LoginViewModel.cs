@@ -115,6 +115,7 @@ namespace MuseumClient.ViewModels
                     case AuthResult.Success:
 
                         ErrorMessage = "";
+                        Reset();
                         _mainVM.ShowContentHubView();
                         break;
 
@@ -132,5 +133,16 @@ namespace MuseumClient.ViewModels
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void Reset()
+        {
+            ErrorMessage = string.Empty;
+            IsPasswordVisible = false;
+
+            UserPassword = " ";
+            UserPassword = string.Empty;
+
+            SelectedUserType = UserTypes.First();
+        }
     }
 }

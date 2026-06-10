@@ -73,7 +73,7 @@
 
                     <Grid>
 
-                        <PasswordBox local:PasswordBoxHelper.BoundPassword="{Binding UserPassword, Mode=TwoWay}"
+                        <PasswordBox local:PasswordBoxHelper.BoundPassword="{Binding UserPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}" 
                                      FontSize="16"
                                      Height="42"/>
