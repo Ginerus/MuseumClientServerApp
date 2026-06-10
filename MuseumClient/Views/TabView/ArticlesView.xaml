@@ -204,7 +204,12 @@
                                     BorderThickness="0"
                                     Background="Transparent"
                                     Foreground="#EF4444"
-                                    Panel.ZIndex="10">
+                                    Focusable="False"
+                                    IsTabStop="False"
+                                    Panel.ZIndex="10"
+                                    Command="{Binding DataContext.DeleteDocumentCommand,
+                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}">
 
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
