@@ -54,7 +54,7 @@
 
     </UserControl.Resources>
 
-    <Grid Background="#EEE">
+    <Grid Background="White">
 
         <!-- (если есть админка — можно добавить кнопку сюда как в ArticlesView) -->
         <!--
