@@ -55,15 +55,17 @@ namespace MuseumClient.ViewModels
         public RelayCommand LoadCommand { get; }
         public RelayCommand OpenDocumentCommand { get; }
 
-        public ArticlesViewModel()
+        private readonly ContentHubViewModel _hub;
+
+        public ArticlesViewModel(ContentHubViewModel hub)
         {
+            _hub = hub;
+
             var config = new ConfigService().Server;
             _apiService = new ApiService(config, AuthService.Instance());
 
             LoadCommand = new RelayCommand(async _ => await LoadArticlesListAsync());
-            OpenDocumentCommand = new RelayCommand(async param => await OpenDocument(param));
-
-            AuthService.Instance().AuthChanged += OnAuthChanged;
+            OpenDocumentCommand = new RelayCommand(async p => await OpenDocument(p));
         }
 
         private void OnAuthChanged()
@@ -130,12 +132,7 @@ namespace MuseumClient.ViewModels
             if (parameter is not DocumentDto doc)
                 return;
 
-            // пока заглушка — можно заменить на открытие файла позже
-            await Task.Run(() =>
-            {
-                // Заглушка
-                MessageBox.Show($"Открыть:\n{doc.Title}\nОтдел: {doc.DepartmentName}");
-            });
+            _hub.ShowDocument(doc.DocumentId, doc.FileType);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

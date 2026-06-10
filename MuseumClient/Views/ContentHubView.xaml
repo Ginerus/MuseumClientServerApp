@@ -56,35 +56,39 @@
 
         <!-- DataTemplates -->
 
-            <DataTemplate DataType="{x:Type vm:AboutMuseumViewModel}">
-                <views:AboutMuseumView/>
-            </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AboutMuseumViewModel}">
+            <views:AboutMuseumView/>
+        </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:ArticlesViewModel}">
-                <views:ArticlesView/>
-            </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ArticlesViewModel}">
+            <views:ArticlesView/>
+        </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:ExhibitsViewModel}">
-                <views:ExhibitsView/>
-            </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ExhibitsViewModel}">
+            <views:ExhibitsView/>
+        </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:DepartmentsViewModel}">
-                <views:DepartmentsView/>
-            </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DepartmentsViewModel}">
+            <views:DepartmentsView/>
+        </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:MediaImagesViewModel}">
-                <views:MediaImagesView/>
-            </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MediaImagesViewModel}">
+            <views:MediaImagesView/>
+        </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:MediaVideosViewModel}">
-                <views:MediaVideosView/>
-            </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MediaVideosViewModel}">
+            <views:MediaVideosView/>
+        </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vmDetails:IllustrationViewModel}">
-                <viewsDetails:IllustrationView/>
-            </DataTemplate>
+        <DataTemplate DataType="{x:Type vmDetails:IllustrationViewModel}">
+            <viewsDetails:IllustrationView/>
+        </DataTemplate>
 
-        </UserControl.Resources>
+        <DataTemplate DataType="{x:Type vmDetails:DocumentViewerViewModel}">
+            <viewsDetails:DocumentViewerView/>
+        </DataTemplate>
+
+    </UserControl.Resources>
 
         <Grid Background="White">
 
