@@ -1,4 +1,5 @@
 ﻿using MuseumClient.Commands;
+using MuseumClient.Services;
 using MuseumClient.ViewModels.Details;
 using System.ComponentModel;
 using System.Windows;
@@ -8,6 +9,14 @@ namespace MuseumClient.ViewModels
     public class ContentHubViewModel : INotifyPropertyChanged
     {
         private object _currentTabView;
+
+        public string CurrentUserType =>
+            AuthService.Instance().CurrentUserType?.ToUpper() ?? "UNKNOWN"; // Действующая тип юсера (роль)
+        public string CurrentUserTypeDisplay =>
+            AuthService.Instance().CurrentUserType == "admin"
+                ? "Администратор"
+                : "Гость";
+
         public object CurrentTabView
         {
             get => _currentTabView;
@@ -15,6 +24,7 @@ namespace MuseumClient.ViewModels
             {
                 _currentTabView = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentTabView)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentUserType)));
             }
         }
 
@@ -89,6 +99,8 @@ namespace MuseumClient.ViewModels
 
             ExitCommand = new RelayCommand(async _ =>
             {
+                AuthService.Instance().Logout();
+
                 _mainVM.ShowLoginView();
             });
 

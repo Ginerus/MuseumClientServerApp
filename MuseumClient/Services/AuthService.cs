@@ -27,6 +27,7 @@ namespace MuseumClient.Services
 
         private string _token;
         private string _baseUrl;
+        private string _userType;
 
         private AuthService(ServerConfig config)
         {
@@ -35,6 +36,11 @@ namespace MuseumClient.Services
 
         public string CurrentToken => _token;
         public string BaseUrl => _baseUrl;
+
+        public string CurrentUserType => _userType;
+
+        public bool IsAdmin => _userType == "admin";
+        public bool IsGuest => _userType == "guest";
 
         private async Task<string> GetWorkingUrlAsync()
         {
@@ -96,6 +102,8 @@ namespace MuseumClient.Services
                 if (json?.status == "ok")
                 {
                     _token = json.token;
+                    _userType = json.userType;
+
                     return AuthResult.Success;
                 }
 
@@ -113,6 +121,12 @@ namespace MuseumClient.Services
 
                 return AuthResult.ServerUnavailable;
             }
+        }
+
+        public void Logout()
+        {
+            _token = null;
+            _userType = null;
         }
     }
 }

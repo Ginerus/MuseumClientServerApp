@@ -142,7 +142,19 @@
 
                         </Border>
 
-                        <Button Content="🏠  О музее"
+                    <Border Background="#EEF2FF"
+                        CornerRadius="8"
+                        Padding="6"
+                        Margin="10,0,10,10">
+
+                        <TextBlock Text="{Binding CurrentUserTypeDisplay}"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="#1D4ED8"
+                           HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <Button Content="🏠  О музее"
                                 Command="{Binding ShowAboutMuseumCommand}"
                                 Style="{StaticResource SidebarButtonStyle}"/>
 
