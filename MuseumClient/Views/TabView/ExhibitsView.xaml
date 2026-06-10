@@ -1,24 +1,72 @@
 ﻿<UserControl x:Class="MuseumClient.Views.ExhibitsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d">
 
-    <!-- Загрузка данных -->
+    <!-- Load -->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
-    <Grid Background="#F5F5F5">
+    <UserControl.Resources>
+
+        <!-- CARD BUTTON STYLE -->
+        <Style x:Key="ExhibitCardButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" Background="Transparent">
+                            <ContentPresenter/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.92"/>
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- CARD STYLE -->
+        <Style x:Key="ExhibitCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="BorderBrush" Value="#DDD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid Background="#EEE">
+
+        <!-- (если есть админка — можно добавить кнопку сюда как в ArticlesView) -->
+        <!--
+        <Button Content="➕ Добавить экспонат"
+                Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}"/>
+        -->
+
         <ScrollViewer VerticalScrollBarVisibility="Auto">
 
             <ItemsControl ItemsSource="{Binding Exhibits}">
 
-                <!-- Группировка -->
+                <!-- GROUP -->
                 <ItemsControl.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>
@@ -26,39 +74,37 @@
                                 <TextBlock Text="{Binding Name}"
                                            FontSize="18"
                                            FontWeight="Bold"
-                                           Margin="10,20,10,10"/>
+                                           Margin="16,20,16,10"
+                                           Foreground="#334155"/>
                             </DataTemplate>
                         </GroupStyle.HeaderTemplate>
                     </GroupStyle>
                 </ItemsControl.GroupStyle>
 
-                <!-- Панель плиток -->
+                <!-- WRAP -->
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Margin="10"/>
+                        <WrapPanel Margin="12"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
-                <!-- Элемент экспоната -->
+                <!-- ITEM -->
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Command="{Binding DataContext.OpenExhibitCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                CommandParameter="{Binding}"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Padding="0">
 
-                            <Border Width="180"
+                        <Button Command="{Binding DataContext.OpenExhibitCommand,
+                                          RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                Style="{StaticResource ExhibitCardButtonStyle}">
+
+                            <Border Style="{StaticResource ExhibitCardStyle}"
+                                    Width="180"
                                     Height="200"
-                                    Margin="8"
-                                    Background="White"
-                                    CornerRadius="10"
-                                    BorderBrush="#DDD"
-                                    BorderThickness="1">
+                                    Margin="8">
 
                                 <StackPanel>
 
-                                    <!-- Картинка -->
+                                    <!-- IMAGE -->
                                     <Border Height="120"
                                             Background="#EEE"
                                             CornerRadius="8"
@@ -67,24 +113,26 @@
 
                                         <Image Source="{Binding ThumbnailImage}"
                                                Stretch="Uniform"/>
-                                               <!-- Stretch="UniformToFill"/> во всю плитку-->
                                     </Border>
 
-                                    <!-- Название -->
+                                    <!-- TITLE -->
                                     <TextBlock Text="{Binding Name}"
                                                TextWrapping="Wrap"
                                                TextAlignment="Center"
                                                FontSize="12"
                                                Margin="5"
-                                               MaxHeight="40"/>
+                                               MaxHeight="40"
+                                               Foreground="#374151"/>
 
                                 </StackPanel>
                             </Border>
                         </Button>
+
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
 
             </ItemsControl>
         </ScrollViewer>
+
     </Grid>
 </UserControl>
