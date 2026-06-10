@@ -10,6 +10,7 @@ namespace MuseumClient.Services
     {
         private static AuthService? _instance;
 
+        public event Action? AuthChanged;
         public static AuthService Instance(ServerConfig? config = null)
         {
             if (_instance == null)
@@ -104,6 +105,8 @@ namespace MuseumClient.Services
                     _token = json.token;
                     _userType = json.userType;
 
+                    AuthChanged?.Invoke();
+
                     return AuthResult.Success;
                 }
 
@@ -127,6 +130,8 @@ namespace MuseumClient.Services
         {
             _token = null;
             _userType = null;
+
+            AuthChanged?.Invoke();
         }
     }
 }

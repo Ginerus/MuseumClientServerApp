@@ -106,6 +106,8 @@ namespace MuseumClient.ViewModels
 
             // Стартовая вкладка
             CurrentTabView = AboutMuseumVM;
+
+            AuthService.Instance().AuthChanged += OnAuthChanged;
         }
 
         public void ShowIllustration(int id)
@@ -114,5 +116,11 @@ namespace MuseumClient.ViewModels
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnAuthChanged()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentUserType)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentUserTypeDisplay)));
+        }
     }
 }

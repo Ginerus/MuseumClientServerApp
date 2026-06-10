@@ -14,6 +14,17 @@ namespace MuseumClient.ViewModels
     {
         private readonly ApiService _apiService;
 
+        private bool _canEdit;
+        public bool CanEdit
+        {
+            get => _canEdit;
+            set
+            {
+                _canEdit = value;
+                OnPropertyChanged(nameof(CanEdit));
+            }
+        }
+
         // Коллекция документов (readonly — чтобы не заменили извне)
         public ObservableCollection<DocumentDto> Documents { get; } = new();
 
@@ -51,9 +62,21 @@ namespace MuseumClient.ViewModels
 
             LoadCommand = new RelayCommand(async _ => await LoadArticlesListAsync());
             OpenDocumentCommand = new RelayCommand(async param => await OpenDocument(param));
+
+            AuthService.Instance().AuthChanged += OnAuthChanged;
         }
 
-        // 🔥 Загрузка списка документов
+        private void OnAuthChanged()
+        {
+            CanEdit = AuthService.Instance().IsAdmin;
+        }
+
+        public void RefreshPermissions()
+        {
+            OnPropertyChanged(nameof(CanEdit));
+        }
+
+        // Загрузка списка документов
         public async Task LoadArticlesListAsync()
         {
             try
