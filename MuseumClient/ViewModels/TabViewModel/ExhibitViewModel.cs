@@ -17,6 +17,17 @@ namespace MuseumClient.ViewModels
     {
         private readonly ApiService _apiService;
 
+        private bool _canEdit;
+        public bool CanEdit
+        {
+            get => _canEdit;
+            set
+            {
+                _canEdit = value;
+                OnPropertyChanged(nameof(CanEdit));
+            }
+        }
+
         public ObservableCollection<ExhibitDto> Exhibits { get; } = new();
 
         private ICollectionView? _exhibitsView;
@@ -51,6 +62,10 @@ namespace MuseumClient.ViewModels
 
             LoadCommand = new RelayCommand(async _ => await LoadExhibitsAsync());
             OpenExhibitCommand = new RelayCommand(async param => await OpenExhibit(param));
+
+            AuthService.Instance().AuthChanged += OnAuthChanged;
+
+            CanEdit = AuthService.Instance().IsAdmin;
         }
 
         // Загрузка экспонатов
@@ -151,6 +166,16 @@ namespace MuseumClient.ViewModels
                     // можно позже заменить на placeholder
                 }
             }
+        }
+
+        private void OnAuthChanged()
+        {
+            CanEdit = AuthService.Instance().IsAdmin;
+        }
+
+        public void RefreshPermissions()
+        {
+            OnPropertyChanged(nameof(CanEdit));
         }
     }
 }
