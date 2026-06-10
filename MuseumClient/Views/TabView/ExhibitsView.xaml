@@ -68,7 +68,8 @@
             FontWeight="SemiBold"
             BorderThickness="0"
             Cursor="Hand"
-            Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}">
+            Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}"
+            Command="{Binding CreateExhibitCommand}">
 
             <Button.Template>
                 <ControlTemplate TargetType="Button">
@@ -232,8 +233,8 @@
                                     Focusable="False"
                                     IsTabStop="False"
                                     Panel.ZIndex="10"
-                                    Command="{Binding DataContext.DeleteDocumentCommand,
-                                                RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    Command="{Binding DataContext.EditExhibitCommand,
+                                            RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                     CommandParameter="{Binding}"
                                     Visibility="{Binding DataContext.CanEdit,
                                                  RelativeSource={RelativeSource AncestorType=ItemsControl},
