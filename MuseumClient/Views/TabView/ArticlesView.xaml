@@ -81,6 +81,35 @@
 
     <Grid Background="White">
 
+        <!-- Кнопка администратора -->
+
+        <Button Content="➕ Добавить статью"
+            Width="170"
+            Height="38"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="0,15,20,0"
+            Panel.ZIndex="100"
+            Background="#4A90E2"
+            Foreground="White"
+            FontWeight="SemiBold"
+            BorderThickness="0"
+            Cursor="Hand">
+
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                        CornerRadius="8">
+
+                        <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+
+        </Button>
+
         <ScrollViewer VerticalScrollBarVisibility="Auto">
 
             <ItemsControl ItemsSource="{Binding Documents}">
