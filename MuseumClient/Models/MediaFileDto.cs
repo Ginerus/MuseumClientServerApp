@@ -40,5 +40,11 @@ namespace MuseumClient.Models
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        public class ApiResponse<T>
+        {
+            public string status { get; set; }
+            public T data { get; set; }
+        }
     }
 }

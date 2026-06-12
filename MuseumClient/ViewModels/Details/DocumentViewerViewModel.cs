@@ -1,12 +1,14 @@
 ﻿using Microsoft.Win32;
+using MuseumClient.Commands;
+using MuseumClient.Models;
 using MuseumClient.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
-using MuseumClient.Commands;
-using System.Threading.Tasks;
 using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+using static MuseumClient.Models.MediaFileDto;
 
 namespace MuseumClient.ViewModels.Details
 {
@@ -20,7 +22,6 @@ namespace MuseumClient.ViewModels.Details
         private readonly ApiService _apiService;
         private readonly int _id;
 
-        public string Title { get; set; } = "";
         public string FileType { get; set; } = "";
         public string? LocalPdfPath { get; set; }
 
@@ -47,6 +48,23 @@ namespace MuseumClient.ViewModels.Details
         public bool IsPdf => FileType?.ToLower() == "pdf";
         public bool IsText => FileType?.ToLower() is "txt" or "md";
 
+        private async Task InitializeAsync()
+        {
+            await LoadMetadataAsync();
+            await LoadAsync();
+        }
+
+        private string _title = "";
+        public string Title
+        {
+            get => _title;
+            set
+            {
+                _title = value;
+                OnPropertyChanged(nameof(Title));
+            }
+        }
+
         public DocumentViewerViewModel(int id, string fileType)
         {
             _id = id;
@@ -61,7 +79,14 @@ namespace MuseumClient.ViewModels.Details
 
             DownloadCommand = new RelayCommand(async _ => await DownloadAsync());
 
-            _ = LoadAsync();
+            _ = InitializeAsync();
+        }
+
+        private async Task LoadMetadataAsync()
+        {
+            var response = await _apiService.GetAsync<ApiResponse<MediaFileDto>>($"MediaFile/{_id}");
+
+            Title = response.data.Title;
         }
 
         private void RefreshFileTypeFlags()

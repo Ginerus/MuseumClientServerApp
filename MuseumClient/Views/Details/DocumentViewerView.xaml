@@ -11,7 +11,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </UserControl.Resources>
 
-    <Grid Background="#F3F4F6">
+    <Grid Background="White">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -25,7 +25,7 @@
             Padding="15"
             Margin="20,20,20,10"
             BorderBrush="#E5E7EB"
-            BorderThickness="1">
+            BorderThickness="2">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -40,20 +40,24 @@
                            FontWeight="Bold"
                            Foreground="#1F2937"/>
 
-                    <TextBlock Text="Документ музея"
+                    <TextBlock Text="Статья музея"
                            FontSize="13"
                            Foreground="#6B7280"/>
 
                 </StackPanel>
 
                 <Button Grid.Column="1"
-                    Content="⬇ Скачать"
-                    Command="{Binding DownloadCommand}"
-                    Width="120"
-                    Height="36"
-                    Background="#4A90E2"
-                    Foreground="White"
-                    BorderThickness="0"/>
+        Content="Скачать"
+        Command="{Binding DownloadCommand}"
+        Width="120"
+        Height="36"
+        Background="#4A90E2"
+        Foreground="White"
+        BorderThickness="0"
+        FontSize="14"
+        FontWeight="SemiBold"
+        FontFamily="Segoe UI"
+        Cursor="Hand"/>
 
             </Grid>
 
@@ -61,54 +65,62 @@
 
         <!-- CONTENT (скроллится) -->
         <!-- CONTENT -->
-        <ScrollViewer Grid.Row="1"
-              VerticalScrollBarVisibility="Auto">
-
-            <Grid Margin="20,0,20,20">
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <!-- TXT / MD -->
-                <Border Background="White"
+        <Border Grid.Row="1"
+                Margin="20,0,20,20"
                 CornerRadius="16"
-                Padding="15"
-                Margin="0,0,0,15"
-                BorderBrush="#E5E7EB"
-                BorderThickness="1"
-                Visibility="{Binding IsText, Converter={StaticResource BoolToVisibilityConverter}}">
+                Background="#F3F4F6"
+                BorderBrush="#D1D5DB"
+                BorderThickness="1">
 
-                    <TextBlock Text="{Binding Text}"
-                       TextWrapping="Wrap"
-                       FontFamily="Consolas"
-                       FontSize="14"/>
-                </Border>
+            <Border.Clip>
+                <RectangleGeometry RadiusX="16"
+                           RadiusY="16"
+                           Rect="0,0,9999,9999"/>
+            </Border.Clip>
 
-                <!-- PDF -->
-                <Border Grid.Row="1"
-                Background="White"
-                CornerRadius="16"
-                Padding="10"
-                BorderBrush="#E5E7EB"
-                BorderThickness="1"
-                Visibility="{Binding IsPdf, Converter={StaticResource BoolToVisibilityConverter}}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
 
-                    <wv2:WebView2 x:Name="PdfView"
-                          Height="700">
+                <StackPanel Margin="5">
 
-                        <i:Interaction.Behaviors>
-                            <beh:WebView2PdfBehavior/>
-                        </i:Interaction.Behaviors>
+                    <!-- TXT / MD -->
+                    <Border Background="White"
+                            Padding="15"
+                            Margin="0,0,0,5"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="1"
+                            Visibility="{Binding IsText, Converter={StaticResource BoolToVisibilityConverter}}">
 
-                    </wv2:WebView2>
+                        <TextBlock Text="{Binding Text}"
+                           TextWrapping="Wrap"
+                           FontFamily="Consolas"
+                           FontSize="14"/>
+                    </Border>
 
-                </Border>
+                    <!-- PDF -->
+                    <Border Background="White"
+                    Padding="10"
+                    Margin="0,0,0,10"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="1"
+                    Visibility="{Binding IsPdf, Converter={StaticResource BoolToVisibilityConverter}}">
 
-            </Grid>
+                        <wv2:WebView2 x:Name="PdfView"
+                              Height="700">
 
-        </ScrollViewer>
+                            <i:Interaction.Behaviors>
+                                <beh:WebView2PdfBehavior/>
+                            </i:Interaction.Behaviors>
+
+                        </wv2:WebView2>
+
+                    </Border>
+
+                </StackPanel>
+
+            </ScrollViewer>
+
+        </Border>
 
     </Grid>
 </UserControl>
