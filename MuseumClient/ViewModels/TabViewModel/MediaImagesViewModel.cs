@@ -46,6 +46,19 @@ namespace MuseumClient.ViewModels
 
         private readonly ContentHubViewModel _hub;
 
+        private bool _canEdit;
+        public bool CanEdit
+        {
+            get => _canEdit;
+            set
+            {
+                _canEdit = value;
+                OnPropertyChanged(nameof(CanEdit));
+            }
+        }
+
+        private readonly AuthService _auth;
+
         public MediaImagesViewModel(ContentHubViewModel hub)
         {
             _hub = hub;
@@ -53,8 +66,19 @@ namespace MuseumClient.ViewModels
             var config = new ConfigService().Server;
             _apiService = new ApiService(config, AuthService.Instance());
 
+            _auth = AuthService.Instance();
+
             LoadImagesCommand = new RelayCommand(async _ => await LoadImagesAsync());
             OpenImageCommand = new RelayCommand(async p => await OpenImage(p));
+
+            _auth.AuthChanged += OnAuthChanged;
+
+            CanEdit = _auth.IsAdmin;
+        }
+
+        private void OnAuthChanged()
+        {
+            CanEdit = _auth.IsAdmin;
         }
 
         public async Task LoadImagesAsync()
