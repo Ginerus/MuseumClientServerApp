@@ -132,23 +132,25 @@
 
         </Border>
 
-        <Border Background="#66000000"
-        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
-        Panel.ZIndex="999">
+        <Grid Panel.ZIndex="999"
+      Background="#66000000"
+      Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
 
-            <Grid HorizontalAlignment="Center"
-          VerticalAlignment="Center">
+            <!-- РАСТЯГИВАЕМ НА ВСЁ -->
+            <Grid HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
 
                 <Border Width="140"
                 Height="140"
                 Background="#1F2937"
                 CornerRadius="16"
-                Opacity="0.95">
+                Opacity="0.95"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
 
                     <StackPanel HorizontalAlignment="Center"
                         VerticalAlignment="Center">
 
-                        <!-- СПИННЕР -->
                         <Viewbox Width="40" Height="40" Margin="0,0,0,12">
                             <Canvas Width="50" Height="50">
                                 <Ellipse Width="40" Height="40"
@@ -167,9 +169,9 @@
                            FontSize="14"
                            HorizontalAlignment="Center"/>
                     </StackPanel>
+
                 </Border>
             </Grid>
-        </Border>
-
+        </Grid>
     </Grid>
 </UserControl>
