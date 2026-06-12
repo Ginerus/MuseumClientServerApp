@@ -1,31 +1,56 @@
 ﻿using Microsoft.Xaml.Behaviors;
 using Microsoft.Web.WebView2.Wpf;
+using MuseumClient.ViewModels.Details;
 using System;
+using System.ComponentModel;
 
 namespace MuseumClient.Behaviors
 {
     public class WebView2PdfBehavior : Behavior<WebView2>
     {
+        private DocumentViewerViewModel? _vm;
+
         protected override async void OnAttached()
         {
             base.OnAttached();
 
             await AssociatedObject.EnsureCoreWebView2Async();
 
-            SetSource();
+            _vm = AssociatedObject.DataContext as DocumentViewerViewModel;
+
+            if (_vm != null)
+            {
+                _vm.PropertyChanged += Vm_PropertyChanged;
+
+                TryLoadPdf();
+            }
         }
 
-        private void SetSource()
+        private void Vm_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (AssociatedObject.DataContext is ViewModels.Details.DocumentViewerViewModel vm &&
-                !string.IsNullOrEmpty(vm.LocalPdfPath))
+            if (e.PropertyName == nameof(DocumentViewerViewModel.LocalPdfPath))
             {
-                AssociatedObject.Source = new Uri(vm.LocalPdfPath, UriKind.Absolute);
+                TryLoadPdf();
             }
+        }
+
+        private void TryLoadPdf()
+        {
+            if (_vm == null)
+                return;
+
+            if (string.IsNullOrWhiteSpace(_vm.LocalPdfPath))
+                return;
+
+            AssociatedObject.Source =
+                new Uri(_vm.LocalPdfPath, UriKind.Absolute);
         }
 
         protected override void OnDetaching()
         {
+            if (_vm != null)
+                _vm.PropertyChanged -= Vm_PropertyChanged;
+
             base.OnDetaching();
         }
     }

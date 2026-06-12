@@ -56,7 +56,16 @@ namespace MuseumClient.ViewModels.Details
             }
         }
 
-        public string? LocalPdfPath { get; set; }
+        private string? _localPdfPath;
+        public string? LocalPdfPath
+        {
+            get => _localPdfPath;
+            set
+            {
+                _localPdfPath = value;
+                OnPropertyChanged(nameof(LocalPdfPath));
+            }
+        }
 
         private string? _text;
         public string? Text
@@ -184,7 +193,6 @@ namespace MuseumClient.ViewModels.Details
                         File.WriteAllBytes(path, _rawFile!);
 
                         LocalPdfPath = path;
-                        OnPropertyChanged(nameof(LocalPdfPath));
                         break;
                     }
                 case "docx":
