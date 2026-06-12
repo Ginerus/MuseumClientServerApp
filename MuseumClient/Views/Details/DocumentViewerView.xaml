@@ -60,6 +60,7 @@
         </Border>
 
         <!-- CONTENT (скроллится) -->
+        <!-- CONTENT -->
         <ScrollViewer Grid.Row="1"
               VerticalScrollBarVisibility="Auto">
 
@@ -71,13 +72,13 @@
                 </Grid.RowDefinitions>
 
                 <!-- TXT / MD -->
-                <Border Grid.Row="0"
-                Background="White"
+                <Border Background="White"
                 CornerRadius="16"
                 Padding="15"
                 Margin="0,0,0,15"
                 BorderBrush="#E5E7EB"
-                BorderThickness="1">
+                BorderThickness="1"
+                Visibility="{Binding IsText, Converter={StaticResource BoolToVisibilityConverter}}">
 
                     <TextBlock Text="{Binding Text}"
                        TextWrapping="Wrap"
@@ -91,7 +92,8 @@
                 CornerRadius="16"
                 Padding="10"
                 BorderBrush="#E5E7EB"
-                BorderThickness="1">
+                BorderThickness="1"
+                Visibility="{Binding IsPdf, Converter={StaticResource BoolToVisibilityConverter}}">
 
                     <wv2:WebView2 x:Name="PdfView"
                           Height="700">

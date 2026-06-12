@@ -44,10 +44,15 @@ namespace MuseumClient.ViewModels.Details
 
         private byte[]? _rawFile;
 
+        public bool IsPdf => FileType?.ToLower() == "pdf";
+        public bool IsText => FileType?.ToLower() is "txt" or "md";
+
         public DocumentViewerViewModel(int id, string fileType)
         {
             _id = id;
             FileType = fileType;
+
+            RefreshFileTypeFlags();
 
             _apiService = new ApiService(
                 new ConfigService().Server,
@@ -57,6 +62,12 @@ namespace MuseumClient.ViewModels.Details
             DownloadCommand = new RelayCommand(async _ => await DownloadAsync());
 
             _ = LoadAsync();
+        }
+
+        private void RefreshFileTypeFlags()
+        {
+            OnPropertyChanged(nameof(IsPdf));
+            OnPropertyChanged(nameof(IsText));
         }
 
         public RelayCommand DownloadCommand { get; }
