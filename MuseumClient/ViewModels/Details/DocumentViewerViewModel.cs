@@ -58,9 +58,8 @@ namespace MuseumClient.ViewModels.Details
         private byte[]? _rawFile;
 
         public bool IsPdf => FileType?.ToLower() == "pdf";
-        public bool IsText => FileType?.ToLower() is "txt" or "md";
-        public bool IsDoc => FileType?.ToLower() is "doc" or "docx";
-        public bool IsPdfOrDoc => FileType?.ToLower() is "pdf" or "docx";
+        public bool IsText => FileType?.ToLower() is "txt";
+        public bool IsHtml => FileType?.ToLower() is "pdf" or "docx" or "md";
 
         private async Task InitializeAsync()
         {
@@ -127,10 +126,19 @@ namespace MuseumClient.ViewModels.Details
             switch (FileType.ToLower())
             {
                 case "txt":
-                case "md":
                     Text = Encoding.UTF8.GetString(bytes);
                     break;
+                case "md":
+                    {
+                        var markdown = Encoding.UTF8.GetString(bytes);
+                        var html = MarkdownConverter.ConvertToHtml(markdown);
 
+                        var htmlPath = Path.Combine(Path.GetTempPath(), $"{_id}_md.html");
+                        File.WriteAllText(htmlPath, html, Encoding.UTF8);
+
+                        HtmlPath = new Uri(htmlPath).AbsoluteUri;
+                        break;
+                    }
                 case "pdf":
                     {
                         var path = Path.Combine(Path.GetTempPath(), $"{_id}.pdf");
@@ -182,8 +190,8 @@ namespace MuseumClient.ViewModels.Details
                     "txt" => "Текстовый документ (*.txt)|*.txt|Все файлы (*.*)|*.*",
                     "md" => "Markdown файл (*.md)|*.md|Все файлы (*.*)|*.*",
                     "pdf" => "PDF документ (*.pdf)|*.pdf|Все файлы (*.*)|*.*",
-                    "doc" => "Документ Word 97-2003 (*.docx)|*.pdf|Все файлы (*.*)|*.*",
-                    "docx" => "Документ Word(*.docx)|*.pdf|Все файлы (*.*)|*.*",
+                    "doc" => "Документ Word 97-2003 (*.doc)|*.doc|Все файлы (*.*)|*.*",
+                    "docx" => "Документ Word(*.docx)|*.docx|Все файлы (*.*)|*.*",
                     _ => "Все файлы (*.*)|*.*"
                 }
             };

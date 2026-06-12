@@ -75,7 +75,7 @@
             <!-- ЕДИНЫЙ КОНТЕЙНЕР -->
             <Grid>
 
-                <!-- TXT / MD -->
+                <!-- TXT -->
                 <ScrollViewer VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
                       Visibility="{Binding IsText, Converter={StaticResource BoolToVisibilityConverter}}">
@@ -101,7 +101,7 @@
                 </ScrollViewer>
 
                 <!-- PDF -->
-                <Border Visibility="{Binding IsPdfOrDoc, Converter={StaticResource BoolToVisibilityConverter}}"
+                <Border Visibility="{Binding IsHtml, Converter={StaticResource BoolToVisibilityConverter}}"
                         Background="White"
                         Padding="10"
                         Margin="10"
