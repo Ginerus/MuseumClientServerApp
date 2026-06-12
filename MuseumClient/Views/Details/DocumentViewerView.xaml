@@ -87,10 +87,15 @@
                             BorderThickness="1"
                             CornerRadius="12">
 
-                        <TextBlock Text="{Binding Text}"
-                                   TextWrapping="Wrap"
-                                   FontFamily="Consolas"
-                                   FontSize="14"/>
+                        <TextBox Text="{Binding Text}"
+                                 TextWrapping="Wrap"
+                                 FontFamily="Consolas"
+                                 FontSize="14"
+                                 IsReadOnly="True"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Disabled"/>
                     </Border>
 
                 </ScrollViewer>
