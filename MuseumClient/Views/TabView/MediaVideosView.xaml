@@ -61,7 +61,7 @@
 
     </UserControl.Resources>
 
-    <Grid Background="#F5F5F5">
+    <Grid Background="White">
 
         <!-- ========================= -->
         <!-- ADMIN ADD BUTTON -->

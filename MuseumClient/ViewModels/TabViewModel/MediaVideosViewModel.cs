@@ -46,16 +46,40 @@ namespace MuseumClient.ViewModels
         public RelayCommand LoadCommand { get; }
         public RelayCommand OpenVideoCommand { get; }
 
+        private bool _canEdit;
+        public bool CanEdit
+        {
+            get => _canEdit;
+            set
+            {
+                _canEdit = value;
+                OnPropertyChanged(nameof(CanEdit));
+            }
+        }
+
+        private readonly AuthService _auth;
+
         public MediaVideosViewModel()
         {
             var config = new ConfigService().Server;
             _apiService = new ApiService(config, AuthService.Instance());
 
+            _auth = AuthService.Instance();
+
             LoadCommand = new RelayCommand(async _ => await LoadVideosListAsync());
             OpenVideoCommand = new RelayCommand(async param => await OpenVideo(param));
+
+            _auth.AuthChanged += OnAuthChanged;
+
+            CanEdit = _auth.IsAdmin;
         }
 
-        // 🔥 загрузка списка видео
+        private void OnAuthChanged()
+        {
+            CanEdit = _auth.IsAdmin;
+        }
+
+        // Загрузка списка видео
         public async Task LoadVideosListAsync()
         {
             try
