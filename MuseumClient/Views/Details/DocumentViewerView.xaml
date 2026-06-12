@@ -96,7 +96,7 @@
                 </ScrollViewer>
 
                 <!-- PDF -->
-                <Border Visibility="{Binding IsPdf, Converter={StaticResource BoolToVisibilityConverter}}"
+                <Border Visibility="{Binding IsPdfOrDoc, Converter={StaticResource BoolToVisibilityConverter}}"
                         Background="White"
                         Padding="10"
                         Margin="10"
@@ -108,6 +108,7 @@
 
                         <i:Interaction.Behaviors>
                             <beh:WebView2PdfBehavior/>
+                            <beh:WebView2HtmlBehavior HtmlPath="{Binding HtmlPath}" />
                         </i:Interaction.Behaviors>
 
                     </wv2:WebView2>

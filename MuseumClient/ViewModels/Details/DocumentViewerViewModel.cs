@@ -59,6 +59,8 @@ namespace MuseumClient.ViewModels.Details
 
         public bool IsPdf => FileType?.ToLower() == "pdf";
         public bool IsText => FileType?.ToLower() is "txt" or "md";
+        public bool IsDoc => FileType?.ToLower() is "doc" or "docx";
+        public bool IsPdfOrDoc => FileType?.ToLower() is "pdf" or "docx";
 
         private async Task InitializeAsync()
         {
@@ -74,6 +76,17 @@ namespace MuseumClient.ViewModels.Details
             {
                 _title = value;
                 OnPropertyChanged(nameof(Title));
+            }
+        }
+
+        private string? _htmlPath;
+        public string? HtmlPath
+        {
+            get => _htmlPath;
+            set
+            {
+                _htmlPath = value;
+                OnPropertyChanged(nameof(HtmlPath));
             }
         }
 
@@ -127,6 +140,20 @@ namespace MuseumClient.ViewModels.Details
                         OnPropertyChanged(nameof(LocalPdfPath));
                         break;
                     }
+                case "docx":
+                    {
+                        var path = Path.Combine(Path.GetTempPath(), $"{_id}.docx");
+                        File.WriteAllBytes(path, _rawFile!);
+
+                        var html = DocxToHtmlConverter.Convert(path);
+
+                        var htmlPath = Path.Combine(Path.GetTempPath(), $"{_id}.html");
+                        File.WriteAllText(htmlPath, html, Encoding.UTF8);
+
+                        HtmlPath = new Uri(htmlPath).AbsoluteUri;
+                        OnPropertyChanged(nameof(HtmlPath));
+                        break;
+                    }
                 default:
                     Text = "Формат откроется через внешнее приложение";
                     break;
@@ -139,6 +166,8 @@ namespace MuseumClient.ViewModels.Details
                 "pdf" => ".pdf",
                 "txt" => ".txt",
                 "md" => ".md",
+                "doc" => ".doc",
+                "docx" => ".docx",
                 _ => ""
             };
 
