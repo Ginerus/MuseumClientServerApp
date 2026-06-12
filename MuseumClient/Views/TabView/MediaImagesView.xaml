@@ -14,6 +14,10 @@
 
     <UserControl.Resources>
 
+        <!-- ========================= -->
+        <!-- CARD BUTTON STYLE -->
+        <!-- ========================= -->
+
         <Style x:Key="ImageCardButtonStyle"
                TargetType="Button">
 
@@ -36,15 +40,13 @@
 
                         <ControlTemplate.Triggers>
 
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
+                            <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Root"
                                         Property="Opacity"
                                         Value="0.92"/>
                             </Trigger>
 
-                            <Trigger Property="IsPressed"
-                                     Value="True">
+                            <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="Root"
                                         Property="Opacity"
                                         Value="0.85"/>
@@ -60,24 +62,47 @@
 
     </UserControl.Resources>
 
-    <Grid Background="#F5F5F5">
+    <Grid Background="White">
+
+        <!-- ========================= -->
+        <!-- ADMIN ADD BUTTON -->
+        <!-- ========================= -->
+
+        <Button Content="➕ Добавить изображение"
+                Width="200"
+                Height="38"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="0,15,20,0"
+                Panel.ZIndex="100"
+                Background="#4A90E2"
+                Foreground="White"
+                FontWeight="SemiBold"
+                BorderThickness="0"
+                Cursor="Hand"
+                Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}">
+
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+
+        </Button>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto">
 
             <ItemsControl ItemsSource="{Binding Images}">
 
-                <ItemsControl.GroupStyle>
-                    <GroupStyle>
-                        <GroupStyle.HeaderTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}"
-                                           FontSize="18"
-                                           FontWeight="Bold"
-                                           Margin="10,20,10,10"/>
-                            </DataTemplate>
-                        </GroupStyle.HeaderTemplate>
-                    </GroupStyle>
-                </ItemsControl.GroupStyle>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -88,50 +113,111 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-                        <Button Command="{Binding DataContext.OpenImageCommand,
-                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                CommandParameter="{Binding}"
-                                Style="{StaticResource ImageCardButtonStyle}">
+                        <Grid>
 
-                            <Border Width="180"
-                                    Height="200"
-                                    Margin="8"
-                                    Background="White"
-                                    CornerRadius="10"
-                                    BorderBrush="#DDD"
-                                    BorderThickness="1">
+                            <!-- CARD -->
+                            <Button Command="{Binding DataContext.OpenImageCommand,
+                                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}"
+                                    Style="{StaticResource ImageCardButtonStyle}">
 
-                                <Border.Effect>
-                                    <DropShadowEffect BlurRadius="10"
-                                                      ShadowDepth="2"
-                                                      Opacity="0.08"/>
-                                </Border.Effect>
+                                <Border Width="180"
+                                        Height="200"
+                                        Margin="8"
+                                        Background="White"
+                                        CornerRadius="10"
+                                        BorderBrush="#DDD"
+                                        BorderThickness="1">
 
-                                <StackPanel>
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="10"
+                                                          ShadowDepth="2"
+                                                          Opacity="0.08"/>
+                                    </Border.Effect>
 
-                                    <Border Height="120"
-                                            Background="#EEE"
-                                            CornerRadius="8"
-                                            Margin="10,10,10,5"
-                                            ClipToBounds="True">
+                                    <StackPanel>
 
-                                        <Image Source="{Binding ThumbnailImage}"
-                                               Stretch="Uniform"/>
+                                        <Border Height="120"
+                                                Background="#EEE"
+                                                CornerRadius="8"
+                                                Margin="10,10,10,5"
+                                                ClipToBounds="True">
 
-                                    </Border>
+                                            <Image Source="{Binding ThumbnailImage}"
+                                                   Stretch="Uniform"/>
 
-                                    <TextBlock Text="{Binding Title}"
-                                               TextWrapping="Wrap"
-                                               TextAlignment="Center"
-                                               FontSize="12"
-                                               Margin="5"
-                                               MaxHeight="40"/>
+                                        </Border>
 
-                                </StackPanel>
+                                        <TextBlock Text="{Binding Title}"
+                                                   TextWrapping="Wrap"
+                                                   TextAlignment="Center"
+                                                   FontSize="12"
+                                                   Margin="5"
+                                                   MaxHeight="40"/>
 
-                            </Border>
+                                    </StackPanel>
 
-                        </Button>
+                                </Border>
+
+                            </Button>
+
+                            <!-- DELETE BUTTON -->
+                            <Button Content="✕"
+                                    Width="22"
+                                    Height="22"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Margin="0,12,14,0"
+                                    Cursor="Hand"
+                                    BorderThickness="0"
+                                    Background="Transparent"
+                                    Foreground="#EF4444"
+                                    Focusable="False"
+                                    IsTabStop="False"
+                                    Panel.ZIndex="10"
+                                    Command="{Binding DataContext.DeleteImageCommand,
+                                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}"
+                                    Visibility="{Binding DataContext.CanEdit,
+                                                         RelativeSource={RelativeSource AncestorType=ItemsControl},
+                                                         Converter={StaticResource BoolToVisibilityConverter}}">
+
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+
+                                        <Border x:Name="Root"
+                                                Background="Transparent"
+                                                CornerRadius="6">
+
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"/>
+
+                                        </Border>
+
+                                        <ControlTemplate.Triggers>
+
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Root"
+                                                        Property="Background"
+                                                        Value="#22EF4444"/>
+                                            </Trigger>
+
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="Root"
+                                                        Property="Background"
+                                                        Value="#44EF4444"/>
+                                            </Trigger>
+
+                                        </ControlTemplate.Triggers>
+
+                                    </ControlTemplate>
+                                </Button.Template>
+
+                            </Button>
+
+                        </Grid>
 
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
