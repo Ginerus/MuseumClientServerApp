@@ -16,7 +16,6 @@
 
         <Style x:Key="DepartmentCardButtonStyle"
                TargetType="Button">
-
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="0"/>
@@ -26,43 +25,84 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-
-                        <Border x:Name="Root"
-                                Background="Transparent">
-
+                        <Border x:Name="Root" Background="Transparent">
                             <ContentPresenter/>
-
                         </Border>
 
                         <ControlTemplate.Triggers>
-
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
-                                <Setter TargetName="Root"
-                                        Property="Opacity"
-                                        Value="0.92"/>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.92"/>
                             </Trigger>
 
-                            <Trigger Property="IsPressed"
-                                     Value="True">
-                                <Setter TargetName="Root"
-                                        Property="Opacity"
-                                        Value="0.85"/>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.85"/>
                             </Trigger>
-
                         </ControlTemplate.Triggers>
-
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
 
+        <Style x:Key="DepartmentCardStyle"
+               TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="BorderBrush" Value="#DDD"/>
+            <Setter Property="BorderThickness" Value="1"/>
         </Style>
 
     </UserControl.Resources>
 
-    <Grid Background="#F5F5F5">
+    <Grid Background="White">
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <!-- ========================= -->
+        <!-- TOP BAR (НЕ ПЕРЕКРЫВАЕТСЯ) -->
+        <!-- ========================= -->
+
+        <Grid Height="70"
+              VerticalAlignment="Top"
+              Panel.ZIndex="10">
+
+            <TextBlock Text="Отделы музея"
+                       FontSize="22"
+                       FontWeight="Bold"
+                       Foreground="#1F2937"
+                       VerticalAlignment="Center"
+                       Margin="20,0,0,0"/>
+
+            <Button Content="➕ Добавить отдел"
+                    Width="170"
+                    Height="38"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Margin="0,0,20,0"
+                    Background="#4A90E2"
+                    Foreground="White"
+                    FontWeight="SemiBold"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}">
+
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+
+            </Button>
+
+        </Grid>
+
+        <!-- ========================= -->
+        <!-- CONTENT -->
+        <!-- ========================= -->
+
+        <ScrollViewer Margin="0,70,0,0"
+                      VerticalScrollBarVisibility="Auto">
 
             <ItemsControl ItemsSource="{Binding Departments}">
 
@@ -75,50 +115,84 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-                        <Button Command="{Binding DataContext.OpenDepartmentCommand,
-                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                CommandParameter="{Binding}"
-                                Style="{StaticResource DepartmentCardButtonStyle}">
+                        <Grid>
 
-                            <Border Width="180"
-                                    Height="200"
-                                    Margin="8"
-                                    Background="White"
-                                    CornerRadius="10"
-                                    BorderBrush="#DDD"
-                                    BorderThickness="1">
+                            <Button Command="{Binding DataContext.OpenDepartmentCommand,
+                                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}"
+                                    Style="{StaticResource DepartmentCardButtonStyle}">
 
-                                <Border.Effect>
-                                    <DropShadowEffect BlurRadius="10"
-                                                      ShadowDepth="2"
-                                                      Opacity="0.08"/>
-                                </Border.Effect>
+                                <Border Style="{StaticResource DepartmentCardStyle}"
+                                        Width="180"
+                                        Height="200"
+                                        Margin="8">
 
-                                <StackPanel>
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="10"
+                                                          ShadowDepth="2"
+                                                          Opacity="0.08"/>
+                                    </Border.Effect>
 
-                                    <Border Height="120"
-                                            Background="#EEE"
-                                            CornerRadius="8"
-                                            Margin="10,10,10,5"
-                                            ClipToBounds="True">
+                                    <StackPanel>
 
-                                        <Image Source="{Binding ThumbnailImage}"
-                                               Stretch="Uniform"/>
+                                        <Border Height="120"
+                                                Background="#EEE"
+                                                CornerRadius="8"
+                                                Margin="10,10,10,5"
+                                                ClipToBounds="True">
 
-                                    </Border>
+                                            <Image Source="{Binding ThumbnailImage}"
+                                                   Stretch="Uniform"/>
 
-                                    <TextBlock Text="{Binding Name}"
-                                               TextWrapping="Wrap"
-                                               TextAlignment="Center"
-                                               FontSize="12"
-                                               Margin="5"
-                                               MaxHeight="40"/>
+                                        </Border>
 
-                                </StackPanel>
+                                        <TextBlock Text="{Binding Name}"
+                                                   TextAlignment="Center"
+                                                   FontSize="12"
+                                                   Margin="5"
+                                                   MaxHeight="40"/>
 
-                            </Border>
+                                    </StackPanel>
 
-                        </Button>
+                                </Border>
+
+                            </Button>
+
+                            <!-- DELETE -->
+                            <Button Content="✕"
+                                    Width="22"
+                                    Height="22"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Margin="0,12,14,0"
+                                    Foreground="#EF4444"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Visibility="{Binding DataContext.CanEdit,
+                                                         RelativeSource={RelativeSource AncestorType=ItemsControl},
+                                                         Converter={StaticResource BoolToVisibilityConverter}}"
+                                    Command="{Binding DataContext.DeleteDepartmentCommand,
+                                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}">
+
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Root" Background="Transparent" CornerRadius="6">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"/>
+                                        </Border>
+
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Root" Property="Background" Value="#22EF4444"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+
+                            </Button>
+
+                        </Grid>
 
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
