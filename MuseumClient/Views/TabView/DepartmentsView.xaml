@@ -117,40 +117,42 @@
 
                         <Grid>
 
+                            <!-- ========================= -->
+                            <!-- CARD (OPEN) -->
+                            <!-- ========================= -->
                             <Button Command="{Binding DataContext.OpenDepartmentCommand,
-                                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                    CommandParameter="{Binding}"
-                                    Style="{StaticResource DepartmentCardButtonStyle}">
+                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                    CommandParameter="{Binding}"
+                    Style="{StaticResource DepartmentCardButtonStyle}">
 
                                 <Border Style="{StaticResource DepartmentCardStyle}"
-                                        Width="180"
-                                        Height="200"
-                                        Margin="8">
+                        Width="180"
+                        Height="200"
+                        Margin="8">
 
                                     <Border.Effect>
                                         <DropShadowEffect BlurRadius="10"
-                                                          ShadowDepth="2"
-                                                          Opacity="0.08"/>
+                                          ShadowDepth="2"
+                                          Opacity="0.08"/>
                                     </Border.Effect>
 
                                     <StackPanel>
 
                                         <Border Height="120"
-                                                Background="#EEE"
-                                                CornerRadius="8"
-                                                Margin="10,10,10,5"
-                                                ClipToBounds="True">
+                                Background="#EEE"
+                                CornerRadius="8"
+                                Margin="10,10,10,5"
+                                ClipToBounds="True">
 
                                             <Image Source="{Binding ThumbnailImage}"
-                                                   Stretch="Uniform"/>
-
+                                   Stretch="Uniform"/>
                                         </Border>
 
                                         <TextBlock Text="{Binding Name}"
-                                                   TextAlignment="Center"
-                                                   FontSize="12"
-                                                   Margin="5"
-                                                   MaxHeight="40"/>
+                                   TextAlignment="Center"
+                                   FontSize="12"
+                                   Margin="5"
+                                   MaxHeight="40"/>
 
                                     </StackPanel>
 
@@ -158,33 +160,93 @@
 
                             </Button>
 
-                            <!-- DELETE -->
-                            <Button Content="✕"
-                                    Width="22"
-                                    Height="22"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Top"
-                                    Margin="0,12,14,0"
-                                    Foreground="#EF4444"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    Visibility="{Binding DataContext.CanEdit,
-                                                         RelativeSource={RelativeSource AncestorType=ItemsControl},
-                                                         Converter={StaticResource BoolToVisibilityConverter}}"
-                                    Command="{Binding DataContext.DeleteDepartmentCommand,
-                                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                    CommandParameter="{Binding}">
+                            <!-- ========================= -->
+                            <!-- EDIT BUTTON -->
+                            <!-- ========================= -->
+                            <Button Content="✏️"
+                    Width="22"
+                    Height="22"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Margin="0,12,40,0"
+                    Foreground="Black"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Visibility="{Binding DataContext.CanEdit,
+                                         RelativeSource={RelativeSource AncestorType=ItemsControl},
+                                         Converter={StaticResource BoolToVisibilityConverter}}"
+                    Command="{Binding DataContext.EditDepartmentCommand,
+                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                    CommandParameter="{Binding}">
 
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
-                                        <Border x:Name="Root" Background="Transparent" CornerRadius="6">
+                                        <Border x:Name="Root"
+                                Background="Transparent"
+                                CornerRadius="6">
                                             <ContentPresenter HorizontalAlignment="Center"
-                                                              VerticalAlignment="Center"/>
+                                              VerticalAlignment="Center"/>
                                         </Border>
 
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="Root" Property="Background" Value="#22EF4444"/>
+                                                <Setter TargetName="Root"
+                                        Property="Background"
+                                        Value="#22EF4444"/>
+                                            </Trigger>
+
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="Root"
+                                        Property="Background"
+                                        Value="#44EF4444"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+
+                            </Button>
+
+                            <!-- ========================= -->
+                            <!-- DELETE BUTTON -->
+                            <!-- ========================= -->
+                            <Button Content="✕"
+                    Width="22"
+                    Height="22"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Margin="0,12,14,0"
+                    Foreground="#EF4444"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Visibility="{Binding DataContext.CanEdit,
+                                         RelativeSource={RelativeSource AncestorType=ItemsControl},
+                                         Converter={StaticResource BoolToVisibilityConverter}}"
+                    Command="{Binding DataContext.DeleteDepartmentCommand,
+                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                    CommandParameter="{Binding}">
+
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Root"
+                                Background="Transparent"
+                                CornerRadius="6">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                                        </Border>
+
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Root"
+                                        Property="Background"
+                                        Value="#22EF4444"/>
+                                            </Trigger>
+
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="Root"
+                                        Property="Background"
+                                        Value="#44EF4444"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>

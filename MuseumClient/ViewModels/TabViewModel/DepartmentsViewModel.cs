@@ -44,6 +44,9 @@ namespace MuseumClient.ViewModels
 
         private readonly AuthService _auth;
 
+        public RelayCommand EditDepartmentCommand { get; }
+
+
         public DepartmentsViewModel()
         {
             var config = new ConfigService().Server;
@@ -53,6 +56,8 @@ namespace MuseumClient.ViewModels
 
             LoadCommand = new RelayCommand(async _ => await LoadDepartmentsAsync());
             OpenDepartmentCommand = new RelayCommand(async param => await OpenDepartment(param));
+
+            EditDepartmentCommand = new RelayCommand(async param => await EditDepartment(param));
 
             _auth.AuthChanged += OnAuthChanged;
 
@@ -111,6 +116,19 @@ namespace MuseumClient.ViewModels
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        private async Task EditDepartment(object? parameter)
+{
+    if (parameter is not DepartmentDto dept)
+        return;
+
+    await Task.Run(() =>
+    {
+        MessageBox.Show(
+            $"Редактирование отдела:\n{dept.Name}\nID: {dept.DepartmentId}"
+        );
+    });
+}
 
         private void OnPropertyChanged(string name)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
