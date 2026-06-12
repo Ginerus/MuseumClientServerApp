@@ -22,12 +22,24 @@ namespace MuseumClient.ViewModels.Details
 
         public string Title { get; set; } = "";
         public string FileType { get; set; } = "";
+        public string? LocalPdfPath { get; set; }
 
         private string? _text;
         public string? Text
         {
             get => _text;
             set { _text = value; OnPropertyChanged(nameof(Text)); }
+        }
+
+        private bool _isPdfReady;
+        public bool IsPdfReady
+        {
+            get => _isPdfReady;
+            set
+            {
+                _isPdfReady = value;
+                OnPropertyChanged(nameof(IsPdfReady));
+            }
         }
 
         private byte[]? _rawFile;
@@ -63,10 +75,14 @@ namespace MuseumClient.ViewModels.Details
                     break;
 
                 case "pdf":
-                    // позже можно WebView2
-                    Text = "PDF preview (todo WebView2)";
-                    break;
+                    {
+                        var path = Path.Combine(Path.GetTempPath(), $"{_id}.pdf");
+                        File.WriteAllBytes(path, _rawFile!);
 
+                        LocalPdfPath = path;
+                        OnPropertyChanged(nameof(LocalPdfPath));
+                        break;
+                    }
                 default:
                     Text = "Формат откроется через внешнее приложение";
                     break;

@@ -5,7 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MuseumClient.Views.Details"
              mc:Ignorable="d"
-             xmlns:conv="clr-namespace:MuseumClient.Converters">
+             xmlns:conv="clr-namespace:MuseumClient.Converters"
+             xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:beh="clr-namespace:MuseumClient.Behaviors">
     
     <UserControl.Resources>
         <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
@@ -29,9 +32,28 @@
                        Visibility="{Binding Text, Converter={StaticResource NullToVisibilityConverter}}"/>
 
                 <!-- fallback -->
+                <!-- PDF -->
+                <StackPanel Margin="20">
+
+                    <TextBlock Text="{Binding Title}" />
+
+                    <TextBlock Text="{Binding Text}" />
+
+                    <wv2:WebView2 x:Name="PdfView"
+                  Height="700">
+
+                        <i:Interaction.Behaviors>
+                            <beh:WebView2PdfBehavior/>
+                        </i:Interaction.Behaviors>
+
+                    </wv2:WebView2>
+
+                </StackPanel>
+                <!-- fallback -->
                 <TextBlock Text="PDF / DOCX откроется отдельно"
-                       Foreground="Gray"
-                       Margin="0,10"/>
+                           Foreground="Gray"
+                           Margin="0,10"
+                           Visibility="{Binding IsPdf, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Invert}"/>
 
                 <Button Content="Скачать"
                     Command="{Binding DownloadCommand}"
