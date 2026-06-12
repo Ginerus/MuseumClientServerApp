@@ -34,6 +34,27 @@ namespace MuseumClient.ViewModels.Details
             }
         }
 
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+            }
+        }
+
+        private string _status = "";
+        public string Status
+        {
+            get => _status;
+            set
+            {
+                _status = value;
+                OnPropertyChanged(nameof(Status));
+            }
+        }
 
         public string? LocalPdfPath { get; set; }
 
@@ -63,8 +84,26 @@ namespace MuseumClient.ViewModels.Details
 
         private async Task InitializeAsync()
         {
-            await LoadMetadataAsync();
-            await LoadAsync();
+            try
+            {
+                IsLoading = true;
+                Status = "Загрузка документа...";
+
+                await LoadMetadataAsync();
+
+                Status = "Загрузка содержимого...";
+                await LoadAsync();
+
+                Status = "";
+            }
+            catch
+            {
+                Status = "Ошибка загрузки документа";
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         private string _title = "";

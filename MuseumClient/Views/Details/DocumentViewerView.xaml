@@ -9,6 +9,14 @@
     <UserControl.Resources>
         <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+        <Storyboard x:Key="SpinAnimation" RepeatBehavior="Forever">
+            <DoubleAnimation
+        Storyboard.TargetName="rot"
+        Storyboard.TargetProperty="Angle"
+        From="0" To="360"
+        Duration="0:0:1"/>
+        </Storyboard>
     </UserControl.Resources>
 
     <Grid Background="White">
@@ -122,6 +130,45 @@
 
             </Grid>
 
+        </Border>
+
+        <Border Background="#66000000"
+        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+        Panel.ZIndex="999">
+
+            <Grid HorizontalAlignment="Center"
+          VerticalAlignment="Center">
+
+                <Border Width="140"
+                Height="140"
+                Background="#1F2937"
+                CornerRadius="16"
+                Opacity="0.95">
+
+                    <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+
+                        <!-- СПИННЕР -->
+                        <Viewbox Width="40" Height="40" Margin="0,0,0,12">
+                            <Canvas Width="50" Height="50">
+                                <Ellipse Width="40" Height="40"
+                                 Stroke="#4A90E2"
+                                 StrokeThickness="4"
+                                 StrokeDashArray="2 2">
+                                    <Ellipse.RenderTransform>
+                                        <RotateTransform x:Name="rot"/>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                            </Canvas>
+                        </Viewbox>
+
+                        <TextBlock Text="{Binding Status}"
+                           Foreground="White"
+                           FontSize="14"
+                           HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </Border>
 
     </Grid>
