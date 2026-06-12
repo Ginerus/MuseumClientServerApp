@@ -31,16 +31,40 @@ namespace MuseumClient.ViewModels
         public RelayCommand LoadCommand { get; }
         public RelayCommand OpenDepartmentCommand { get; }
 
+        private bool _canEdit;
+        public bool CanEdit
+        {
+            get => _canEdit;
+            set
+            {
+                _canEdit = value;
+                OnPropertyChanged(nameof(CanEdit));
+            }
+        }
+
+        private readonly AuthService _auth;
+
         public DepartmentsViewModel()
         {
             var config = new ConfigService().Server;
             _apiService = new ApiService(config, AuthService.Instance());
 
+            _auth = AuthService.Instance();
+
             LoadCommand = new RelayCommand(async _ => await LoadDepartmentsAsync());
             OpenDepartmentCommand = new RelayCommand(async param => await OpenDepartment(param));
+
+            _auth.AuthChanged += OnAuthChanged;
+
+            CanEdit = _auth.IsAdmin; // начальное состояние
         }
 
-        // 🔥 Загрузка списка отделов
+        private void OnAuthChanged()
+        {
+            CanEdit = _auth.IsAdmin;
+        }
+
+        // Загрузка списка отделов
         public async Task LoadDepartmentsAsync()
         {
             try
@@ -58,7 +82,7 @@ namespace MuseumClient.ViewModels
                         Departments.Add(item);
                     }
 
-                    // 🔥 загрузка картинок
+                    // Загрузка картинок
                     _ = LoadThumbnailsAsync();
                 }
             }
@@ -72,7 +96,7 @@ namespace MuseumClient.ViewModels
             }
         }
 
-        // 🔥 Клик по отделу
+        // Клик по отделу
         private async Task OpenDepartment(object? parameter)
         {
             if (parameter is not DepartmentDto dept)
@@ -91,7 +115,7 @@ namespace MuseumClient.ViewModels
         private void OnPropertyChanged(string name)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        // 🔥 Загрузка картинок с token
+        // Загрузка картинок с token
         private async Task LoadThumbnailsAsync()
         {
             foreach (var dept in Departments)
