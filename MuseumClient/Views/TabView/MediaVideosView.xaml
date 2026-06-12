@@ -14,9 +14,9 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
-    <!-- STYLE (изоляция от HandyControl) -->
     <UserControl.Resources>
 
+        <!-- CARD STYLE -->
         <Style x:Key="VideoCardButtonStyle"
                TargetType="Button">
 
@@ -63,6 +63,36 @@
 
     <Grid Background="#F5F5F5">
 
+        <!-- ========================= -->
+        <!-- ADMIN ADD BUTTON -->
+        <!-- ========================= -->
+
+        <Button Content="➕ Добавить видео"
+                Width="180"
+                Height="38"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="0,15,20,0"
+                Panel.ZIndex="100"
+                Background="#4A90E2"
+                Foreground="White"
+                FontWeight="SemiBold"
+                BorderThickness="0"
+                Cursor="Hand"
+                Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}">
+
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+
+        </Button>
+
         <ScrollViewer VerticalScrollBarVisibility="Auto">
 
             <ItemsControl ItemsSource="{Binding Videos}">
@@ -77,88 +107,149 @@
 
                     <DataTemplate>
 
-                        <Button Command="{Binding DataContext.OpenVideoCommand,
-                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                CommandParameter="{Binding}"
-                                Style="{StaticResource VideoCardButtonStyle}">
+                        <Grid>
 
-                            <Border Width="220"
-                                    Height="200"
-                                    Margin="8"
-                                    Background="White"
-                                    CornerRadius="10"
-                                    BorderBrush="#DDD"
-                                    BorderThickness="1">
+                            <!-- CARD -->
+                            <Button Command="{Binding DataContext.OpenVideoCommand,
+                                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}"
+                                    Style="{StaticResource VideoCardButtonStyle}">
 
-                                <Border.Effect>
-                                    <DropShadowEffect BlurRadius="10"
-                                                      ShadowDepth="2"
-                                                      Opacity="0.08"/>
-                                </Border.Effect>
+                                <Border Width="220"
+                                        Height="200"
+                                        Margin="8"
+                                        Background="White"
+                                        CornerRadius="10"
+                                        BorderBrush="#DDD"
+                                        BorderThickness="1">
 
-                                <StackPanel>
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="10"
+                                                          ShadowDepth="2"
+                                                          Opacity="0.08"/>
+                                    </Border.Effect>
 
-                                    <!-- VIDEO BLOCK -->
-                                    <Border Height="120"
-                                            Background="Black"
-                                            CornerRadius="8"
-                                            Margin="10,10,10,5"
-                                            ClipToBounds="True">
+                                    <StackPanel>
 
-                                        <Grid>
+                                        <!-- VIDEO BLOCK -->
+                                        <Border Height="120"
+                                                Background="Black"
+                                                CornerRadius="8"
+                                                Margin="10,10,10,5"
+                                                ClipToBounds="True">
 
-                                            <Image Source="{Binding ThumbnailImage}"
-                                                   Stretch="UniformToFill"/>
+                                            <Grid>
 
-                                            <MediaElement LoadedBehavior="Manual"
-                                                          UnloadedBehavior="Stop"
-                                                          Stretch="UniformToFill"
-                                                          Opacity="0"
-                                                          IsHitTestVisible="False">
+                                                <Image Source="{Binding ThumbnailImage}"
+                                                       Stretch="UniformToFill"/>
 
-                                                <i:Interaction.Behaviors>
-                                                    <behaviors:VideoHoverBehavior/>
-                                                </i:Interaction.Behaviors>
+                                                <MediaElement LoadedBehavior="Manual"
+                                                              UnloadedBehavior="Stop"
+                                                              Stretch="UniformToFill"
+                                                              Opacity="0"
+                                                              IsHitTestVisible="False">
 
-                                            </MediaElement>
+                                                    <i:Interaction.Behaviors>
+                                                        <behaviors:VideoHoverBehavior/>
+                                                    </i:Interaction.Behaviors>
 
-                                            <TextBlock Text="Видео"
-                                                       Foreground="White"
-                                                       FontSize="16"
-                                                       FontWeight="Bold"
-                                                       HorizontalAlignment="Center"
-                                                       VerticalAlignment="Center">
+                                                </MediaElement>
 
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding ThumbnailImage}" Value="{x:Null}">
-                                                                <Setter Property="Visibility" Value="Visible"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
+                                                <TextBlock Text="Видео"
+                                                           Foreground="White"
+                                                           FontSize="16"
+                                                           FontWeight="Bold"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center">
 
-                                            </TextBlock>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding ThumbnailImage}" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
 
-                                        </Grid>
+                                                </TextBlock>
 
-                                    </Border>
+                                            </Grid>
 
-                                    <!-- TITLE -->
-                                    <TextBlock Text="{Binding Title}"
-                                               TextWrapping="Wrap"
-                                               TextAlignment="Center"
-                                               FontSize="12"
-                                               Margin="5"
-                                               MaxHeight="40"/>
+                                        </Border>
 
-                                </StackPanel>
+                                        <!-- TITLE -->
+                                        <TextBlock Text="{Binding Title}"
+                                                   TextWrapping="Wrap"
+                                                   TextAlignment="Center"
+                                                   FontSize="12"
+                                                   Margin="5"
+                                                   MaxHeight="40"/>
 
-                            </Border>
+                                    </StackPanel>
 
-                        </Button>
+                                </Border>
+
+                            </Button>
+
+                            <!-- DELETE BUTTON -->
+                            <Button Content="✕"
+                                    Width="22"
+                                    Height="22"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Margin="0,12,14,0"
+                                    Cursor="Hand"
+                                    BorderThickness="0"
+                                    Background="Transparent"
+                                    Foreground="#EF4444"
+                                    Focusable="False"
+                                    IsTabStop="False"
+                                    Panel.ZIndex="10"
+                                    Command="{Binding DataContext.DeleteVideoCommand,
+                                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}"
+                                    Visibility="{Binding DataContext.CanEdit,
+                                                         RelativeSource={RelativeSource AncestorType=ItemsControl},
+                                                         Converter={StaticResource BoolToVisibilityConverter}}">
+
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+
+                                        <Border x:Name="Root"
+                                                Background="Transparent"
+                                                CornerRadius="6">
+
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"/>
+
+                                        </Border>
+
+                                        <ControlTemplate.Triggers>
+
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Root"
+                                                        Property="Background"
+                                                        Value="#22EF4444"/>
+                                            </Trigger>
+
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="Root"
+                                                        Property="Background"
+                                                        Value="#44EF4444"/>
+                                            </Trigger>
+
+                                        </ControlTemplate.Triggers>
+
+                                    </ControlTemplate>
+                                </Button.Template>
+
+                            </Button>
+
+                        </Grid>
 
                     </DataTemplate>
 
