@@ -66,6 +66,10 @@ namespace MuseumClient.ViewModels
 
             LoadCommand = new RelayCommand(async _ => await LoadArticlesListAsync());
             OpenDocumentCommand = new RelayCommand(async p => await OpenDocument(p));
+
+            AuthService.Instance().AuthChanged += OnAuthChanged;
+
+            CanEdit = AuthService.Instance().IsAdmin; // важно: начальное значение
         }
 
         private void OnAuthChanged()
