@@ -20,12 +20,12 @@
 
         <!-- HEADER (фиксированный) -->
         <Border Grid.Row="0"
-            Background="White"
-            CornerRadius="16"
-            Padding="15"
-            Margin="20,20,20,10"
-            BorderBrush="#E5E7EB"
-            BorderThickness="2">
+                Background="White"
+                CornerRadius="16"
+                Padding="15"
+                Margin="20,20,20,10"
+                BorderBrush="#E5E7EB"
+                BorderThickness="2">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -47,78 +47,74 @@
                 </StackPanel>
 
                 <Button Grid.Column="1"
-        Content="Скачать"
-        Command="{Binding DownloadCommand}"
-        Width="120"
-        Height="36"
-        Background="#4A90E2"
-        Foreground="White"
-        BorderThickness="0"
-        FontSize="14"
-        FontWeight="SemiBold"
-        FontFamily="Segoe UI"
-        Cursor="Hand"/>
+                        Content="Скачать"
+                        Command="{Binding DownloadCommand}"
+                        Width="120"
+                        Height="36"
+                        Background="#4A90E2"
+                        Foreground="White"
+                        BorderThickness="0"
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        FontFamily="Segoe UI"
+                        Cursor="Hand"/>
 
             </Grid>
 
         </Border>
 
-        <!-- CONTENT (скроллится) -->
-        <!-- CONTENT -->
+        <!-- CONTENT AREA -->
         <Border Grid.Row="1"
                 Margin="20,0,20,20"
                 CornerRadius="16"
                 Background="#F3F4F6"
                 BorderBrush="#D1D5DB"
-                BorderThickness="1">
+                BorderThickness="1"
+                ClipToBounds="True">
 
-            <Border.Clip>
-                <RectangleGeometry RadiusX="16"
-                           RadiusY="16"
-                           Rect="0,0,9999,9999"/>
-            </Border.Clip>
+            <!-- ЕДИНЫЙ КОНТЕЙНЕР -->
+            <Grid>
 
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                  HorizontalScrollBarVisibility="Disabled">
+                <!-- TXT / MD -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Visibility="{Binding IsText, Converter={StaticResource BoolToVisibilityConverter}}">
 
-                <StackPanel Margin="5">
-
-                    <!-- TXT / MD -->
                     <Border Background="White"
                             Padding="15"
-                            Margin="0,0,0,5"
+                            Margin="10"
                             BorderBrush="#E5E7EB"
                             BorderThickness="1"
-                            Visibility="{Binding IsText, Converter={StaticResource BoolToVisibilityConverter}}">
+                            CornerRadius="12">
 
                         <TextBlock Text="{Binding Text}"
-                           TextWrapping="Wrap"
-                           FontFamily="Consolas"
-                           FontSize="14"/>
+                                   TextWrapping="Wrap"
+                                   FontFamily="Consolas"
+                                   FontSize="14"/>
                     </Border>
 
-                    <!-- PDF -->
-                    <Border Background="White"
-                    Padding="10"
-                    Margin="0,0,0,10"
-                    BorderBrush="#E5E7EB"
-                    BorderThickness="1"
-                    Visibility="{Binding IsPdf, Converter={StaticResource BoolToVisibilityConverter}}">
+                </ScrollViewer>
 
-                        <wv2:WebView2 x:Name="PdfView"
-                              Height="700">
+                <!-- PDF -->
+                <Border Visibility="{Binding IsPdf, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Background="White"
+                        Padding="10"
+                        Margin="10"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="1"
+                        CornerRadius="12">
 
-                            <i:Interaction.Behaviors>
-                                <beh:WebView2PdfBehavior/>
-                            </i:Interaction.Behaviors>
+                    <wv2:WebView2 x:Name="PdfView">
 
-                        </wv2:WebView2>
+                        <i:Interaction.Behaviors>
+                            <beh:WebView2PdfBehavior/>
+                        </i:Interaction.Behaviors>
 
-                    </Border>
+                    </wv2:WebView2>
 
-                </StackPanel>
+                </Border>
 
-            </ScrollViewer>
+            </Grid>
 
         </Border>
 

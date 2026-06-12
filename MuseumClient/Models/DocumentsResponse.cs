@@ -14,21 +14,12 @@ namespace MuseumClient.Models
         public List<DocumentDto> Data { get; set; } = new();
     }
 
-    public class DocumentDto
+    public class DocumentResponse
     {
-        [JsonPropertyName("documentId")]
-        public int DocumentId { get; set; }
+        [JsonPropertyName("status")]
+        public string Status { get; set; } = string.Empty;
 
-        [JsonPropertyName("title")]
-        public string Title { get; set; } = string.Empty;
-
-        [JsonPropertyName("fileType")]
-        public string FileType { get; set; } = string.Empty;
-
-        [JsonPropertyName("department")]
-        public DepartmentDto? Department { get; set; }
-
-        // 🔥 Для группировки
-        public string DepartmentName => Department?.Name ?? "Без отдела";
+        [JsonPropertyName("data")]
+        public DocumentDto Data { get; set; } = new();
     }
 }

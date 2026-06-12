@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using static MuseumClient.Models.MediaFileDto;
 
 namespace MuseumClient.ViewModels.Details
 {
@@ -22,7 +21,20 @@ namespace MuseumClient.ViewModels.Details
         private readonly ApiService _apiService;
         private readonly int _id;
 
-        public string FileType { get; set; } = "";
+        private string _fileType = "";
+        public string FileType
+        {
+            get => _fileType;
+            set
+            {
+                _fileType = value;
+                OnPropertyChanged(nameof(FileType));
+                OnPropertyChanged(nameof(IsPdf));
+                OnPropertyChanged(nameof(IsText));
+            }
+        }
+
+
         public string? LocalPdfPath { get; set; }
 
         private string? _text;
@@ -70,8 +82,6 @@ namespace MuseumClient.ViewModels.Details
             _id = id;
             FileType = fileType;
 
-            RefreshFileTypeFlags();
-
             _apiService = new ApiService(
                 new ConfigService().Server,
                 AuthService.Instance()
@@ -84,15 +94,13 @@ namespace MuseumClient.ViewModels.Details
 
         private async Task LoadMetadataAsync()
         {
-            var response = await _apiService.GetAsync<ApiResponse<MediaFileDto>>($"MediaFile/{_id}");
+            var response = await _apiService.GetAsync<DocumentResponse>($"Document/{_id}");
 
-            Title = response.data.Title;
-        }
-
-        private void RefreshFileTypeFlags()
-        {
-            OnPropertyChanged(nameof(IsPdf));
-            OnPropertyChanged(nameof(IsText));
+            if (response?.Data != null)
+            {
+                Title = response.Data.Title;
+                FileType = response.Data.FileType;
+            }
         }
 
         public RelayCommand DownloadCommand { get; }
@@ -124,21 +132,40 @@ namespace MuseumClient.ViewModels.Details
                     break;
             }
         }
-
         private async Task DownloadAsync()
         {
+            string extension = FileType?.ToLower() switch
+            {
+                "pdf" => ".pdf",
+                "txt" => ".txt",
+                "md" => ".md",
+                _ => ""
+            };
+
             var dialog = new SaveFileDialog
             {
-                FileName = Title,
-                Filter = "All files (*.*)|*.*"
+                FileName = string.IsNullOrWhiteSpace(Title)
+                    ? $"document{extension}"
+                    : $"{Title}{extension}",
+
+                Filter = FileType?.ToLower() switch
+                {
+                    "txt" => "Текстовый документ (*.txt)|*.txt|Все файлы (*.*)|*.*",
+                    "md" => "Markdown файл (*.md)|*.md|Все файлы (*.*)|*.*",
+                    "pdf" => "PDF документ (*.pdf)|*.pdf|Все файлы (*.*)|*.*",
+                    _ => "Все файлы (*.*)|*.*"
+                }
             };
 
             if (dialog.ShowDialog() == true && _rawFile != null)
             {
-                File.WriteAllBytes(dialog.FileName, _rawFile);
+                string path = dialog.FileName;
+
+                if (!Path.HasExtension(path))
+                    path += extension;
+
+                await File.WriteAllBytesAsync(path, _rawFile);
             }
         }
     }
-
-
 }
