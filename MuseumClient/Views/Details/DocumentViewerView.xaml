@@ -132,15 +132,13 @@
 
         </Border>
 
-        <Grid Panel.ZIndex="999"
-      Background="#66000000"
-      Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+        <!-- OVERLAY -->
+        <Grid Grid.RowSpan="2"
+          Panel.ZIndex="999"
+          Background="#66000000"
+          Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
 
-            <!-- РАСТЯГИВАЕМ НА ВСЁ -->
-            <Grid HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
-
-                <Border Width="140"
+            <Border Width="260"
                 Height="140"
                 Background="#1F2937"
                 CornerRadius="16"
@@ -148,30 +146,43 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
 
-                    <StackPanel HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
+                <StackPanel VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
 
-                        <Viewbox Width="40" Height="40" Margin="0,0,0,12">
-                            <Canvas Width="50" Height="50">
-                                <Ellipse Width="40" Height="40"
+                    <Viewbox Width="40"
+                         Height="40"
+                         Margin="0,0,0,12">
+
+                        <Canvas Width="50"
+                            Height="50">
+
+                            <Ellipse Width="40"
+                                 Height="40"
                                  Stroke="#4A90E2"
                                  StrokeThickness="4"
                                  StrokeDashArray="2 2">
-                                    <Ellipse.RenderTransform>
-                                        <RotateTransform x:Name="rot"/>
-                                    </Ellipse.RenderTransform>
-                                </Ellipse>
-                            </Canvas>
-                        </Viewbox>
 
-                        <TextBlock Text="{Binding Status}"
+                                <Ellipse.RenderTransform>
+                                    <RotateTransform x:Name="rot"/>
+                                </Ellipse.RenderTransform>
+
+                            </Ellipse>
+
+                        </Canvas>
+
+                    </Viewbox>
+
+                    <TextBlock Text="{Binding Status}"
                            Foreground="White"
                            FontSize="14"
-                           HorizontalAlignment="Center"/>
-                    </StackPanel>
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"
+                           Margin="10,0,10,0"/>
 
-                </Border>
-            </Grid>
+                </StackPanel>
+
+            </Border>
+
         </Grid>
     </Grid>
 </UserControl>
