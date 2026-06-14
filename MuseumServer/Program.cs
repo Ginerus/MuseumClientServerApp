@@ -41,28 +41,32 @@ namespace MuseumServer
 
             var app = builder.Build();
 
-            // Проверка подключения к БД
+            // Ожидание доступности базы данных
             using (var scope = app.Services.CreateScope())
             {
                 var dbFactory = scope.ServiceProvider
                     .GetRequiredService<IDbContextFactory<MuseumContext>>();
 
-                using var db = dbFactory.CreateDbContext();
+                Console.WriteLine("Ожидание доступности базы данных...");
 
-                try
+                while (true)
                 {
-                    if (!db.Database.CanConnect())
+                    try
                     {
-                        Console.WriteLine("Ошибка: база данных недоступна.");
-                        return;
+                        using var db = dbFactory.CreateDbContext();
+
+                        if (db.Database.CanConnect())
+                        {
+                            Console.WriteLine("Подключение к базе данных успешно.");
+                            break;
+                        }
+                    }
+                    catch
+                    {
+                        // Игнорируем ошибки и ждём следующую попытку
                     }
 
-                    Console.WriteLine("Подключение к базе данных успешно.");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Ошибка подключения к БД: {ex.Message}");
-                    return;
+                    Thread.Sleep(TimeSpan.FromSeconds(30));
                 }
             }
 
