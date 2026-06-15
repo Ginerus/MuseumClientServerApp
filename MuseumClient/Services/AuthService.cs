@@ -11,6 +11,7 @@ namespace MuseumClient.Services
         private static AuthService? _instance;
 
         public event Action? AuthChanged;
+
         public static AuthService Instance(ServerConfig? config = null)
         {
             if (_instance == null)
@@ -25,6 +26,7 @@ namespace MuseumClient.Services
         }
 
         private readonly ServerConfig _serverConfig;
+        private readonly HttpClient _client;
 
         private string _token;
         private string _baseUrl;
@@ -33,6 +35,11 @@ namespace MuseumClient.Services
         private AuthService(ServerConfig config)
         {
             _serverConfig = config;
+
+            _client = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(2)
+            };
         }
 
         public string CurrentToken => _token;
@@ -45,16 +52,11 @@ namespace MuseumClient.Services
 
         private async Task<string> GetWorkingUrlAsync()
         {
-            using var client = new HttpClient();
-
-            client.Timeout = TimeSpan.FromSeconds(2);
-
-            // 1. пробуем локальный сервер
             try
             {
                 var localTestUrl = $"{_serverConfig.LocalUrl}/api/health";
 
-                var response = await client.GetAsync(localTestUrl);
+                var response = await _client.GetAsync(localTestUrl);
 
                 System.Diagnostics.Debug.WriteLine("LOCAL TEST: " + localTestUrl);
 
@@ -66,7 +68,6 @@ namespace MuseumClient.Services
                 System.Diagnostics.Debug.WriteLine("LOCAL FAIL: " + ex.Message);
             }
 
-            // 2. fallback на удалённый
             System.Diagnostics.Debug.WriteLine("USING REMOTE: " + _serverConfig.RemoteUrl);
 
             return _serverConfig.RemoteUrl;
@@ -86,11 +87,9 @@ namespace MuseumClient.Services
                 password
             };
 
-            using var client = new HttpClient();
-
             try
             {
-                var response = await client.PostAsJsonAsync(url, payload);
+                var response = await _client.PostAsJsonAsync(url, payload);
 
                 var body = await response.Content.ReadAsStringAsync();
                 System.Diagnostics.Debug.WriteLine("RESPONSE: " + body);
@@ -115,13 +114,11 @@ namespace MuseumClient.Services
             catch (HttpRequestException ex)
             {
                 System.Diagnostics.Debug.WriteLine("REGISTER ERROR: " + ex);
-
                 return AuthResult.ServerUnavailable;
             }
             catch (TaskCanceledException ex)
             {
                 System.Diagnostics.Debug.WriteLine("TIMEOUT: " + ex);
-
                 return AuthResult.ServerUnavailable;
             }
         }
