@@ -1,13 +1,14 @@
 ﻿using MuseumServer.Data;
 using MuseumServer.Models;
 using Microsoft.EntityFrameworkCore;
+using BCrypt.Net;
 
 namespace MuseumServer.Services
 {
     public class SessionService
     {
         private readonly IDbContextFactory<MuseumContext> _dbFactory;
-        private readonly string _adminPassword;
+        private readonly string _adminPasswordHash;
         private readonly TimeSpan _sessionLifetime = TimeSpan.FromHours(12);
 
         public SessionService(IDbContextFactory<MuseumContext> dbFactory)
@@ -15,10 +16,11 @@ namespace MuseumServer.Services
             _dbFactory = dbFactory;
 
             var path = Path.Combine(AppContext.BaseDirectory, "Config", "password.txt");
+
             if (!File.Exists(path))
                 throw new FileNotFoundException("Файл с паролем администратора не найден", path);
 
-            _adminPassword = File.ReadAllText(path).Trim();
+            _adminPasswordHash = File.ReadAllText(path).Trim();
         }
 
         public string CreateSession(string userType)
@@ -55,7 +57,25 @@ namespace MuseumServer.Services
             return true;
         }
 
-        public bool ValidateAdminPassword(string password) => password == _adminPassword;
+        public bool ValidateAdminPassword(string password)
+        {
+            if (string.IsNullOrWhiteSpace(_adminPasswordHash))
+            {
+                return false;
+            }
+
+            //Console.WriteLine(BCrypt.Net.BCrypt.HashPassword(password));
+
+            try
+            {
+                var result = BCrypt.Net.BCrypt.Verify(password, _adminPasswordHash);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
 
         public Session? GetSession(string token)
         {
