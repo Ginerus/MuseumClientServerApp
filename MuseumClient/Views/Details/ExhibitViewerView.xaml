@@ -1,0 +1,246 @@
+﻿<UserControl x:Class="MuseumClient.Views.Details.ExhibitViewerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Background="White">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="450"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Фото экспоната -->
+
+        <Border Grid.Column="0"
+                Margin="20"
+                Background="White"
+                CornerRadius="16"
+                BorderBrush="#E5E7EB"
+                BorderThickness="2">
+
+            <Grid>
+
+                <Image Source="{Binding Image}"
+                       Stretch="Uniform"
+                       Margin="10"/>
+
+            </Grid>
+
+        </Border>
+
+        <!-- Правая колонка -->
+
+        <ScrollViewer Grid.Column="2"
+                      VerticalScrollBarVisibility="Auto">
+
+            <StackPanel Margin="20">
+
+                <!-- HEADER -->
+
+                <Border Background="White"
+                        CornerRadius="16"
+                        Padding="15"
+                        Margin="0,0,0,15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2">
+
+                    <Grid>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+
+                            <TextBlock Text="{Binding Name}"
+                                       FontSize="24"
+                                       FontWeight="Bold"
+                                       Foreground="#1F2937"
+                                       TextWrapping="Wrap"/>
+
+                            <TextBlock Text="{Binding DepartmentName}"
+                                       Margin="0,4,0,0"
+                                       FontSize="13"
+                                       Foreground="#6B7280"/>
+
+                        </StackPanel>
+
+                        <!-- Редактировать -->
+
+                        <Button Grid.Column="1"
+                                Content="Редактировать"
+                                Width="130"
+                                Height="36"
+                                Background="#F59E0B"
+                                Foreground="White"
+                                BorderThickness="0"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                FontFamily="Segoe UI"
+                                Cursor="Hand"
+                                Visibility="{Binding CanEdit,
+                                                        Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                        <!-- Сохранить -->
+
+                        <Button Grid.Column="3"
+                                Content="Сохранить"
+                                Width="120"
+                                Height="36"
+                                Background="#4A90E2"
+                                Foreground="White"
+                                BorderThickness="0"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                FontFamily="Segoe UI"
+                                Cursor="Hand"
+                                Visibility="{Binding CanEdit,
+                                                     Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                        <!-- Удалить -->
+
+                        <Button Grid.Column="5"
+                                Content="Удалить"
+                                Width="120"
+                                Height="36"
+                                Background="#D9534F"
+                                Foreground="White"
+                                BorderThickness="0"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                FontFamily="Segoe UI"
+                                Cursor="Hand"
+                                Visibility="{Binding CanEdit,
+                             Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                    </Grid>
+
+                </Border>
+
+                <!-- Карточки характеристик -->
+
+                <UniformGrid Columns="2"
+                             Margin="0,0,0,15">
+
+                    <Border Margin="0,0,10,0"
+                            Padding="12"
+                            Background="White"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="2"
+                            CornerRadius="12">
+
+                        <StackPanel>
+
+                            <TextBlock Text="Материалы"
+                                       FontWeight="SemiBold"
+                                       FontSize="14"
+                                       Foreground="#374151"/>
+
+                            <TextBlock Text="{Binding Materials}"
+                                       Margin="0,6,0,0"
+                                       TextWrapping="Wrap"
+                                       Foreground="#111827"/>
+
+                        </StackPanel>
+
+                    </Border>
+
+                    <Border Padding="12"
+                            Background="White"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="2"
+                            CornerRadius="12">
+
+                        <StackPanel>
+
+                            <TextBlock Text="Тип хранения"
+                                       FontWeight="SemiBold"
+                                       FontSize="14"
+                                       Foreground="#374151"/>
+
+                            <TextBlock Text="{Binding StorageType}"
+                                       Margin="0,6,0,0"
+                                       TextWrapping="Wrap"
+                                       Foreground="#111827"/>
+
+                        </StackPanel>
+
+                    </Border>
+
+                </UniformGrid>
+
+                <!-- Описание -->
+
+                <Border Background="White"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2"
+                        CornerRadius="12"
+                        Padding="15">
+
+                    <StackPanel>
+
+                        <TextBlock Text="Описание"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="#1F2937"/>
+
+                        <Separator Margin="0,10"/>
+
+                        <TextBlock Text="{Binding Description}"
+                                   TextWrapping="Wrap"
+                                   FontSize="15"
+                                   Foreground="#374151"
+                                   LineHeight="24"/>
+
+                    </StackPanel>
+
+                </Border>
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+        <!-- OVERLAY ЗАГРУЗКИ -->
+
+        <Grid Panel.ZIndex="999"
+              Grid.ColumnSpan="3"
+              Background="#66000000"
+              Visibility="{Binding IsLoading,
+                                   Converter={StaticResource BoolToVisibilityConverter}}">
+
+            <Border Width="260"
+                    Height="140"
+                    Background="#1F2937"
+                    CornerRadius="16"
+                    Opacity="0.95"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+
+                    <ProgressBar Width="180"
+                                 Height="8"
+                                 IsIndeterminate="True"
+                                 Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Загрузка экспоната..."
+                               Foreground="White"
+                               FontSize="14"
+                               TextAlignment="Center"/>
+
+                </StackPanel>
+
+            </Border>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>

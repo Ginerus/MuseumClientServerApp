@@ -55,8 +55,12 @@ namespace MuseumClient.ViewModels
         public RelayCommand LoadCommand { get; }
         public RelayCommand OpenExhibitCommand { get; }
 
-        public ExhibitsViewModel()
+        private readonly ContentHubViewModel _hub;
+
+        public ExhibitsViewModel(ContentHubViewModel hub)
         {
+            _hub = hub;
+
             var config = new ConfigService().Server;
             _apiService = new ApiService(config, AuthService.Instance());
 
@@ -125,12 +129,9 @@ namespace MuseumClient.ViewModels
             if (parameter is not ExhibitDto exhibit)
                 return;
 
-            await Task.Run(() =>
-            {
-                MessageBox.Show(
-                    $"Экспонат:\n{exhibit.Name}\nОтдел: {exhibit.DepartmentName}\nID: {exhibit.ExhibitId}"
-                );
-            });
+            _hub.ShowExhibit(exhibit.ExhibitId);
+
+            await Task.CompletedTask;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

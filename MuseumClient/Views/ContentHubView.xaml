@@ -88,6 +88,10 @@
             <viewsDetails:DocumentViewerView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vmDetails:ExhibitViewerViewModel}">
+            <viewsDetails:ExhibitViewerView/>
+        </DataTemplate>
+
     </UserControl.Resources>
 
         <Grid Background="White">

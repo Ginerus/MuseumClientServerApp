@@ -55,7 +55,7 @@ namespace MuseumClient.ViewModels
             // Инициализация внутренних ViewModel
             AboutMuseumVM = new AboutMuseumViewModel();
             ArticlesVM = new ArticlesViewModel(this);
-            ExhibitsVM = new ExhibitsViewModel();
+            ExhibitsVM = new ExhibitsViewModel(this);
             DepartmentsVM = new DepartmentsViewModel();
             MediaImagesVM = new MediaImagesViewModel(this);
             MediaVideosVM = new MediaVideosViewModel();
@@ -119,6 +119,12 @@ namespace MuseumClient.ViewModels
         {
             CurrentTabView = new DocumentViewerViewModel(id, fileType);
         }
+
+        public void ShowExhibit(int id)
+        {
+            CurrentTabView = new ExhibitViewerViewModel(id);
+        }
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
