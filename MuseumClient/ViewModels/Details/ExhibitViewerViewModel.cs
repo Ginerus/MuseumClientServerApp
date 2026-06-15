@@ -21,7 +21,27 @@ namespace MuseumClient.ViewModels.Details
                 new ConfigService().Server,
                 AuthService.Instance());
 
+            CanEdit = AuthService.Instance().IsAdmin;
+
+            AuthService.Instance().AuthChanged += OnAuthChanged;
+
             _ = InitializeAsync();
+        }
+
+        private void OnAuthChanged()
+        {
+            CanEdit = AuthService.Instance().IsAdmin;
+        }
+
+        private bool _canEdit;
+        public bool CanEdit
+        {
+            get => _canEdit;
+            set
+            {
+                _canEdit = value;
+                OnPropertyChanged(nameof(CanEdit));
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
