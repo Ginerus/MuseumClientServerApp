@@ -150,6 +150,8 @@
 
             <TextBlock Grid.Row="2"
                        Text="{Binding SelectedImagePath}"
+                       MaxWidth="300"
+                       TextTrimming="CharacterEllipsis"
                        Margin="0,10,0,0"
                        TextWrapping="Wrap"
                        Foreground="#6B7280"

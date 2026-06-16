@@ -1,8 +1,5 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
-using MuseumClient.Models;
 
 namespace MuseumClient.Services
 {
@@ -90,6 +87,19 @@ namespace MuseumClient.Services
             ApplyHeaders();
 
             var response = await _client.DeleteAsync(BuildUrl(endpoint));
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<T>();
+        }
+
+        public async Task<T> PostMultipartAsync<T>(string endpoint, MultipartFormDataContent content)
+        {
+            ApplyHeaders();
+
+            var response = await _client.PostAsync(
+                BuildUrl(endpoint),
+                content);
 
             response.EnsureSuccessStatusCode();
 
