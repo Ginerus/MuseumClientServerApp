@@ -5,30 +5,61 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d">
 
+
     <Grid Background="White">
 
+
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="450"/>
+
+            <!-- фото -->
+            <ColumnDefinition Width="0.9*"
+                              MinWidth="320"/>
+
             <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="*"/>
+
+            <!-- информация -->
+            <ColumnDefinition Width="1.6*"/>
+
         </Grid.ColumnDefinitions>
 
-        <!-- ЛЕВАЯ ЧАСТЬ -->
 
-        <StackPanel Grid.Column="0"
-                    Margin="20">
 
-            <Border Height="500"
+        <!-- ================= -->
+        <!-- IMAGE AREA -->
+        <!-- ================= -->
+
+
+        <Grid Grid.Column="0"
+              Margin="20">
+
+
+            <Grid.RowDefinitions>
+
+                <RowDefinition Height="*"/>
+
+                <RowDefinition Height="Auto"/>
+
+                <RowDefinition Height="Auto"/>
+
+            </Grid.RowDefinitions>
+
+
+
+            <Border Grid.Row="0"
                     Background="White"
                     CornerRadius="16"
                     BorderBrush="#E5E7EB"
-                    BorderThickness="2">
+                    BorderThickness="2"
+                    MinHeight="300">
+
 
                 <Grid>
 
+
                     <Image Source="{Binding Image}"
                            Stretch="Uniform"
-                           Margin="10"/>
+                           Margin="15"/>
+
 
                     <TextBlock Text="Изображение не выбрано"
                                Foreground="#9CA3AF"
@@ -36,243 +67,402 @@
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"/>
 
+
                 </Grid>
+
 
             </Border>
 
-            <Button Content="Выбрать изображение"
-                    Height="40"
-                    Margin="0,15,0,0"
-                    Background="#4A90E2"
-                    Foreground="White"
-                    BorderThickness="0"
-                    FontWeight="SemiBold"
-                    Cursor="Hand"
-                    Command="{Binding SelectImageCommand}">
+
+
+            <Button Grid.Row="1"
+        Height="42"
+        Margin="0,15,0,0"
+        Cursor="Hand"
+        Background="White"
+        BorderBrush="#4A90E2"
+        BorderThickness="2"
+        Padding="15,0"
+        Command="{Binding SelectImageCommand}">
+
 
                 <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                CornerRadius="8">
 
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="Root"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="10"
+                    Padding="{TemplateBinding Padding}">
+
+
+                            <ContentPresenter
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+
 
                         </Border>
+
+
+                        <ControlTemplate.Triggers>
+
+
+                            <Trigger Property="IsMouseOver"
+                         Value="True">
+
+                                <Setter TargetName="Root"
+                            Property="Background"
+                            Value="#EFF6FF"/>
+
+                            </Trigger>
+
+
+                            <Trigger Property="IsPressed"
+                         Value="True">
+
+                                <Setter TargetName="Root"
+                            Property="Background"
+                            Value="#DBEAFE"/>
+
+                            </Trigger>
+
+
+                        </ControlTemplate.Triggers>
+
+
                     </ControlTemplate>
+
+
                 </Button.Template>
+
+
+
+                <TextBlock Text="Выбрать изображение"
+               Foreground="#2563EB"
+               FontWeight="SemiBold"
+               FontSize="14"/>
+
 
             </Button>
 
-            <TextBlock Text="{Binding SelectedImagePath}"
+
+            <TextBlock Grid.Row="2"
+                       Text="{Binding SelectedImagePath}"
                        Margin="0,10,0,0"
                        TextWrapping="Wrap"
                        Foreground="#6B7280"
                        FontSize="12"/>
 
-        </StackPanel>
 
-        <!-- ПРАВАЯ ЧАСТЬ -->
+        </Grid>
+
+
+
+
+
+        <!-- ================= -->
+        <!-- RIGHT CONTENT -->
+        <!-- ================= -->
+
 
         <ScrollViewer Grid.Column="2"
-                      VerticalScrollBarVisibility="Auto">
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+
 
             <StackPanel Margin="20">
+
+
+
+                <!-- HEADER -->
+
+
+<!-- HEADER -->
 
                 <!-- HEADER -->
 
                 <Border Background="White"
-                        CornerRadius="16"
-                        Padding="15"
-                        Margin="0,0,0,15"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="2">
+        CornerRadius="16"
+        Padding="15"
+        BorderBrush="#E5E7EB"
+        BorderThickness="2"
+        Margin="0,0,0,15">
 
-                    <Grid>
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                    <DockPanel LastChildFill="True">
 
-                        <StackPanel>
 
-                            <TextBlock Text="Создание экспоната"
-                                       FontSize="24"
-                                       FontWeight="Bold"
-                                       Foreground="#1F2937"/>
+                        <!-- Кнопка справа -->
 
-                            <TextBlock Text="Заполните информацию о новом экспонате"
-                                       Margin="0,4,0,0"
-                                       FontSize="13"
-                                       Foreground="#6B7280"/>
+                        <Button DockPanel.Dock="Right"
+                Content="Добавить"
+                Width="130"
+                Height="38"
+                Margin="15,0,0,0"
+                Background="#4A90E2"
+                Foreground="White"
+                BorderThickness="0"
+                FontWeight="SemiBold"
+                Cursor="Hand"
+                VerticalAlignment="Center"
+                Command="{Binding SaveCommand}">
 
-                        </StackPanel>
-
-                        <Button Grid.Column="1"
-                                Content="Создать"
-                                Width="140"
-                                Height="36"
-                                Background="#4A90E2"
-                                Foreground="White"
-                                BorderThickness="0"
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                Cursor="Hand"
-                                Command="{Binding SaveCommand}">
 
                             <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}"
-                                            CornerRadius="8">
 
-                                        <ContentPresenter HorizontalAlignment="Center"
-                                                          VerticalAlignment="Center"/>
+                                <ControlTemplate TargetType="Button">
+
+                                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="8">
+
+                                        <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
 
                                     </Border>
+
                                 </ControlTemplate>
+
                             </Button.Template>
+
 
                         </Button>
 
-                    </Grid>
 
-                </Border>
 
-                <!-- НАЗВАНИЕ -->
-
-                <Border Background="White"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="2"
-                        CornerRadius="12"
-                        Padding="15"
-                        Margin="0,0,0,15">
-
-                    <StackPanel>
-
-                        <TextBlock Text="Название"
-                                   FontSize="16"
-                                   FontWeight="SemiBold"
-                                   Foreground="#374151"/>
-
-                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
-                                 Margin="0,8,0,0"
-                                 Height="35"/>
-
-                    </StackPanel>
-
-                </Border>
-
-                <!-- ХАРАКТЕРИСТИКИ -->
-
-                <UniformGrid Columns="2"
-                             Margin="0,0,0,15">
-
-                    <!-- Материалы -->
-
-                    <Border Margin="0,0,10,0"
-                            Background="White"
-                            BorderBrush="#E5E7EB"
-                            BorderThickness="2"
-                            CornerRadius="12"
-                            Padding="15">
+                        <!-- Текст занимает всё место -->
 
                         <StackPanel>
 
-                            <TextBlock Text="Материалы"
-                                       FontSize="16"
-                                       FontWeight="SemiBold"
-                                       Foreground="#374151"/>
 
-                            <TextBox Text="{Binding Materials, UpdateSourceTrigger=PropertyChanged}"
-                                     Margin="0,8,0,0"/>
+                            <TextBlock Text="Новый экспонат"
+                       FontSize="26"
+                       FontWeight="Bold"
+                       Foreground="#1F2937"/>
+
+
+                            <TextBlock Text="Заполните информацию"
+                       Margin="0,5,0,0"
+                       Foreground="#6B7280"/>
+
 
                         </StackPanel>
 
-                    </Border>
 
-                    <!-- Хранение -->
+                    </DockPanel>
 
-                    <Border Background="White"
-                            BorderBrush="#E5E7EB"
-                            BorderThickness="2"
+
+                </Border>
+
+
+
+
+                <!-- NAME -->
+
+
+                <Border Background="White"
+                        CornerRadius="12"
+                        Padding="15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2"
+                        Margin="0,0,0,15">
+
+
+                    <StackPanel>
+
+
+                        <TextBlock Text="Название"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"/>
+
+
+                        <TextBox Height="36"
+                                 Margin="0,8,0,0"
+                                 Text="{Binding Name,
+                                 UpdateSourceTrigger=PropertyChanged}"/>
+
+
+                    </StackPanel>
+
+
+                </Border>
+
+
+
+
+
+                <!-- DATA GRID -->
+
+
+                <Grid Margin="0,0,0,15">
+
+
+                    <Grid.ColumnDefinitions>
+
+                        <ColumnDefinition Width="*"/>
+
+                        <ColumnDefinition Width="15"/>
+
+                        <ColumnDefinition Width="*"/>
+
+                    </Grid.ColumnDefinitions>
+
+
+
+
+
+                    <!-- MATERIALS -->
+
+
+                    <Border Grid.Column="0"
+                            Background="White"
                             CornerRadius="12"
-                            Padding="15">
+                            Padding="15"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="2">
+
 
                         <StackPanel>
 
+
+                            <TextBlock Text="Материалы"
+                                       FontWeight="SemiBold"/>
+
+
+                            <TextBox Margin="0,8,0,0"
+                                     Height="35"
+                                     Text="{Binding Materials,
+                                     UpdateSourceTrigger=PropertyChanged}"/>
+
+
+                        </StackPanel>
+
+
+                    </Border>
+
+
+
+
+
+                    <!-- STORAGE -->
+
+
+                    <Border Grid.Column="2"
+                            Background="White"
+                            CornerRadius="12"
+                            Padding="15"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="2">
+
+
+                        <StackPanel>
+
+
                             <TextBlock Text="Тип хранения"
-                                       FontSize="16"
-                                       FontWeight="SemiBold"
-                                       Foreground="#374151"/>
+                                       FontWeight="SemiBold"/>
+
 
                             <CheckBox Content="Постоянное хранение"
                                       Margin="0,10,0,0"
                                       IsChecked="{Binding IsPermanent}"/>
 
+
                         </StackPanel>
+
 
                     </Border>
 
-                </UniformGrid>
 
-                <!-- ОТДЕЛ -->
+                </Grid>
+
+
+
+
+
+
+
+                <!-- DEPARTMENT -->
+
 
                 <Border Background="White"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="2"
                         CornerRadius="12"
                         Padding="15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2"
                         Margin="0,0,0,15">
+
 
                     <StackPanel>
 
-                        <TextBlock Text="Отдел"
-                                   FontSize="16"
-                                   FontWeight="SemiBold"
-                                   Foreground="#374151"/>
 
-                        <ComboBox Margin="0,8,0,0"
-                                  Height="35"
+                        <TextBlock Text="Отдел"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"/>
+
+
+                        <ComboBox Height="36"
+                                  Margin="0,8,0,0"
                                   ItemsSource="{Binding Departments}"
                                   SelectedItem="{Binding SelectedDepartment}"
                                   DisplayMemberPath="Name"/>
 
+
                     </StackPanel>
+
 
                 </Border>
 
-                <!-- ОПИСАНИЕ -->
+
+
+
+
+
+
+                <!-- DESCRIPTION -->
+
 
                 <Border Background="White"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="2"
                         CornerRadius="12"
-                        Padding="15">
+                        Padding="15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2">
+
 
                     <StackPanel>
 
+
                         <TextBlock Text="Описание"
                                    FontSize="18"
-                                   FontWeight="SemiBold"
-                                   Foreground="#1F2937"/>
+                                   FontWeight="SemiBold"/>
+
 
                         <Separator Margin="0,10"/>
 
-                        <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
-                                 AcceptsReturn="True"
+
+                        <TextBox MinHeight="180"
                                  TextWrapping="Wrap"
+                                 AcceptsReturn="True"
                                  VerticalScrollBarVisibility="Auto"
-                                 Height="250"/>
+                                 Text="{Binding Description,
+                                 UpdateSourceTrigger=PropertyChanged}"/>
+
 
                     </StackPanel>
 
+
                 </Border>
+
+
 
             </StackPanel>
 
+
         </ScrollViewer>
 
+
     </Grid>
+
 
 </UserControl>
