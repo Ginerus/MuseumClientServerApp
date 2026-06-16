@@ -92,6 +92,10 @@
             <viewsDetails:ExhibitViewerView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vmDetails:AddExhibitViewModel}">
+            <viewsDetails:AddExhibitView/>
+        </DataTemplate>
+
     </UserControl.Resources>
 
         <Grid Background="White">

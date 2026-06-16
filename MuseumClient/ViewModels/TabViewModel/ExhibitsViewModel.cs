@@ -54,6 +54,7 @@ namespace MuseumClient.ViewModels
 
         public RelayCommand LoadCommand { get; }
         public RelayCommand OpenExhibitCommand { get; }
+        public RelayCommand CreateExhibitCommand { get; }
 
         private readonly ContentHubViewModel _hub;
 
@@ -66,6 +67,7 @@ namespace MuseumClient.ViewModels
 
             LoadCommand = new RelayCommand(async _ => await LoadExhibitsAsync());
             OpenExhibitCommand = new RelayCommand(async param => await OpenExhibit(param));
+            CreateExhibitCommand = new RelayCommand(async param => await OpenCreateExhibit(param));
 
             AuthService.Instance().AuthChanged += OnAuthChanged;
 
@@ -132,6 +134,11 @@ namespace MuseumClient.ViewModels
             _hub.ShowExhibit(exhibit.ExhibitId);
 
             await Task.CompletedTask;
+        }
+
+        private async Task OpenCreateExhibit(object? parameter)
+        {
+            _hub.ShowCreateExhibit();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
