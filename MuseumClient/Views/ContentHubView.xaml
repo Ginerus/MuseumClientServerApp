@@ -36,11 +36,16 @@
 
                         <ControlTemplate.Triggers>
 
-                            <Trigger Property="IsMouseOver" Value="True">
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                    <Condition Property="Background" Value="Transparent"/>
+                                </MultiTrigger.Conditions>
+
                                 <Setter TargetName="border"
-                                Property="Background"
-                                Value="#22FFFFFF"/>
-                            </Trigger>
+                                        Property="Background"
+                                        Value="#22FFFFFF"/>
+                            </MultiTrigger>
 
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="border"
