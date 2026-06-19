@@ -6,19 +6,6 @@
              xmlns:beh="clr-namespace:MuseumClient.Behaviors"
              xmlns:conv="clr-namespace:MuseumClient.Converters">
 
-    <UserControl.Resources>
-        <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-
-        <Storyboard x:Key="SpinAnimation" RepeatBehavior="Forever">
-            <DoubleAnimation
-        Storyboard.TargetName="rot"
-        Storyboard.TargetProperty="Angle"
-        From="0" To="360"
-        Duration="0:0:1"/>
-        </Storyboard>
-    </UserControl.Resources>
-
     <Grid Background="White">
 
         <Grid.RowDefinitions>
@@ -132,52 +119,35 @@
 
         </Border>
 
-        <!-- OVERLAY -->
+        <!-- OVERLAY ЗАГРУЗКИ -->
         <Grid Grid.RowSpan="2"
-          Panel.ZIndex="999"
-          Background="#66000000"
-          Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+      Panel.ZIndex="999"
+      Background="#66000000"
+      Visibility="{Binding IsLoading,
+                           Converter={StaticResource BoolToVisibilityConverter}}">
 
             <Border Width="260"
-                Height="140"
-                Background="#1F2937"
-                CornerRadius="16"
-                Opacity="0.95"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+            Height="140"
+            Background="#1F2937"
+            CornerRadius="16"
+            Opacity="0.95"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
 
                 <StackPanel VerticalAlignment="Center"
-                        HorizontalAlignment="Center">
+                    HorizontalAlignment="Center">
 
-                    <Viewbox Width="40"
-                         Height="40"
-                         Margin="0,0,0,12">
-
-                        <Canvas Width="50"
-                            Height="50">
-
-                            <Ellipse Width="40"
-                                 Height="40"
-                                 Stroke="#4A90E2"
-                                 StrokeThickness="4"
-                                 StrokeDashArray="2 2">
-
-                                <Ellipse.RenderTransform>
-                                    <RotateTransform x:Name="rot"/>
-                                </Ellipse.RenderTransform>
-
-                            </Ellipse>
-
-                        </Canvas>
-
-                    </Viewbox>
+                    <ProgressBar Width="180"
+                         Height="8"
+                         IsIndeterminate="True"
+                         Margin="0,0,0,15"/>
 
                     <TextBlock Text="{Binding Status}"
-                           Foreground="White"
-                           FontSize="14"
-                           TextAlignment="Center"
-                           TextWrapping="Wrap"
-                           Margin="10,0,10,0"/>
+                       Foreground="White"
+                       FontSize="14"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       Margin="10,0,10,0"/>
 
                 </StackPanel>
 
