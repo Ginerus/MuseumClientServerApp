@@ -74,7 +74,22 @@ namespace MuseumClient.ViewModels.Details
                     OnPropertyChanged(nameof(DepartmentName));
                 }
 
-                var bytes = await _apiService.GetBytesAsync($"MediaFile/stream/{_id}");
+
+                var bytesTask = _apiService.GetBytesAsync($"MediaFile/stream/{_id}");
+
+                var completed = await Task.WhenAny(
+                    bytesTask,
+                    Task.Delay(10000)
+                );
+
+                if (completed != bytesTask)
+                {
+                    throw new Exception("Превышено время загрузки изображения");
+                }
+
+
+                var bytes = await bytesTask;
+
 
                 var image = new BitmapImage();
 
@@ -89,12 +104,19 @@ namespace MuseumClient.ViewModels.Details
 
                 Image = image;
             }
+            catch (Exception ex)
+            {
+                Title = "Ошибка загрузки";
+                Description = ex.Message;
+
+                OnPropertyChanged(nameof(Title));
+                OnPropertyChanged(nameof(Description));
+            }
             finally
             {
                 IsLoading = false;
             }
         }
-
         private async Task DownloadAsync()
         {
             try

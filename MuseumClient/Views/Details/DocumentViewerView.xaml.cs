@@ -24,16 +24,6 @@ namespace MuseumClient.Views.Details
         public DocumentViewerView()
         {
             InitializeComponent();
-
-            Loaded += DocumentViewerView_Loaded;
-        }
-
-        private void DocumentViewerView_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (Resources["SpinAnimation"] is Storyboard sb)
-            {
-                sb.Begin();
-            }
         }
     }
 }
