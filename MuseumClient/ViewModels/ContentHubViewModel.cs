@@ -28,6 +28,18 @@ namespace MuseumClient.ViewModels
             }
         }
 
+        private string _selectedMenu = "About";
+
+        public string SelectedMenu
+        {
+            get => _selectedMenu;
+            set
+            {
+                _selectedMenu = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedMenu)));
+            }
+        }
+
         // Внутренние ViewModels
         public AboutMuseumViewModel AboutMuseumVM { get; }
         public ArticlesViewModel ArticlesVM { get; }
@@ -63,38 +75,39 @@ namespace MuseumClient.ViewModels
             // Команды
             ShowAboutMuseumCommand = new RelayCommand(async _ =>
             {
+                SelectedMenu = "About";
                 CurrentTabView = AboutMuseumVM;
-                await AboutMuseumVM.LoadDepartmentCountAsync(); // обновляем данные
+                await AboutMuseumVM.LoadDepartmentCountAsync();
             });
 
             ShowArticlesCommand = new RelayCommand(async _ =>
             {
+                SelectedMenu = "Articles";
                 CurrentTabView = ArticlesVM;
-                //await Task.CompletedTask;
             });
 
             ShowExhibitsCommand = new RelayCommand(async _ =>
             {
+                SelectedMenu = "Exhibits";
                 CurrentTabView = ExhibitsVM;
-                //await Task.CompletedTask;
             });
 
             ShowDepartmentsCommand = new RelayCommand(async _ =>
             {
+                SelectedMenu = "Departments";
                 CurrentTabView = DepartmentsVM;
-                //await Task.CompletedTask;
             });
 
             ShowIllustrationsCommand = new RelayCommand(async _ =>
             {
+                SelectedMenu = "Illustrations";
                 CurrentTabView = MediaImagesVM;
-                //await Task.CompletedTask;
             });
 
             ShowVideosCommand = new RelayCommand(async _ =>
             {
+                SelectedMenu = "Videos";
                 CurrentTabView = MediaVideosVM;
-                //await Task.CompletedTask;
             });
 
             ExitCommand = new RelayCommand(async _ =>

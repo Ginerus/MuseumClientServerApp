@@ -12,6 +12,7 @@
             <Setter Property="Height" Value="42"/>
             <Setter Property="Margin" Value="10,4"/>
             <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -22,7 +23,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="border"
-                        Background="Transparent"
+                        Background="{TemplateBinding Background}"
                         BorderBrush="#55FFFFFF"
                         BorderThickness="2"
                         CornerRadius="8">
@@ -167,30 +168,122 @@
                     </Border>
 
                     <Button Content="🏠  О музее"
-                                Command="{Binding ShowAboutMuseumCommand}"
-                                Style="{StaticResource SidebarButtonStyle}"/>
+                            Command="{Binding ShowAboutMuseumCommand}">
 
-                        <Button Content="📰  Статьи"
-                                Command="{Binding ShowArticlesCommand}"
-                                Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource SidebarButtonStyle}"
+                                   TargetType="Button">
 
-                        <Button Content="🏺  Экспонаты"
-                                Command="{Binding ShowExhibitsCommand}"
-                                Style="{StaticResource SidebarButtonStyle}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedMenu}"
+                                                Value="About">
+                                        <Setter Property="Background"
+                                                Value="#4A70FF"/>
+                                        <Setter Property="Foreground"
+                                                Value="#EEF2FF"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
 
-                        <Button Content="🏢  Отделы"
-                                Command="{Binding ShowDepartmentsCommand}"
-                                Style="{StaticResource SidebarButtonStyle}"/>
+                            </Style>
+                        </Button.Style>
 
-                        <Button Content="🖼  Иллюстрации"
-                                Command="{Binding ShowIllustrationsCommand}"
-                                Style="{StaticResource SidebarButtonStyle}"/>
+                    </Button>
 
-                        <Button Content="🎥  Видео"
-                                Command="{Binding ShowVideosCommand}"
-                                Style="{StaticResource SidebarButtonStyle}"/>
+                    <Button Content="📰  Статьи"
+                            Command="{Binding ShowArticlesCommand}">
 
-                    </StackPanel>
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource SidebarButtonStyle}"
+                                   TargetType="Button">
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedMenu}"
+                                                 Value="Articles">
+                                        <Setter Property="Background"
+                                                Value="#4A70FF"/>
+                                        <Setter Property="Foreground"
+                                                Value="#EEF2FF"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+
+                            </Style>
+                        </Button.Style>
+
+                    </Button>
+
+                    <Button Content="🏺  Экспонаты"
+                            Command="{Binding ShowExhibitsCommand}">
+                        <Button.Style>
+                        <Style BasedOn="{StaticResource SidebarButtonStyle}"
+                                   TargetType="Button">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedMenu}"
+                                             Value="Exhibits">
+                                    <Setter Property="Background"
+                                            Value="#4A70FF"/>
+                                    <Setter Property="Foreground"
+                                            Value="#EEF2FF"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Content="🏢  Отделы"
+                                Command="{Binding ShowDepartmentsCommand}">
+                        <Button.Style>
+                        <Style BasedOn="{StaticResource SidebarButtonStyle}"
+                               TargetType="Button">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedMenu}"
+                                            Value="Departments">
+                                    <Setter Property="Background"
+                                            Value="#4A70FF"/>
+                                    <Setter Property="Foreground"
+                                            Value="#EEF2FF"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Content="🖼  Иллюстрации"
+                                Command="{Binding ShowIllustrationsCommand}">
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource SidebarButtonStyle}"
+                               TargetType="Button">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedMenu}"
+                                            Value="Illustrations">
+                                        <Setter Property="Background"
+                                            Value="#4A70FF"/>
+                                        <Setter Property="Foreground"
+                                            Value="#EEF2FF"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Content="🎥  Видео"
+                                Command="{Binding ShowVideosCommand}">
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource SidebarButtonStyle}"
+                               TargetType="Button">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedMenu}"
+                                            Value="Videos">
+                                        <Setter Property="Background"
+                                            Value="#4A70FF"/>
+                                        <Setter Property="Foreground"
+                                            Value="#EEF2FF"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                </StackPanel>
 
                 </DockPanel>
 
