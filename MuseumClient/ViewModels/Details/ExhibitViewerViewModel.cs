@@ -119,8 +119,8 @@ namespace MuseumClient.ViewModels.Details
 
         public string StorageType =>
             IsPermanent
-                ? "Постоянное хранение"
-                : "Временное хранение";
+                ? "Постоянное"
+                : "Временное";
 
         private BitmapImage? _image;
         public BitmapImage? Image
