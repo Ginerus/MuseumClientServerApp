@@ -56,10 +56,29 @@ namespace MuseumClient.ViewModels.Details
             get => _volume;
             set
             {
+                if (value < 0)
+                    value = 0;
+
+                if (value > 100)
+                    value = 100;
+
+
                 _volume = value;
 
+
                 if (MediaPlayer != null)
+                {
                     MediaPlayer.Volume = value;
+
+                    // если подняли громкость после 0
+                    if (value > 0 && MediaPlayer.Mute)
+                    {
+                        MediaPlayer.Mute = false;
+                        _muted = false;
+                        OnPropertyChanged(nameof(Muted));
+                    }
+                }
+
 
                 OnPropertyChanged(nameof(Volume));
             }
@@ -74,7 +93,12 @@ namespace MuseumClient.ViewModels.Details
             {
                 _muted = value;
 
-                MediaPlayer.Mute = value;
+
+                if (MediaPlayer != null)
+                {
+                    MediaPlayer.Mute = value;
+                }
+
 
                 OnPropertyChanged(nameof(Muted));
             }
@@ -160,7 +184,7 @@ namespace MuseumClient.ViewModels.Details
 
             MediaPlayer = new LibVLCSharp.Shared.MediaPlayer(_libVLC);
 
-            MediaPlayer.Volume = 100;
+            Volume = 100;
 
             TogglePlayCommand =
                 new RelayCommand(async _ =>
