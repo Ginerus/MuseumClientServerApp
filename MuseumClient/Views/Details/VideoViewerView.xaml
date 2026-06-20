@@ -115,12 +115,13 @@
 
                         <Grid Margin="15">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+    <ColumnDefinition Width="45"/>
+    <ColumnDefinition Width="45"/>
+    <ColumnDefinition Width="130"/>
+    <ColumnDefinition Width="*"/>
+    <ColumnDefinition Width="Auto"/>
+    <ColumnDefinition Width="45"/>
+</Grid.ColumnDefinitions>
 
 
 
@@ -166,33 +167,68 @@
 
                             <!-- VOLUME -->
 
-                            <TextBlock Grid.Column="1"
-                                       Text="🔈"
-                                       Foreground="White"
-                                       FontSize="18"
-                                       VerticalAlignment="Center"/>
-                            
-                            
+                            <Button Grid.Column="1"
+                                    Command="{Binding MuteCommand}"
+                                    Width="40"
+                                    Background="Transparent"
+                                    BorderThickness="0">
 
+                                <TextBlock FontSize="18"
+                                           Foreground="White">
+
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+
+                                            <Setter Property="Text"
+                                                    Value="🔈"/>
+
+                                            <Style.Triggers>
+
+                                                <DataTrigger Binding="{Binding Muted}"
+                                                            Value="True">
+
+                                                    <Setter Property="Text"
+                                                            Value="🔇"/>
+
+                                                </DataTrigger>
+
+                                            </Style.Triggers>
+
+                                        </Style>
+
+                                    </TextBlock.Style>
+
+                                </TextBlock>
+
+                            </Button>
 
                             <Slider Grid.Column="2"
-                                    Height="5"
+                                    Height="20"
                                     Minimum="0"
                                     Maximum="100"
                                     Value="{Binding Volume, Mode=TwoWay}"
-                                    VerticalAlignment="Center"/>
+                                    VerticalAlignment="Center"
+                                    Cursor="Hand"/>
 
                             <Slider Grid.Column="3"
-                                    Height="5"
+                                    Height="20"
                                     Minimum="0"
                                     Maximum="100"
-                                    Value="{Binding Position, Mode=TwoWay}"
+                                    Value="{Binding Position, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     VerticalAlignment="Center"
-                                    Margin="15,0"/>
+                                    Margin="15,0"
+                                    Cursor="Hand"/>
+                            
+                            <TextBlock Grid.Column="4"
+                                       Text="{Binding CurrentTime}"
+                                       Foreground="White"
+                                       VerticalAlignment="Center"
+                                       Margin="10,0"/>
 
-                            <Button Grid.Column="4"
+                            <Button Grid.Column="5"
                                     Width="35"
                                     Height="35"
+                                    Command="{Binding FullscreenCommand}"
                                     Background="Transparent"
                                     BorderThickness="0"
                                     Cursor="Hand">
@@ -202,11 +238,7 @@
                                            FontSize="18"/>
                             </Button>
                         </Grid>
-
-
                     </Border>
-
-
                 </Grid>
 
 

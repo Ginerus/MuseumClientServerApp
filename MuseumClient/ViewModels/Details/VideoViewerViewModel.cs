@@ -7,27 +7,47 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
-
+using System.Windows;
+using System.Windows.Interop;
 
 namespace MuseumClient.ViewModels.Details
 {
-    public class VideoViewerViewModel : INotifyPropertyChanged
+    public class VideoViewerViewModel : INotifyPropertyChanged, IDisposable
     {
-
         private readonly ApiService _apiService;
-
         private readonly int _id;
 
-
-        private LibVLC _libVLC;
-
+        private readonly LibVLC _libVLC;
         private Media? _media;
 
-        public MediaPlayer MediaPlayer { get; }
+        public LibVLCSharp.Shared.MediaPlayer MediaPlayer { get; }
 
         public string Title { get; set; } = "";
         public string Description { get; set; } = "";
         public string DepartmentName { get; set; } = "";
+
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+            }
+        }
+
+        private bool _isPlaying;
+        public bool IsPlaying
+        {
+            get => _isPlaying;
+            set
+            {
+                _isPlaying = value;
+                OnPropertyChanged(nameof(IsPlaying));
+            }
+        }
 
         private int _volume = 100;
 
@@ -45,49 +65,87 @@ namespace MuseumClient.ViewModels.Details
             }
         }
 
-        private bool _isLoading;
+        private bool _muted;
 
-        public bool IsLoading
+        public bool Muted
         {
-            get => _isLoading;
+            get => _muted;
             set
             {
-                _isLoading = value;
-                OnPropertyChanged(nameof(IsLoading));
+                _muted = value;
+
+                MediaPlayer.Mute = value;
+
+                OnPropertyChanged(nameof(Muted));
             }
         }
 
-        private bool _isPlaying;
+        private bool _isSeeking;
 
-        public bool IsPlaying
-        {
-            get => _isPlaying;
-            set
-            {
-                _isPlaying = value;
-                OnPropertyChanged(nameof(IsPlaying));
-            }
-        }
+        public RelayCommand SeekStartCommand { get; }
+        public RelayCommand SeekEndCommand { get; }
 
         public double Position
         {
-            get => MediaPlayer.Position * 100;
+            get
+            {
+                if (MediaPlayer.Length <= 0)
+                    return 0;
+
+                return MediaPlayer.Position * 100;
+            }
             set
             {
-                MediaPlayer.Position = (float)(value / 100);
+                MediaPlayer.Position =
+                    (float)(value / 100);
+
                 OnPropertyChanged(nameof(Position));
             }
         }
+        public string CurrentTime
+        {
+            get
+            {
+                return TimeSpan
+                    .FromMilliseconds(MediaPlayer.Time)
+                    .ToString(@"mm\:ss");
+            }
+        }
+        public string Duration
+        {
+            get
+            {
+                return TimeSpan
+                    .FromMilliseconds(MediaPlayer.Length)
+                    .ToString(@"mm\:ss");
+            }
+        }
 
+        private bool _fullscreen;
+        public bool Fullscreen
+        {
+            get => _fullscreen;
+            set
+            {
+                _fullscreen = value;
+                OnPropertyChanged(nameof(Fullscreen));
+            }
+        }
         public RelayCommand TogglePlayCommand { get; }
 
         public RelayCommand DownloadCommand { get; }
+
+        public RelayCommand MuteCommand { get; }
+
+        public RelayCommand FullscreenCommand { get; }
 
         public VideoViewerViewModel(int id)
         {
             _id = id;
 
-            var config = new ConfigService().Server;
+            var config =
+                new ConfigService()
+                .Server;
 
             _apiService =
                 new ApiService(
@@ -96,41 +154,136 @@ namespace MuseumClient.ViewModels.Details
 
             Core.Initialize();
 
-            _libVLC = new LibVLC();
 
-            MediaPlayer =
-                new MediaPlayer(_libVLC);
+            _libVLC =
+                new LibVLC();
 
-            DownloadCommand =
-                new RelayCommand(async _ =>
-                    await DownloadAsync());
+            MediaPlayer = new LibVLCSharp.Shared.MediaPlayer(_libVLC);
+
+            MediaPlayer.Volume = 100;
 
             TogglePlayCommand =
                 new RelayCommand(async _ =>
                 {
+
                     if (MediaPlayer.IsPlaying)
                     {
-                        await Task.Run(() =>
-                        {
-                            MediaPlayer.Pause();
-                        });
+                        MediaPlayer.Pause();
                     }
                     else
                     {
-                        await Task.Run(() =>
-                        {
-                            MediaPlayer.Play();
-                        });
+                        MediaPlayer.Play();
                     }
 
-                    IsPlaying = MediaPlayer.IsPlaying;
-                    OnPropertyChanged(nameof(IsPlaying));
+                    await Task.CompletedTask;
+
                 });
+
+            MuteCommand =
+                new RelayCommand(async _ =>
+                {
+
+                    Muted = !Muted;
+
+                    await Task.CompletedTask;
+
+                });
+
+
+
+            FullscreenCommand =
+                new RelayCommand(async _ =>
+                {
+                    var window =
+                        Application.Current.MainWindow;
+
+                    if (window == null)
+                        return;
+
+
+                    if (!Fullscreen)
+                    {
+                        window.WindowStyle =
+                            WindowStyle.None;
+
+                        window.WindowState =
+                            WindowState.Maximized;
+
+                        window.ResizeMode =
+                            ResizeMode.NoResize;
+
+                        Fullscreen = true;
+                    }
+                    else
+                    {
+                        window.WindowStyle =
+                            WindowStyle.SingleBorderWindow;
+
+                        window.WindowState =
+                            WindowState.Normal;
+
+                        window.ResizeMode =
+                            ResizeMode.CanResize;
+
+                        Fullscreen = false;
+                    }
+
+                });
+
+            DownloadCommand =
+                new RelayCommand(async _ =>
+                {
+                    await DownloadAsync();
+                });
+
+            SeekStartCommand =
+                new RelayCommand(async _ =>
+                {
+                    _isSeeking = true;
+                    await Task.CompletedTask;
+                });
+
+
+            SeekEndCommand =
+                new RelayCommand(async _ =>
+                {
+                    _isSeeking = false;
+                    await Task.CompletedTask;
+                });
+
+            MediaPlayer.Playing += (s, e) =>
+            {
+                IsPlaying = true;
+            };
+
+            MediaPlayer.Paused += (s, e) =>
+            {
+                IsPlaying = false;
+            };
+
+            MediaPlayer.PositionChanged += (s, e) =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+
+                    if (!_isSeeking)
+                    {
+                        OnPropertyChanged(nameof(Position));
+                    }
+
+                    OnPropertyChanged(nameof(CurrentTime));
+
+                });
+            };
+
+            MediaPlayer.LengthChanged += (s, e) =>
+            {
+                OnPropertyChanged(nameof(Duration));
+            };
 
             _ = LoadVideoAsync();
 
         }
-
         public async Task LoadVideoAsync()
         {
             try
@@ -144,14 +297,20 @@ namespace MuseumClient.ViewModels.Details
 
                 if (response?.Data != null)
                 {
-                    Title = response.Data.Title;
-                    Description = response.Data.Description;
+
+                    Title =
+                        response.Data.Title;
+
+                    Description =
+                        response.Data.Description;
+
                     DepartmentName =
                         response.Data.Department?.Name ?? "";
 
                     OnPropertyChanged(nameof(Title));
                     OnPropertyChanged(nameof(Description));
                     OnPropertyChanged(nameof(DepartmentName));
+
                 }
 
                 var bytes =
@@ -174,28 +333,12 @@ namespace MuseumClient.ViewModels.Details
                         FromType.FromPath);
 
                 MediaPlayer.Play(_media);
-
-                MediaPlayer.PositionChanged += (s, e) =>
-                {
-                    OnPropertyChanged(nameof(Position));
-                };
-
-                MediaPlayer.Playing += (s, e) =>
-                {
-                    IsPlaying = true;
-                    OnPropertyChanged(nameof(IsPlaying));
-                };
-
-                MediaPlayer.Paused += (s, e) =>
-                {
-                    IsPlaying = false;
-                    OnPropertyChanged(nameof(IsPlaying));
-                };
-
             }
             catch (Exception ex)
             {
-                Description = ex.Message;
+
+                Description =
+                    ex.Message;
 
                 OnPropertyChanged(nameof(Description));
             }
@@ -203,11 +346,11 @@ namespace MuseumClient.ViewModels.Details
             {
                 IsLoading = false;
             }
-
         }
 
         private async Task DownloadAsync()
         {
+
             var bytes =
                 await _apiService.GetBytesAsync(
                     $"MediaFile/stream/{_id}?size=video");
@@ -221,27 +364,35 @@ namespace MuseumClient.ViewModels.Details
 
             if (dialog.ShowDialog() == true)
             {
+
                 File.WriteAllBytes(
                     dialog.FileName,
                     bytes);
             }
         }
 
+        public void Dispose()
+        {
+
+            MediaPlayer.Stop();
+
+            _media?.Dispose();
+
+            MediaPlayer.Dispose();
+
+            _libVLC.Dispose();
+
+        }
+
+
         public event PropertyChangedEventHandler? PropertyChanged;
+
 
         private void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(
                 this,
                 new PropertyChangedEventArgs(name));
-        }
-
-        public void Dispose()
-        {
-            MediaPlayer.Stop();
-            _media?.Dispose();
-            MediaPlayer.Dispose();
-            _libVLC.Dispose();
         }
 
     }
