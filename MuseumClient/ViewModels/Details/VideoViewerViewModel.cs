@@ -387,12 +387,12 @@ namespace MuseumClient.ViewModels.Details
                     bytes);
 
                 _media =
-                    new Media(
-                        _libVLC,
-                        path,
-                        FromType.FromPath);
+                new Media(
+                    _libVLC,
+                    path,
+                    FromType.FromPath);
 
-                MediaPlayer.Play(_media);
+                MediaPlayer.Media = _media;
             }
             catch (Exception ex)
             {
