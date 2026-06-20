@@ -25,11 +25,6 @@ namespace MuseumClient.ViewModels.Details
 
         public MediaPlayer MediaPlayer { get; }
 
-
-        public RelayCommand PlayCommand { get; }
-        public RelayCommand PauseCommand { get; }
-
-
         public string Title { get; set; } = "";
         public string Description { get; set; } = "";
         public string DepartmentName { get; set; } = "";
@@ -62,6 +57,30 @@ namespace MuseumClient.ViewModels.Details
             }
         }
 
+        private bool _isPlaying;
+
+        public bool IsPlaying
+        {
+            get => _isPlaying;
+            set
+            {
+                _isPlaying = value;
+                OnPropertyChanged(nameof(IsPlaying));
+            }
+        }
+
+        public double Position
+        {
+            get => MediaPlayer.Position * 100;
+            set
+            {
+                MediaPlayer.Position = (float)(value / 100);
+                OnPropertyChanged(nameof(Position));
+            }
+        }
+
+        public RelayCommand TogglePlayCommand { get; }
+
         public RelayCommand DownloadCommand { get; }
 
         public VideoViewerViewModel(int id)
@@ -82,27 +101,31 @@ namespace MuseumClient.ViewModels.Details
             MediaPlayer =
                 new MediaPlayer(_libVLC);
 
-            PlayCommand =
-                new RelayCommand(async _ =>
-                {
-                    await Task.Run(() =>
-                    {
-                        MediaPlayer.Play();
-                    });
-                });
-
-            PauseCommand =
-                new RelayCommand(async _ =>
-                {
-                    await Task.Run(() =>
-                    {
-                        MediaPlayer.Pause();
-                    });
-                });
-
             DownloadCommand =
                 new RelayCommand(async _ =>
                     await DownloadAsync());
+
+            TogglePlayCommand =
+                new RelayCommand(async _ =>
+                {
+                    if (MediaPlayer.IsPlaying)
+                    {
+                        await Task.Run(() =>
+                        {
+                            MediaPlayer.Pause();
+                        });
+                    }
+                    else
+                    {
+                        await Task.Run(() =>
+                        {
+                            MediaPlayer.Play();
+                        });
+                    }
+
+                    IsPlaying = MediaPlayer.IsPlaying;
+                    OnPropertyChanged(nameof(IsPlaying));
+                });
 
             _ = LoadVideoAsync();
 
@@ -152,6 +175,23 @@ namespace MuseumClient.ViewModels.Details
 
                 MediaPlayer.Play(_media);
 
+                MediaPlayer.PositionChanged += (s, e) =>
+                {
+                    OnPropertyChanged(nameof(Position));
+                };
+
+                MediaPlayer.Playing += (s, e) =>
+                {
+                    IsPlaying = true;
+                    OnPropertyChanged(nameof(IsPlaying));
+                };
+
+                MediaPlayer.Paused += (s, e) =>
+                {
+                    IsPlaying = false;
+                    OnPropertyChanged(nameof(IsPlaying));
+                };
+
             }
             catch (Exception ex)
             {
@@ -194,6 +234,14 @@ namespace MuseumClient.ViewModels.Details
             PropertyChanged?.Invoke(
                 this,
                 new PropertyChangedEventArgs(name));
+        }
+
+        public void Dispose()
+        {
+            MediaPlayer.Stop();
+            _media?.Dispose();
+            MediaPlayer.Dispose();
+            _libVLC.Dispose();
         }
 
     }
