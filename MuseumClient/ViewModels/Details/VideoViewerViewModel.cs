@@ -1,15 +1,15 @@
 ﻿using LibVLCSharp.Shared;
+using Microsoft.Win32;
 using MuseumClient.Commands;
 using MuseumClient.Models;
 using MuseumClient.Services;
-using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
-using System.Threading;
 
 namespace MuseumClient.ViewModels.Details
 {
@@ -194,24 +194,32 @@ namespace MuseumClient.ViewModels.Details
             }
         }
 
-        private bool _fullscreen;
+        private bool _isFullscreen = true;
 
-        public bool Fullscreen
+        public bool IsFullscreen
         {
-            get => _fullscreen;
+            get => _isFullscreen;
             set
             {
-                _fullscreen = value;
+                _isFullscreen = value;
 
-                OnPropertyChanged(nameof(Fullscreen));
-                OnPropertyChanged(nameof(IsNormalMode));
+                OnPropertyChanged(nameof(IsFullscreen));
+                OnPropertyChanged(nameof(FullscreenMargin));
+
             }
         }
 
-        public bool IsNormalMode => !Fullscreen;
+        public Thickness FullscreenMargin
+        {
+            get
+            {
+                return IsFullscreen
+                    ? new Thickness(0)
+                    : new Thickness(20, 0, 20, 20);
+            }
+        }
 
 
-        public bool IsDescriptionVisible => !Fullscreen;
         public RelayCommand TogglePlayCommand { get; }
 
         public RelayCommand DownloadCommand { get; }
@@ -273,11 +281,14 @@ namespace MuseumClient.ViewModels.Details
 
 
             FullscreenCommand =
-        new RelayCommand(async _ =>
-        {
-            Fullscreen = !Fullscreen;
-            await Task.CompletedTask;
-        });
+                new RelayCommand(async _ =>
+                {
+
+                    IsFullscreen = !IsFullscreen;
+
+                    await Task.CompletedTask;
+
+                });
 
             DownloadCommand =
                 new RelayCommand(async _ =>
