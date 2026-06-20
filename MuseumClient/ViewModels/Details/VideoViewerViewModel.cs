@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
+using System.Threading;
 
 namespace MuseumClient.ViewModels.Details
 {
@@ -49,6 +50,8 @@ namespace MuseumClient.ViewModels.Details
             }
         }
 
+        private CancellationTokenSource? _volumeCts;
+
         private int _volume = 100;
 
         public int Volume
@@ -65,22 +68,53 @@ namespace MuseumClient.ViewModels.Details
 
                 _volume = value;
 
-
-                if (MediaPlayer != null)
-                {
-                    MediaPlayer.Volume = value;
-
-                    // если подняли громкость после 0
-                    if (value > 0 && MediaPlayer.Mute)
-                    {
-                        MediaPlayer.Mute = false;
-                        _muted = false;
-                        OnPropertyChanged(nameof(Muted));
-                    }
-                }
-
-
                 OnPropertyChanged(nameof(Volume));
+
+
+                _volumeCts?.Cancel();
+
+                _volumeCts = new CancellationTokenSource();
+
+                var token = _volumeCts.Token;
+
+
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await Task.Delay(80, token);
+
+
+                        if (token.IsCancellationRequested)
+                            return;
+
+
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            if (MediaPlayer == null)
+                                return;
+
+
+                            MediaPlayer.Volume = value;
+
+
+                            if (value > 0 && MediaPlayer.Mute)
+                            {
+                                MediaPlayer.Mute = false;
+
+                                _muted = false;
+
+                                OnPropertyChanged(nameof(Muted));
+                            }
+                        });
+
+                    }
+                    catch
+                    {
+
+                    }
+
+                }, token);
             }
         }
 
