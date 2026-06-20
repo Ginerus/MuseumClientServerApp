@@ -22,9 +22,23 @@ namespace MuseumClient.ViewModels
             get => _currentTabView;
             set
             {
+
+                if (_currentTabView is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+
+
                 _currentTabView = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentTabView)));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentUserType)));
+
+
+                PropertyChanged?.Invoke(
+                    this,
+                    new PropertyChangedEventArgs(nameof(CurrentTabView)));
+
+                PropertyChanged?.Invoke(
+                    this,
+                    new PropertyChangedEventArgs(nameof(CurrentUserType)));
             }
         }
 

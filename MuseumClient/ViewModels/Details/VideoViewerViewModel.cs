@@ -433,15 +433,22 @@ namespace MuseumClient.ViewModels.Details
 
         public void Dispose()
         {
+            try
+            {
+                MediaPlayer.Stop();
 
-            MediaPlayer.Stop();
+                MediaPlayer.Media = null;
 
-            _media?.Dispose();
+                _media?.Dispose();
 
-            MediaPlayer.Dispose();
+                MediaPlayer.Dispose();
 
-            _libVLC.Dispose();
+                _libVLC.Dispose();
+            }
+            catch
+            {
 
+            }
         }
 
 
