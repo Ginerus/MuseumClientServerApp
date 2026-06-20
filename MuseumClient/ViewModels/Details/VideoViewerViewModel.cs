@@ -69,6 +69,7 @@ namespace MuseumClient.ViewModels.Details
                 _volume = value;
 
                 OnPropertyChanged(nameof(Volume));
+                OnPropertyChanged(nameof(VolumeIcon));
 
 
                 _volumeCts?.Cancel();
@@ -105,6 +106,7 @@ namespace MuseumClient.ViewModels.Details
                                 _muted = false;
 
                                 OnPropertyChanged(nameof(Muted));
+                                OnPropertyChanged(nameof(VolumeIcon));
                             }
                         });
 
@@ -127,14 +129,27 @@ namespace MuseumClient.ViewModels.Details
             {
                 _muted = value;
 
-
                 if (MediaPlayer != null)
                 {
                     MediaPlayer.Mute = value;
                 }
 
-
                 OnPropertyChanged(nameof(Muted));
+                OnPropertyChanged(nameof(VolumeIcon));
+            }
+        }
+
+        public string VolumeIcon
+        {
+            get
+            {
+                if (Muted || Volume == 0)
+                    return "🔇";
+
+                if (Volume <= 50)
+                    return "🔉";
+
+                return "🔊";
             }
         }
 

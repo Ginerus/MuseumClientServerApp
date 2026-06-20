@@ -177,34 +177,11 @@
                                     VerticalAlignment="Center"
                                     Cursor="Hand">
 
-                                <TextBlock FontSize="18"
+                                <TextBlock Text="{Binding VolumeIcon}"
+                                           FontSize="18"
                                            Foreground="White"
                                            HorizontalAlignment="Center"
-                                           VerticalAlignment="Center">
-
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-
-                                            <Setter Property="Text"
-                                                    Value="🔈"/>
-
-                                            <Style.Triggers>
-
-                                                <DataTrigger Binding="{Binding Muted}"
-                                                             Value="True">
-
-                                                    <Setter Property="Text"
-                                                            Value="🔇"/>
-
-                                                </DataTrigger>
-
-                                            </Style.Triggers>
-
-                                        </Style>
-
-                                    </TextBlock.Style>
-
-                                </TextBlock>
+                                           VerticalAlignment="Center"/>
 
                             </Button>
 
