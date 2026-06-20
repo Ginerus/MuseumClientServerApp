@@ -15,6 +15,7 @@ namespace MuseumClient.ViewModels
     public class MediaVideosViewModel : INotifyPropertyChanged
     {
         private readonly ApiService _apiService;
+        private readonly ContentHubViewModel _hub;
 
         // Коллекция видео
         public ObservableCollection<MediaFileDto> Videos { get; } = new();
@@ -59,8 +60,10 @@ namespace MuseumClient.ViewModels
 
         private readonly AuthService _auth;
 
-        public MediaVideosViewModel()
+        public MediaVideosViewModel(ContentHubViewModel hub)
         {
+            _hub = hub;
+
             var config = new ConfigService().Server;
             _apiService = new ApiService(config, AuthService.Instance());
 
@@ -124,10 +127,7 @@ namespace MuseumClient.ViewModels
             if (parameter is not MediaFileDto video)
                 return;
 
-            await Task.Run(() =>
-            {
-                MessageBox.Show($"Видео:\n{video.Title}\nID: {video.MediaFileId}");
-            });
+            _hub.ShowVideo(video.MediaFileId);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

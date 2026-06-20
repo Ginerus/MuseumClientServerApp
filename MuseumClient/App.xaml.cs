@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using LibVLCSharp.Shared;
 using System.Windows;
 
 namespace MuseumClient
@@ -9,6 +8,11 @@ namespace MuseumClient
     /// </summary>
     public partial class App : Application
     {
-    }
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            Core.Initialize();
 
+            base.OnStartup(e);
+        }
+    }
 }

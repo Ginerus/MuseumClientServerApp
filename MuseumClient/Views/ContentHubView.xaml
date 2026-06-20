@@ -102,6 +102,10 @@
             <viewsDetails:AddExhibitView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vmDetails:VideoViewerViewModel}">
+            <viewsDetails:VideoViewerView/>
+        </DataTemplate>
+
     </UserControl.Resources>
 
         <Grid Background="White">
