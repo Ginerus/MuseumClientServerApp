@@ -252,21 +252,27 @@ namespace MuseumClient.ViewModels.Details
             Volume = 100;
 
             TogglePlayCommand =
-                new RelayCommand(async _ =>
+            new RelayCommand(async _ =>
+            {
+                if (MediaPlayer.IsPlaying)
                 {
-
-                    if (MediaPlayer.IsPlaying)
+                    MediaPlayer.Pause();
+                }
+                else
+                {
+                    // видео дошло до конца
+                    if (MediaPlayer.Position >= 0.99f)
                     {
-                        MediaPlayer.Pause();
-                    }
-                    else
-                    {
-                        MediaPlayer.Play();
+                        MediaPlayer.Stop();
+
+                        MediaPlayer.Position = 0;
                     }
 
-                    await Task.CompletedTask;
+                    MediaPlayer.Play();
+                }
 
-                });
+                await Task.CompletedTask;
+            });
 
             MuteCommand =
                 new RelayCommand(async _ =>
@@ -319,6 +325,17 @@ namespace MuseumClient.ViewModels.Details
             MediaPlayer.Paused += (s, e) =>
             {
                 IsPlaying = false;
+            };
+
+            MediaPlayer.EndReached += (s, e) =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    IsPlaying = false;
+
+                    OnPropertyChanged(nameof(Position));
+                    OnPropertyChanged(nameof(CurrentTime));
+                });
             };
 
             MediaPlayer.PositionChanged += (s, e) =>
