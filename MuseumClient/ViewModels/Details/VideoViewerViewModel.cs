@@ -195,15 +195,23 @@ namespace MuseumClient.ViewModels.Details
         }
 
         private bool _fullscreen;
+
         public bool Fullscreen
         {
             get => _fullscreen;
             set
             {
                 _fullscreen = value;
+
                 OnPropertyChanged(nameof(Fullscreen));
+                OnPropertyChanged(nameof(IsNormalMode));
             }
         }
+
+        public bool IsNormalMode => !Fullscreen;
+
+
+        public bool IsDescriptionVisible => !Fullscreen;
         public RelayCommand TogglePlayCommand { get; }
 
         public RelayCommand DownloadCommand { get; }
@@ -265,43 +273,11 @@ namespace MuseumClient.ViewModels.Details
 
 
             FullscreenCommand =
-                new RelayCommand(async _ =>
-                {
-                    var window =
-                        Application.Current.MainWindow;
-
-                    if (window == null)
-                        return;
-
-
-                    if (!Fullscreen)
-                    {
-                        window.WindowStyle =
-                            WindowStyle.None;
-
-                        window.WindowState =
-                            WindowState.Maximized;
-
-                        window.ResizeMode =
-                            ResizeMode.NoResize;
-
-                        Fullscreen = true;
-                    }
-                    else
-                    {
-                        window.WindowStyle =
-                            WindowStyle.SingleBorderWindow;
-
-                        window.WindowState =
-                            WindowState.Normal;
-
-                        window.ResizeMode =
-                            ResizeMode.CanResize;
-
-                        Fullscreen = false;
-                    }
-
-                });
+        new RelayCommand(async _ =>
+        {
+            Fullscreen = !Fullscreen;
+            await Task.CompletedTask;
+        });
 
             DownloadCommand =
                 new RelayCommand(async _ =>

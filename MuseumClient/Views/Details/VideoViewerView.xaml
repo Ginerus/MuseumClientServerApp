@@ -20,6 +20,8 @@
         <Border Grid.Row="0"
         Background="White"
         CornerRadius="16"
+        Visibility="{Binding IsNormalMode,
+                             Converter={StaticResource BoolToVisibilityConverter}}"
         Padding="15"
         Margin="20,20,20,10"
         BorderBrush="#E5E7EB"
@@ -231,6 +233,8 @@
             <Border Grid.Row="1"
                     Background="White"
                     CornerRadius="12"
+                    Visibility="{Binding IsNormalMode,
+                             Converter={StaticResource BoolToVisibilityConverter}}"
                     BorderBrush="#E5E7EB"
                     BorderThickness="2"
                     Padding="15">
