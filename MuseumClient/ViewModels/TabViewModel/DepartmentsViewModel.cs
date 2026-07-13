@@ -43,11 +43,12 @@ namespace MuseumClient.ViewModels
         }
 
         private readonly AuthService _auth;
+        private readonly ContentHubViewModel _hub;
 
         public RelayCommand EditDepartmentCommand { get; }
 
 
-        public DepartmentsViewModel()
+        public DepartmentsViewModel(ContentHubViewModel hub)
         {
             var config = new ConfigService().Server;
             _apiService = new ApiService(config, AuthService.Instance());
@@ -62,6 +63,7 @@ namespace MuseumClient.ViewModels
             _auth.AuthChanged += OnAuthChanged;
 
             CanEdit = _auth.IsAdmin; // начальное состояние
+            _hub = hub;
         }
 
         private void OnAuthChanged()
@@ -107,28 +109,26 @@ namespace MuseumClient.ViewModels
             if (parameter is not DepartmentDto dept)
                 return;
 
-            await Task.Run(() =>
-            {
-                MessageBox.Show(
-                    $"Отдел:\n{dept.Name}\nID: {dept.DepartmentId}"
-                );
-            });
+            _hub.ShowDepartmentCatalog(dept.DepartmentId, dept.Name);
+
+            await Task.CompletedTask;
         }
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private async Task EditDepartment(object? parameter)
-{
-    if (parameter is not DepartmentDto dept)
-        return;
+        {
+            if (parameter is not DepartmentDto dept)
+                return;
 
-    await Task.Run(() =>
-    {
-        MessageBox.Show(
-            $"Редактирование отдела:\n{dept.Name}\nID: {dept.DepartmentId}"
-        );
-    });
-}
+        await Task.Run(() =>
+        {
+            MessageBox.Show(
+                $"Редактирование отдела:\n{dept.Name}\nID: {dept.DepartmentId}"
+            );
+        });
+    }
 
         private void OnPropertyChanged(string name)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

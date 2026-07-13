@@ -82,7 +82,7 @@ namespace MuseumClient.ViewModels
             AboutMuseumVM = new AboutMuseumViewModel();
             ArticlesVM = new ArticlesViewModel(this);
             ExhibitsVM = new ExhibitsViewModel(this);
-            DepartmentsVM = new DepartmentsViewModel();
+            DepartmentsVM = new DepartmentsViewModel(this);
             MediaImagesVM = new MediaImagesViewModel(this);
             MediaVideosVM = new MediaVideosViewModel(this);
 
@@ -165,6 +165,13 @@ namespace MuseumClient.ViewModels
         public void ShowVideo(int id)
         {
             CurrentTabView = new VideoViewerViewModel(id);
+        }
+
+        public void ShowDepartmentCatalog(int departmentId, string departmentName)
+        {
+            var vm = new DepartmentCatalogViewModel(this, departmentId, departmentName);
+            CurrentTabView = vm;
+            _ = vm.LoadAllAsync();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

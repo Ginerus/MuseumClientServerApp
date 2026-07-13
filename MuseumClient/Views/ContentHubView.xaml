@@ -106,6 +106,10 @@
             <viewsDetails:VideoViewerView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vmDetails:DepartmentCatalogViewModel}">
+            <viewsDetails:DepartmentCatalogView/>
+        </DataTemplate>
+
     </UserControl.Resources>
 
         <Grid Background="White">
