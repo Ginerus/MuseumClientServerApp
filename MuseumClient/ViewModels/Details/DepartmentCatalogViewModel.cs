@@ -39,7 +39,7 @@ namespace MuseumClient.ViewModels.Details
             set { _isLoading = value; OnPropertyChanged(nameof(IsLoading)); }
         }
 
-        private string _selectedSection = "Exhibits";
+        private string _selectedSection = "All";
         public string SelectedSection
         {
             get => _selectedSection;

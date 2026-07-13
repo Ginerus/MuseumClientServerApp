@@ -92,6 +92,20 @@
         <StackPanel Grid.Row="1"
                     Orientation="Horizontal"
                     Margin="16,0,16,10">
+            <Button Content="📚 Всё"
+                Command="{Binding SelectSectionCommand}"
+                CommandParameter="All">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource SectionTabButtonStyle}" TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedSection}" Value="All">
+                                <Setter Property="Background" Value="#4A70FF"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
 
             <Button Content="🏺 Экспонаты"
                     Command="{Binding SelectSectionCommand}"
@@ -158,7 +172,7 @@
         <!-- Контент секций -->
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
 
-            <Grid>
+            <StackPanel>
 
                 <!-- ЭКСПОНАТЫ -->
                 <ItemsControl ItemsSource="{Binding Exhibits}">
@@ -167,8 +181,14 @@
                             <Setter Property="Visibility" Value="Collapsed"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding DataContext.SelectedSection,
-                                             RelativeSource={RelativeSource AncestorType=Grid}}"
-                                             Value="Exhibits">
+                                    RelativeSource={RelativeSource AncestorType=Grid}}"
+                                    Value="Exhibits">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding DataContext.SelectedSection,
+                                    RelativeSource={RelativeSource AncestorType=Grid}}"
+                                    Value="All">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -223,6 +243,11 @@
                                 <DataTrigger Binding="{Binding DataContext.SelectedSection,
                                              RelativeSource={RelativeSource AncestorType=Grid}}"
                                              Value="Articles">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding DataContext.SelectedSection,
+                                     RelativeSource={RelativeSource AncestorType=Grid}}"
+                                     Value="All">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -280,6 +305,11 @@
                                              Value="Images">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding DataContext.SelectedSection,
+                                     RelativeSource={RelativeSource AncestorType=Grid}}"
+                                     Value="All">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </ItemsControl.Style>
@@ -334,6 +364,11 @@
                                              Value="Videos">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding DataContext.SelectedSection,
+                                     RelativeSource={RelativeSource AncestorType=Grid}}"
+                                     Value="All">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </ItemsControl.Style>
@@ -377,7 +412,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-            </Grid>
+            </StackPanel>
 
         </ScrollViewer>
 
