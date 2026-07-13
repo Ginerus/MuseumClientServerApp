@@ -165,7 +165,9 @@ namespace MuseumClient.ViewModels.Details
 
             if (response?.Data != null)
             {
-                foreach (var item in response.Data)
+                var filtered = response.Data.Where(m => m.DepartmentId == DepartmentId);
+
+                foreach (var item in filtered)
                 {
                     if (item.MediaType == "image")
                         Images.Add(item);

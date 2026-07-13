@@ -23,6 +23,7 @@ namespace MuseumServer.Services
                     MediaFileId = m.MediaFileId,
                     Title = m.Title,
                     MediaType = m.MediaType,
+                    DepartmentId = m.DepartmentId
                 })
                 .ToListAsync();
         }
