@@ -117,6 +117,17 @@ namespace MuseumClient.ViewModels
         private void SetupCollectionView()
         {
             ImagesView = CollectionViewSource.GetDefaultView(Images);
+
+            if (ImagesView != null)
+            {
+                using (ImagesView.DeferRefresh())
+                {
+                    ImagesView.GroupDescriptions.Clear();
+                    ImagesView.GroupDescriptions.Add(
+                        new PropertyGroupDescription(nameof(MediaFileDto.DepartmentName))
+                    );
+                }
+            }
         }
 
         private async Task OpenImage(object? parameter)

@@ -119,6 +119,17 @@ namespace MuseumClient.ViewModels
         private void SetupCollectionView()
         {
             VideosView = CollectionViewSource.GetDefaultView(Videos);
+
+            if (VideosView != null)
+            {
+                using (VideosView.DeferRefresh())
+                {
+                    VideosView.GroupDescriptions.Clear();
+                    VideosView.GroupDescriptions.Add(
+                        new PropertyGroupDescription(nameof(MediaFileDto.DepartmentName))
+                    );
+                }
+            }
         }
 
         // клик по видео

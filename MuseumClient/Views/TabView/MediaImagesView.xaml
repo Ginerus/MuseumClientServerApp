@@ -98,6 +98,20 @@
 
             <ItemsControl ItemsSource="{Binding Images}">
 
+                <ItemsControl.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           Margin="16,20,16,10"
+                                           Foreground="#334155"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ItemsControl.GroupStyle>
+
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
                         <Setter Property="HorizontalAlignment" Value="Left"/>

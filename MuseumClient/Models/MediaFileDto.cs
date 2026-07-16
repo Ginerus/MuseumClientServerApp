@@ -11,8 +11,10 @@ namespace MuseumClient.Models
         public string Title { get; set; } = string.Empty;
         [JsonPropertyName("mediaType")]
         public string MediaType { get; set; } = string.Empty;
-        [JsonPropertyName("departmentId")]
-        public int? DepartmentId { get; set; }
+        [JsonPropertyName("department")]
+        public DepartmentDto? Department { get; set; }
+        public int? DepartmentId => Department?.DepartmentId;
+        public string DepartmentName => Department?.Name ?? "Без отдела";
         private ImageSource? _thumbnailImage;
         public ImageSource? ThumbnailImage
         {
