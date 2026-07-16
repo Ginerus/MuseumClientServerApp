@@ -1,0 +1,194 @@
+﻿<UserControl x:Class="MuseumClient.Views.Details.AddArticleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d">
+
+    <Grid Background="White">
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+
+            <StackPanel Margin="20">
+
+                <!-- HEADER -->
+                <Border Background="White"
+                        CornerRadius="16"
+                        Padding="15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2"
+                        Margin="0,0,0,15">
+
+                    <DockPanel LastChildFill="True">
+
+                        <Button DockPanel.Dock="Right"
+                                Content="Добавить"
+                                Width="130"
+                                Height="38"
+                                Margin="15,0,0,0"
+                                Background="#4A90E2"
+                                Foreground="White"
+                                BorderThickness="0"
+                                FontWeight="SemiBold"
+                                Cursor="Hand"
+                                VerticalAlignment="Center"
+                                Command="{Binding SaveCommand}">
+
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}"
+                                            CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+
+                        </Button>
+
+                        <StackPanel>
+                            <TextBlock Text="Новая статья"
+                                       FontSize="26"
+                                       FontWeight="Bold"
+                                       Foreground="#1F2937"/>
+                            <TextBlock Text="Заполните информацию"
+                                       Margin="0,5,0,0"
+                                       Foreground="#6B7280"/>
+                        </StackPanel>
+
+                    </DockPanel>
+
+                </Border>
+
+                <!-- НАЗВАНИЕ -->
+                <Border Background="White"
+                        CornerRadius="12"
+                        Padding="15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2"
+                        Margin="0,0,0,15">
+
+                    <StackPanel>
+                        <TextBlock Text="Название"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"/>
+                        <TextBox Height="36"
+                                 Margin="0,8,0,0"
+                                 Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+
+                </Border>
+
+                <!-- ФАЙЛ -->
+                <Border Background="White"
+                        CornerRadius="12"
+                        Padding="15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2"
+                        Margin="0,0,0,15">
+
+                    <StackPanel>
+                        <TextBlock Text="Файл статьи"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"/>
+
+                        <Button Height="42"
+                                Margin="0,8,0,0"
+                                Cursor="Hand"
+                                Background="White"
+                                BorderBrush="#4A90E2"
+                                BorderThickness="2"
+                                Padding="15,0"
+                                HorizontalAlignment="Left"
+                                Command="{Binding SelectFileCommand}">
+
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Root"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="10"
+                                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Root" Property="Background" Value="#EFF6FF"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="Root" Property="Background" Value="#DBEAFE"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+
+                            <TextBlock Text="Выбрать файл"
+                                       Foreground="#2563EB"
+                                       FontWeight="SemiBold"
+                                       FontSize="14"/>
+
+                        </Button>
+
+                        <TextBlock Text="{Binding SelectedFilePath}"
+                                   MaxWidth="600"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,10,0,0"
+                                   TextWrapping="Wrap"
+                                   Foreground="#6B7280"
+                                   FontSize="12"/>
+                    </StackPanel>
+
+                </Border>
+
+                <!-- ОТДЕЛ -->
+                <Border Background="White"
+                        CornerRadius="12"
+                        Padding="15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2"
+                        Margin="0,0,0,15">
+
+                    <StackPanel>
+                        <TextBlock Text="Отдел"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"/>
+                        <ComboBox Height="36"
+                                  Margin="0,8,0,0"
+                                  ItemsSource="{Binding Departments}"
+                                  SelectedItem="{Binding SelectedDepartment}"
+                                  DisplayMemberPath="Name"/>
+                    </StackPanel>
+
+                </Border>
+
+                <!-- ЭКСПОНАТ (НЕОБЯЗАТЕЛЬНО) -->
+                <Border Background="White"
+                        CornerRadius="12"
+                        Padding="15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2">
+
+                    <StackPanel>
+                        <TextBlock Text="Связанный экспонат (необязательно)"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"/>
+                        <ComboBox Height="36"
+                                  Margin="0,8,0,0"
+                                  ItemsSource="{Binding Exhibits}"
+                                  SelectedItem="{Binding SelectedExhibit}"
+                                  DisplayMemberPath="Name"/>
+                    </StackPanel>
+
+                </Border>
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+    </Grid>
+
+</UserControl>

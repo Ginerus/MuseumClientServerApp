@@ -54,6 +54,7 @@ namespace MuseumClient.ViewModels
 
         public RelayCommand LoadCommand { get; }
         public RelayCommand OpenDocumentCommand { get; }
+        public RelayCommand CreateArticleCommand { get; }
 
         private readonly ContentHubViewModel _hub;
 
@@ -66,6 +67,7 @@ namespace MuseumClient.ViewModels
 
             LoadCommand = new RelayCommand(async _ => await LoadArticlesListAsync());
             OpenDocumentCommand = new RelayCommand(async p => await OpenDocument(p));
+            CreateArticleCommand = new RelayCommand(async _ => _hub.ShowCreateArticle());
 
             AuthService.Instance().AuthChanged += OnAuthChanged;
 

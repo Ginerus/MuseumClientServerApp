@@ -174,6 +174,16 @@ namespace MuseumClient.ViewModels
             _ = vm.LoadAllAsync();
         }
 
+        public void ShowArticles()
+        {
+            CurrentTabView = ArticlesVM;
+        }
+
+        public void ShowCreateArticle()
+        {
+            CurrentTabView = new AddArticleViewModel(this);
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private void OnAuthChanged()
