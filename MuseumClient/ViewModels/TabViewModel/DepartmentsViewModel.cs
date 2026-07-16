@@ -30,6 +30,7 @@ namespace MuseumClient.ViewModels
 
         public RelayCommand LoadCommand { get; }
         public RelayCommand OpenDepartmentCommand { get; }
+        public RelayCommand CreateDepartmentCommand { get; }
 
         private bool _canEdit;
         public bool CanEdit
@@ -57,6 +58,7 @@ namespace MuseumClient.ViewModels
 
             LoadCommand = new RelayCommand(async _ => await LoadDepartmentsAsync());
             OpenDepartmentCommand = new RelayCommand(async param => await OpenDepartment(param));
+            CreateDepartmentCommand = new RelayCommand(async _ => _hub.ShowCreateDepartment());
 
             EditDepartmentCommand = new RelayCommand(async param => await EditDepartment(param));
 

@@ -114,6 +114,10 @@
             <viewsDetails:AddArticleView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vmDetails:AddDepartmentViewModel}">
+            <viewsDetails:AddDepartmentView/>
+        </DataTemplate>
+
     </UserControl.Resources>
 
         <Grid Background="White">

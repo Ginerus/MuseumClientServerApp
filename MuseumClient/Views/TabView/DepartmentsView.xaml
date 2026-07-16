@@ -81,6 +81,7 @@
                     FontWeight="SemiBold"
                     BorderThickness="0"
                     Cursor="Hand"
+                    Command="{Binding CreateDepartmentCommand}"
                     Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}">
 
                 <Button.Template>

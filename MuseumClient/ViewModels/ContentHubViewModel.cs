@@ -184,6 +184,16 @@ namespace MuseumClient.ViewModels
             CurrentTabView = new AddArticleViewModel(this);
         }
 
+        public void ShowDepartments()
+        {
+            CurrentTabView = DepartmentsVM;
+        }
+
+        public void ShowCreateDepartment()
+        {
+            CurrentTabView = new AddDepartmentViewModel(this);
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private void OnAuthChanged()
