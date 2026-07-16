@@ -4,6 +4,7 @@ using MuseumClient.Services;
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 
@@ -41,7 +42,31 @@ namespace MuseumClient.ViewModels.Details
             }
         }
 
+        private bool _isFullscreen = true;
+        public bool IsFullscreen
+        {
+            get => _isFullscreen;
+            set
+            {
+                _isFullscreen = value;
+
+                OnPropertyChanged(nameof(IsFullscreen));
+                OnPropertyChanged(nameof(FullscreenMargin));
+            }
+        }
+
+        public Thickness FullscreenMargin
+        {
+            get
+            {
+                return IsFullscreen
+                    ? new Thickness(0)
+                    : new Thickness(20, 0, 20, 20);
+            }
+        }
+
         public RelayCommand DownloadCommand { get; }
+        public RelayCommand FullscreenCommand { get; }
 
         public IllustrationViewModel(int id)
         {
@@ -51,6 +76,12 @@ namespace MuseumClient.ViewModels.Details
             _apiService = new ApiService(config, AuthService.Instance());
 
             DownloadCommand = new RelayCommand(async _ => await DownloadAsync());
+
+            FullscreenCommand = new RelayCommand(async _ =>
+            {
+                IsFullscreen = !IsFullscreen;
+                await Task.CompletedTask;
+            });
 
             _ = LoadIllustrationAsync();
         }
