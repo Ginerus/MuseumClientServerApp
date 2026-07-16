@@ -209,9 +209,12 @@ namespace MuseumClient.ViewModels.Details
                     new StringContent(Name, Encoding.UTF8),
                     "Title");
 
-                content.Add(
-                    new StringContent(ExhibitId.ToString(), Encoding.UTF8),
-                    "ExhibitId");
+                if (SelectedExhibit != null)
+                {
+                    content.Add(
+                        new StringContent(ExhibitId.ToString(), Encoding.UTF8),
+                        "ExhibitId");
+                }
 
                 content.Add(
                     new StringContent(DepartmentId.ToString(), Encoding.UTF8),
