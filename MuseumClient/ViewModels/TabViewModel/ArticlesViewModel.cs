@@ -111,7 +111,7 @@ namespace MuseumClient.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки статей: {ex.Message}");
+                InfoService.Show($"Ошибка загрузки статей: {ex.Message}");
             }
             finally
             {
@@ -169,12 +169,12 @@ namespace MuseumClient.ViewModels
                 }
                 else
                 {
-                    MessageBox.Show("Ошибка удаления статьи");
+                    InfoService.Show("Ошибка удаления статьи");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка удаления: {ex.Message}");
+                InfoService.Show($"Ошибка удаления: {ex.Message}");
             }
         }
 

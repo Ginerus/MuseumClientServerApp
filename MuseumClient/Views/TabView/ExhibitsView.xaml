@@ -177,7 +177,7 @@
                                     Focusable="False"
                                     IsTabStop="False"
                                     Panel.ZIndex="10"
-                                    Command="{Binding DataContext.DeleteDocumentCommand,
+                                    Command="{Binding DataContext.DeleteExhibitCommand,
                                                 RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                     CommandParameter="{Binding}"
                                     Visibility="{Binding DataContext.CanEdit,

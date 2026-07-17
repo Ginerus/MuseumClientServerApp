@@ -52,9 +52,11 @@ namespace MuseumClient.ViewModels
             }
         }
 
+        // Команды
         public RelayCommand LoadCommand { get; }
         public RelayCommand OpenExhibitCommand { get; }
         public RelayCommand CreateExhibitCommand { get; }
+        public RelayCommand DeleteExhibitCommand { get; }
 
         private readonly ContentHubViewModel _hub;
 
@@ -65,9 +67,11 @@ namespace MuseumClient.ViewModels
             var config = new ConfigService().Server;
             _apiService = new ApiService(config, AuthService.Instance());
 
+            // Команды
             LoadCommand = new RelayCommand(async _ => await LoadExhibitsAsync());
             OpenExhibitCommand = new RelayCommand(async param => await OpenExhibit(param));
             CreateExhibitCommand = new RelayCommand(async param => await OpenCreateExhibit(param));
+            DeleteExhibitCommand = new RelayCommand(async param => await DeleteExhibit(param));
 
             AuthService.Instance().AuthChanged += OnAuthChanged;
 
@@ -100,7 +104,7 @@ namespace MuseumClient.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки экспонатов: {ex.Message}");
+                InfoService.Show($"Ошибка загрузки экспонатов: {ex.Message}");
             }
             finally
             {
@@ -176,6 +180,38 @@ namespace MuseumClient.ViewModels
             }
         }
 
+        private async Task DeleteExhibit(object? parameter)
+        {
+            if (parameter is not ExhibitDto exhibit)
+                return;
+
+
+            if (!ConfirmService.ConfirmDelete($"экспонат \"{exhibit.Name}\""))
+                return;
+
+
+            try
+            {
+                bool result = await _apiService.DeleteAsync(
+                    $"Exhibit/{exhibit.ExhibitId}"
+                );
+
+
+                if (result)
+                {
+                    Exhibits.Remove(exhibit);
+                }
+                else
+                {
+                    InfoService.Show("Ошибка удаления экспоната");
+                }
+            }
+            catch (Exception ex)
+            {
+                InfoService.Show($"Ошибка удаления: {ex.Message}");
+            }
+        }
+
         private void OnAuthChanged()
         {
             CanEdit = AuthService.Instance().IsAdmin;
@@ -184,6 +220,6 @@ namespace MuseumClient.ViewModels
         public void RefreshPermissions()
         {
             OnPropertyChanged(nameof(CanEdit));
-        }
+        }   
     }
 }
