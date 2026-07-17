@@ -164,7 +164,7 @@ namespace MuseumServer.Controllers
 
         // GET: api/MediaFile/stream/{id}
         [HttpGet("stream/{id}")]
-        public async Task<IActionResult> Stream([FromHeader] string token, int id, [FromQuery] string? size = null)
+        public async Task<IActionResult> Stream(int id, [FromQuery] string? size = null)
         {
             var media = await _service.GetEntityAsync(id);
 

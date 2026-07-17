@@ -374,7 +374,6 @@ namespace MuseumClient.ViewModels.Details
 
                 if (response?.Data != null)
                 {
-
                     Title =
                         response.Data.Title;
 
@@ -387,33 +386,24 @@ namespace MuseumClient.ViewModels.Details
                     OnPropertyChanged(nameof(Title));
                     OnPropertyChanged(nameof(Description));
                     OnPropertyChanged(nameof(DepartmentName));
-
                 }
 
-                var bytes =
-                    await _apiService.GetBytesAsync(
-                        $"MediaFile/stream/{_id}?size=video");
-
-                var path =
-                    Path.Combine(
-                        Path.GetTempPath(),
-                        $"museum_{_id}.mp4");
-
-                File.WriteAllBytes(
-                    path,
-                    bytes);
+                var streamUrl =
+                    $"{AuthService.Instance().BaseUrl}/api/MediaFile/stream/{_id}" +
+                    $"?size=video&token={AuthService.Instance().CurrentToken}";
 
                 _media =
-                new Media(
-                    _libVLC,
-                    path,
-                    FromType.FromPath);
+                    new Media(
+                        _libVLC,
+                        streamUrl,
+                        FromType.FromLocation);
 
                 MediaPlayer.Media = _media;
+
+                MediaPlayer.Play();
             }
             catch (Exception ex)
             {
-
                 Description =
                     ex.Message;
 
