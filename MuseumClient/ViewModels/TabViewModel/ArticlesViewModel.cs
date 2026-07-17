@@ -52,9 +52,11 @@ namespace MuseumClient.ViewModels
             }
         }
 
+        // Поле команд
         public RelayCommand LoadCommand { get; }
         public RelayCommand OpenDocumentCommand { get; }
         public RelayCommand CreateArticleCommand { get; }
+        public RelayCommand DeleteDocumentCommand { get; }
 
         private readonly ContentHubViewModel _hub;
 
@@ -65,9 +67,11 @@ namespace MuseumClient.ViewModels
             var config = new ConfigService().Server;
             _apiService = new ApiService(config, AuthService.Instance());
 
+            // Команды
             LoadCommand = new RelayCommand(async _ => await LoadArticlesListAsync());
             OpenDocumentCommand = new RelayCommand(async p => await OpenDocument(p));
             CreateArticleCommand = new RelayCommand(async _ => _hub.ShowCreateArticle());
+            DeleteDocumentCommand = new RelayCommand(async p => await DeleteDocument(p));
 
             AuthService.Instance().AuthChanged += OnAuthChanged;
 
@@ -139,6 +143,39 @@ namespace MuseumClient.ViewModels
                 return;
 
             _hub.ShowDocument(doc.DocumentId, doc.FileType);
+        }
+
+        // Метод удаления статьи
+        private async Task DeleteDocument(object? parameter)
+        {
+            if (parameter is not DocumentDto doc)
+                return;
+
+
+            if (!ConfirmService.ConfirmDelete($"статью \"{doc.Title}\""))
+                return;
+
+
+            try
+            {
+                bool result = await _apiService.DeleteAsync(
+                    $"Document/{doc.DocumentId}"
+                );
+
+
+                if (result)
+                {
+                    Documents.Remove(doc);
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка удаления статьи");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка удаления: {ex.Message}");
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

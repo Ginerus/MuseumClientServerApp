@@ -93,6 +93,16 @@ namespace MuseumClient.Services
             return await response.Content.ReadFromJsonAsync<T>();
         }
 
+
+        public async Task<bool> DeleteAsync(string endpoint)
+        {
+            ApplyHeaders();
+
+            var response = await _client.DeleteAsync(BuildUrl(endpoint));
+
+            return response.IsSuccessStatusCode;
+        }
+
         public async Task<T> PostMultipartAsync<T>(string endpoint, MultipartFormDataContent content)
         {
             ApplyHeaders();
