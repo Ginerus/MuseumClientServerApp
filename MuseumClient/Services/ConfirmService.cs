@@ -1,18 +1,21 @@
-﻿using System.Windows;
+﻿using MuseumClient.Views;
+using System.Windows;
 
 namespace MuseumClient.Services
 {
     public static class ConfirmService
     {
-        public static bool ConfirmDelete(string itemName = "эту статью")
+        public static bool ConfirmDelete(string itemName)
         {
-            var result = MessageBox.Show(
-                $"Вы действительно хотите удалить {itemName}?",
-                "Подтверждение удаления",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
+            var window = new ConfirmWindow(
+                $"Вы действительно хотите удалить {itemName}?"
+            );
 
-            return result == MessageBoxResult.Yes;
+            window.Owner = Application.Current.MainWindow;
+
+            window.ShowDialog();
+
+            return window.Result;
         }
     }
 }
