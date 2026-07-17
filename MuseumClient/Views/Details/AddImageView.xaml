@@ -1,0 +1,265 @@
+﻿<UserControl x:Class="MuseumClient.Views.Details.AddImageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:MuseumClient.Converters">
+
+    <UserControl.Resources>
+        <conv:NullToVisibilityConverter x:Key="NullToVisibility"/>
+    </UserControl.Resources>
+
+    <Grid Background="White">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.9*" MinWidth="320"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="1.6*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <!-- IMAGE -->
+
+        <Grid Grid.Column="0"
+              Margin="20">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+
+            <Border Grid.Row="0"
+                    Background="White"
+                    CornerRadius="16"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="2"
+                    MinHeight="300">
+
+                <Grid>
+
+                    <Image Source="{Binding Image}"
+                           Stretch="Uniform"
+                           Margin="15"/>
+
+
+                    <TextBlock Text="Изображение не выбрано"
+                               Foreground="#9CA3AF"
+                               FontSize="16"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Visibility="{Binding Image,
+                               Converter={StaticResource NullToVisibility},
+                               ConverterParameter=Inverse}"/>
+
+                </Grid>
+
+            </Border>
+
+
+
+            <Button Grid.Row="1"
+                    Height="42"
+                    Margin="0,15,0,0"
+                    Command="{Binding SelectImageCommand}"
+                    Background="White"
+                    BorderBrush="#4A90E2"
+                    BorderThickness="2"
+                    Cursor="Hand">
+
+
+                <Button.Template>
+
+                    <ControlTemplate TargetType="Button">
+
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10">
+
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+
+                        </Border>
+
+                    </ControlTemplate>
+
+                </Button.Template>
+
+
+                <TextBlock Text="Выбрать изображение"
+                           Foreground="#2563EB"
+                           FontWeight="SemiBold"/>
+
+            </Button>
+
+
+            <TextBlock Grid.Row="2"
+                       Text="{Binding SelectedImagePath}"
+                       Margin="0,10,0,0"
+                       Foreground="#6B7280"
+                       TextWrapping="Wrap"
+                       TextTrimming="CharacterEllipsis"/>
+
+
+        </Grid>
+
+
+
+
+        <!-- CONTENT -->
+
+        <ScrollViewer Grid.Column="2"
+                      VerticalScrollBarVisibility="Auto">
+
+            <StackPanel Margin="20">
+
+
+                <Border Background="White"
+                        CornerRadius="16"
+                        Padding="15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2"
+                        Margin="0,0,0,15">
+
+
+                    <DockPanel>
+
+
+                        <Button DockPanel.Dock="Right"
+                                Width="130"
+                                Height="38"
+                                Content="Добавить"
+                                Command="{Binding SaveCommand}"
+                                Background="#4A90E2"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"/>
+
+
+                        <StackPanel>
+
+                            <TextBlock Text="Новое изображение"
+                                       FontSize="26"
+                                       FontWeight="Bold"
+                                       Foreground="#1F2937"/>
+
+
+                            <TextBlock Text="Заполните информацию"
+                                       Foreground="#6B7280"
+                                       Margin="0,5,0,0"/>
+
+                        </StackPanel>
+
+
+                    </DockPanel>
+
+
+                </Border>
+
+
+
+                <!-- TITLE -->
+
+                <Border Background="White"
+                        CornerRadius="12"
+                        Padding="15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2"
+                        Margin="0,0,0,15">
+
+
+                    <StackPanel>
+
+                        <TextBlock Text="Название"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"/>
+
+
+                        <TextBox Height="36"
+                                 Margin="0,8,0,0"
+                                 Text="{Binding Title,
+                                 UpdateSourceTrigger=PropertyChanged}"/>
+
+                    </StackPanel>
+
+
+                </Border>
+
+
+
+
+                <!-- DEPARTMENT -->
+
+                <Border Background="White"
+                        CornerRadius="12"
+                        Padding="15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2"
+                        Margin="0,0,0,15">
+
+
+                    <StackPanel>
+
+                        <TextBlock Text="Отдел"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"/>
+
+
+                        <ComboBox Height="36"
+                                  Margin="0,8,0,0"
+                                  ItemsSource="{Binding Departments}"
+                                  SelectedItem="{Binding SelectedDepartment}"
+                                  DisplayMemberPath="Name"/>
+
+
+                    </StackPanel>
+
+
+                </Border>
+
+
+
+
+                <!-- DESCRIPTION -->
+
+                <Border Background="White"
+                        CornerRadius="12"
+                        Padding="15"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="2">
+
+
+                    <StackPanel>
+
+                        <TextBlock Text="Описание"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"/>
+
+
+                        <Separator Margin="0,10"/>
+
+
+                        <TextBox MinHeight="180"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Text="{Binding Description,
+                                 UpdateSourceTrigger=PropertyChanged}"/>
+
+
+                    </StackPanel>
+
+
+                </Border>
+
+
+            </StackPanel>
+
+
+        </ScrollViewer>
+
+
+    </Grid>
+
+</UserControl>

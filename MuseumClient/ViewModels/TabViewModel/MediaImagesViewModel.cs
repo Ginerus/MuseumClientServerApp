@@ -41,8 +41,10 @@ namespace MuseumClient.ViewModels
             }
         }
 
+        // Команды
         public RelayCommand LoadImagesCommand { get; }
         public RelayCommand OpenImageCommand { get; }
+        public RelayCommand CreateImageCommand { get; }
 
         private readonly ContentHubViewModel _hub;
 
@@ -68,8 +70,10 @@ namespace MuseumClient.ViewModels
 
             _auth = AuthService.Instance();
 
+            // Команды
             LoadImagesCommand = new RelayCommand(async _ => await LoadImagesAsync());
             OpenImageCommand = new RelayCommand(async p => await OpenImage(p));
+            CreateImageCommand = new RelayCommand(async _ => await OpenCreateImage());
 
             _auth.AuthChanged += OnAuthChanged;
 
@@ -165,6 +169,13 @@ namespace MuseumClient.ViewModels
                 {
                 }
             }
+        }
+
+        private async Task OpenCreateImage()
+        {
+            _hub.ShowCreateImage();
+
+            await Task.CompletedTask;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

@@ -194,6 +194,16 @@ namespace MuseumClient.ViewModels
             CurrentTabView = new AddDepartmentViewModel(this);
         }
 
+        public void ShowIllustrations()
+        {
+            CurrentTabView = MediaImagesVM;
+        }
+
+        public void ShowCreateImage()
+        {
+            CurrentTabView = new AddImageViewModel(this);
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private void OnAuthChanged()
