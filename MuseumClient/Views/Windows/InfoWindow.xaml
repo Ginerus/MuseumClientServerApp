@@ -2,44 +2,43 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Width="360"
-        Height="180"
+        MaxHeight="500"
+        SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent">
-
     <Border Background="White"
             CornerRadius="15"
             Padding="25"
             BorderBrush="#B0B0B0"
             BorderThickness="2"
             MouseLeftButtonDown="Window_MouseLeftButtonDown">
-
-
         <Border.Effect>
             <DropShadowEffect BlurRadius="25"
                               ShadowDepth="4"
                               Opacity="0.15"/>
         </Border.Effect>
-
-
         <StackPanel>
-
             <TextBlock Text="Уведомление"
                        FontSize="18"
                        FontWeight="Bold"
                        Foreground="#334155"
                        HorizontalAlignment="Center"/>
 
+            <ScrollViewer MaxHeight="300"
+                          Margin="0,20,0,25"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
 
-            <TextBlock Text="{Binding Message}"
-                       Margin="0,20,0,25"
-                       TextWrapping="Wrap"
-                       TextAlignment="Center"
-                       Foreground="#555"
-                       FontSize="14"/>
+                <TextBlock Text="{Binding Message}"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           Foreground="#555"
+                           FontSize="14"/>
 
+            </ScrollViewer>
 
             <Button Content="ОК"
                     Width="130"
@@ -50,19 +49,13 @@
                     BorderThickness="0"
                     Cursor="Hand"
                     Click="Ok_Click">
-
-
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-
                         <Border Background="{TemplateBinding Background}"
                                 CornerRadius="8">
-
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"/>
-
                         </Border>
-
                     </ControlTemplate>
                 </Button.Template>
             </Button>

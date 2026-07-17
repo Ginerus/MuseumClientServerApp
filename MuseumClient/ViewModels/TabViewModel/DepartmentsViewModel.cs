@@ -47,6 +47,7 @@ namespace MuseumClient.ViewModels
         private readonly ContentHubViewModel _hub;
 
         public RelayCommand EditDepartmentCommand { get; }
+        public RelayCommand DeleteDepartmentCommand { get; }
 
 
         public DepartmentsViewModel(ContentHubViewModel hub)
@@ -61,6 +62,7 @@ namespace MuseumClient.ViewModels
             CreateDepartmentCommand = new RelayCommand(async _ => _hub.ShowCreateDepartment());
 
             EditDepartmentCommand = new RelayCommand(async param => await EditDepartment(param));
+            DeleteDepartmentCommand = new RelayCommand(async param => await DeleteDepartment(param));
 
             _auth.AuthChanged += OnAuthChanged;
 
@@ -130,7 +132,87 @@ namespace MuseumClient.ViewModels
                 $"Редактирование отдела:\n{dept.Name}\nID: {dept.DepartmentId}"
             );
         });
-    }
+        }
+
+        private async Task DeleteDepartment(object? parameter)
+        {
+            if (parameter is not DepartmentDto dept)
+                return;
+
+            DepartmentDetailsResponse? details;
+
+            try
+            {
+                details = await _apiService.GetAsync<DepartmentDetailsResponse>($"Department/{dept.DepartmentId}");
+            }
+            catch (Exception ex)
+            {
+                InfoService.Show($"Не удалось проверить содержимое отдела:\n{ex.Message}");
+                return;
+            }
+
+            var exhibitsCount = details?.Data?.Exhibits?.Count ?? 0;
+            var mediaCount = details?.Data?.MediaFiles?.Count ?? 0;
+            var documentsCount = details?.Data?.Documents?.Count ?? 0;
+
+            if (exhibitsCount > 0 || mediaCount > 0 || documentsCount > 0)
+            {
+                var lines = new List<string>();
+
+                if (details?.Data?.Exhibits?.Count > 0)
+                {
+                    lines.Add($"Экспонаты ({details.Data.Exhibits.Count}):");
+
+                    foreach (var exhibit in details.Data.Exhibits)
+                        lines.Add($"    • {exhibit.Name}");
+
+                    lines.Add(string.Empty);
+                }
+
+                if (details?.Data?.MediaFiles?.Count > 0)
+                {
+                    lines.Add($"Медиафайлы ({details.Data.MediaFiles.Count}):");
+
+                    foreach (var media in details.Data.MediaFiles)
+                        lines.Add($"    • {media.Title}");
+
+                    lines.Add(string.Empty);
+                }
+
+                if (details?.Data?.Documents?.Count > 0)
+                {
+                    lines.Add($"Статьи ({details.Data.Documents.Count}):");
+
+                    foreach (var document in details.Data.Documents)
+                        lines.Add($"    • {document.Title}.{document.FileType}");
+
+                    lines.Add(string.Empty);
+                }
+
+                InfoService.Show(
+                    $"Нельзя удалить отдел \"{dept.Name}\", потому что он содержит:\n\n" +
+                    string.Join("\n", lines).TrimEnd() +
+                    "\n\nСначала перенесите или удалите эти объекты.");
+
+                return;
+            }
+
+            var confirmed = ConfirmService.ConfirmDelete(dept.Name);
+
+            if (!confirmed)
+                return;
+
+            var success = await _apiService.DeleteAsync($"Department/{dept.DepartmentId}");
+
+            if (success)
+            {
+                Departments.Remove(dept);
+            }
+            else
+            {
+                InfoService.Show("Не удалось удалить отдел.");
+            }
+        }
 
         private void OnPropertyChanged(string name)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
