@@ -130,7 +130,7 @@ namespace MuseumClient.ViewModels.Details
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки отделов:\n{ex.Message}");
+                InfoService.Show($"Ошибка загрузки отделов:\n{ex.Message}");
             }
         }
 
@@ -152,7 +152,7 @@ namespace MuseumClient.ViewModels.Details
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки экспонатов:\n{ex.Message}");
+                InfoService.Show($"Ошибка загрузки экспонатов:\n{ex.Message}");
             }
         }
 
@@ -176,19 +176,19 @@ namespace MuseumClient.ViewModels.Details
             {
                 if (string.IsNullOrWhiteSpace(Name))
                 {
-                    MessageBox.Show("Введите название статьи");
+                    InfoService.Show("Введите название статьи");
                     return;
                 }
 
                 if (DepartmentId == 0)
                 {
-                    MessageBox.Show("Выберите отдел");
+                    InfoService.Show("Выберите отдел");
                     return;
                 }
 
                 if (string.IsNullOrEmpty(SelectedFilePath))
                 {
-                    MessageBox.Show("Выберите файл статьи");
+                    InfoService.Show("Выберите файл статьи");
                     return;
                 }
 
@@ -198,7 +198,7 @@ namespace MuseumClient.ViewModels.Details
 
                 if (Array.IndexOf(allowedExtensions, extension) < 0)
                 {
-                    MessageBox.Show(
+                    InfoService.Show(
                         "Недопустимый тип файла. Разрешены: pdf, doc, docx, txt, md, ppt, pptx");
                     return;
                 }
@@ -246,13 +246,13 @@ namespace MuseumClient.ViewModels.Details
 
                 await _apiService.PostMultipartAsync<DocumentResponse>("Document", content);
 
-                MessageBox.Show("Статья успешно создана");
+                InfoService.Show("Статья успешно создана");
 
                 _hub.ShowArticles();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка создания:\n{ex.Message}");
+                InfoService.Show($"Ошибка создания:\n{ex.Message}");
             }
         }
 
