@@ -18,17 +18,26 @@ namespace MuseumClient.ViewModels.Details
         private readonly ApiService _apiService;
         private readonly int _id;
 
-        private readonly LibVLC _libVLC;
+        private LibVLC? _libVLC;
         private Media? _media;
 
-        public LibVLCSharp.Shared.MediaPlayer MediaPlayer { get; }
+        private LibVLCSharp.Shared.MediaPlayer? _mediaPlayer;
+        public LibVLCSharp.Shared.MediaPlayer? MediaPlayer
+        {
+            get => _mediaPlayer;
+            private set
+            {
+                _mediaPlayer = value;
+                OnPropertyChanged(nameof(MediaPlayer));
+            }
+        }
 
         public string Title { get; set; } = "";
         public string Description { get; set; } = "";
         public string DepartmentName { get; set; } = "";
 
 
-        private bool _isLoading;
+        private bool _isLoading = true;
         public bool IsLoading
         {
             get => _isLoading;
@@ -162,13 +171,16 @@ namespace MuseumClient.ViewModels.Details
         {
             get
             {
-                if (MediaPlayer.Length <= 0)
+                if (MediaPlayer == null || MediaPlayer.Length <= 0)
                     return 0;
 
                 return MediaPlayer.Position * 100;
             }
             set
             {
+                if (MediaPlayer == null)
+                    return;
+
                 MediaPlayer.Position =
                     (float)(value / 100);
 
@@ -179,6 +191,9 @@ namespace MuseumClient.ViewModels.Details
         {
             get
             {
+                if (MediaPlayer == null)
+                    return "00:00";
+
                 return TimeSpan
                     .FromMilliseconds(MediaPlayer.Time)
                     .ToString(@"mm\:ss");
@@ -188,6 +203,9 @@ namespace MuseumClient.ViewModels.Details
         {
             get
             {
+                if (MediaPlayer == null)
+                    return "00:00";
+
                 return TimeSpan
                     .FromMilliseconds(MediaPlayer.Length)
                     .ToString(@"mm\:ss");
@@ -241,19 +259,12 @@ namespace MuseumClient.ViewModels.Details
                     config,
                     AuthService.Instance());
 
-            Core.Initialize();
-
-
-            _libVLC =
-                new LibVLC();
-
-            MediaPlayer = new LibVLCSharp.Shared.MediaPlayer(_libVLC);
-
-            Volume = 100;
-
             TogglePlayCommand =
             new RelayCommand(async _ =>
             {
+                if (MediaPlayer == null)
+                    return;
+
                 if (MediaPlayer.IsPlaying)
                 {
                     MediaPlayer.Pause();
@@ -317,50 +328,92 @@ namespace MuseumClient.ViewModels.Details
                     await Task.CompletedTask;
                 });
 
-            MediaPlayer.Playing += (s, e) =>
-            {
-                IsPlaying = true;
-            };
+            _ = InitializeAsync();
+        }
 
-            MediaPlayer.Paused += (s, e) =>
+        // Тяжёлая инициализация LibVLC — в фоне, чтобы не блокировать UI.
+        // Флаги ниже настроены под слабое железо (без изменений на сервере/битрейте):
+        //  --avcodec-fast          — более быстрое, чуть менее точное декодирование
+        //  --avcodec-skiploopfilter=all — пропускает deblocking-фильтр H.264 (заметно снижает нагрузку на CPU)
+        //  --skip-frames           — при отставании пропускает кадры вместо подвисания
+        //  --drop-late-frames      — не пытается досматривать "опоздавшие" кадры
+        //  --network-caching=3000  — больше буфер на приём по сети, меньше подрывов из-за медленного диска/сети
+        //  --file-caching=1500     — то же самое для локального чтения
+        private async Task InitializeAsync()
+        {
+            try
             {
-                IsPlaying = false;
-            };
+                IsLoading = true;
 
-            MediaPlayer.EndReached += (s, e) =>
-            {
-                Application.Current.Dispatcher.Invoke(() =>
+                await Task.Run(() =>
+                {
+                    Core.Initialize();
+
+                    _libVLC = new LibVLC(
+                        "--avcodec-fast",
+                        "--avcodec-skiploopfilter=all",
+                        "--skip-frames",
+                        "--drop-late-frames",
+                        "--network-caching=3000",
+                        "--file-caching=1500"
+                    );
+                });
+
+                MediaPlayer = new LibVLCSharp.Shared.MediaPlayer(_libVLC!);
+
+                Volume = 100;
+
+                MediaPlayer.Playing += (s, e) =>
+                {
+                    IsPlaying = true;
+                };
+
+                MediaPlayer.Paused += (s, e) =>
                 {
                     IsPlaying = false;
+                };
 
-                    OnPropertyChanged(nameof(Position));
-                    OnPropertyChanged(nameof(CurrentTime));
-                });
-            };
-
-            MediaPlayer.PositionChanged += (s, e) =>
-            {
-                Application.Current.Dispatcher.Invoke(() =>
+                MediaPlayer.EndReached += (s, e) =>
                 {
-
-                    if (!_isSeeking)
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
+                        IsPlaying = false;
+
                         OnPropertyChanged(nameof(Position));
-                    }
+                        OnPropertyChanged(nameof(CurrentTime));
+                    });
+                };
 
-                    OnPropertyChanged(nameof(CurrentTime));
+                MediaPlayer.PositionChanged += (s, e) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
 
-                });
-            };
+                        if (!_isSeeking)
+                        {
+                            OnPropertyChanged(nameof(Position));
+                        }
 
-            MediaPlayer.LengthChanged += (s, e) =>
+                        OnPropertyChanged(nameof(CurrentTime));
+
+                    });
+                };
+
+                MediaPlayer.LengthChanged += (s, e) =>
+                {
+                    OnPropertyChanged(nameof(Duration));
+                };
+
+                await LoadVideoAsync();
+            }
+            catch (Exception ex)
             {
-                OnPropertyChanged(nameof(Duration));
-            };
-
-            _ = LoadVideoAsync();
-
+                Description = $"Не удалось инициализировать проигрыватель: {ex.Message}";
+                OnPropertyChanged(nameof(Description));
+                IsLoading = false;
+            }
         }
+
         public async Task LoadVideoAsync()
         {
             try
@@ -394,11 +447,11 @@ namespace MuseumClient.ViewModels.Details
 
                 _media =
                     new Media(
-                        _libVLC,
+                        _libVLC!,
                         streamUrl,
                         FromType.FromLocation);
 
-                MediaPlayer.Media = _media;
+                MediaPlayer!.Media = _media;
 
                 MediaPlayer.Play();
             }
@@ -442,15 +495,16 @@ namespace MuseumClient.ViewModels.Details
         {
             try
             {
-                MediaPlayer.Stop();
+                MediaPlayer?.Stop();
 
-                MediaPlayer.Media = null;
+                if (MediaPlayer != null)
+                    MediaPlayer.Media = null;
 
                 _media?.Dispose();
 
-                MediaPlayer.Dispose();
+                MediaPlayer?.Dispose();
 
-                _libVLC.Dispose();
+                _libVLC?.Dispose();
             }
             catch
             {
