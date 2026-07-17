@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 
-namespace MuseumClient.Views
+namespace MuseumClient.Views.Windows
 {
     public partial class ConfirmWindow : Window
     {

@@ -1,4 +1,4 @@
-﻿using MuseumClient.Views;
+﻿using MuseumClient.Views.Windows;
 using System.Windows;
 
 namespace MuseumClient.Services
