@@ -18,7 +18,9 @@ namespace MuseumServer.Attributes
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var sessionService = (SessionService)context.HttpContext.RequestServices.GetService(typeof(SessionService))!;
-            var token = context.HttpContext.Request.Headers["token"].FirstOrDefault();
+
+            var token = context.HttpContext.Request.Headers["token"].FirstOrDefault()
+                    ?? context.HttpContext.Request.Query["token"].FirstOrDefault();
 
             if (string.IsNullOrEmpty(token) || sessionService == null)
             {
