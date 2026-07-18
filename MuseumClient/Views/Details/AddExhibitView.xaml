@@ -209,17 +209,17 @@
                         <!-- Кнопка справа -->
 
                         <Button DockPanel.Dock="Right"
-                Content="Добавить"
-                Width="130"
-                Height="38"
-                Margin="15,0,0,0"
-                Background="#4A90E2"
-                Foreground="White"
-                BorderThickness="0"
-                FontWeight="SemiBold"
-                Cursor="Hand"
-                VerticalAlignment="Center"
-                Command="{Binding SaveCommand}">
+                            Content="{Binding SaveButtonText}"
+                            Width="130"
+                            Height="38"
+                            Margin="15,0,0,0"
+                            Background="#4A90E2"
+                            Foreground="White"
+                            BorderThickness="0"
+                            FontWeight="SemiBold"
+                            Cursor="Hand"
+                            VerticalAlignment="Center"
+                            Command="{Binding SaveCommand}">
 
 
                             <Button.Template>
@@ -249,30 +249,21 @@
                         <StackPanel>
 
 
-                            <TextBlock Text="Новый экспонат"
-                       FontSize="26"
-                       FontWeight="Bold"
-                       Foreground="#1F2937"/>
+                            <TextBlock Text="{Binding HeaderTitle}"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               Foreground="#1F2937"/>
 
 
                             <TextBlock Text="Заполните информацию"
-                       Margin="0,5,0,0"
-                       Foreground="#6B7280"/>
-
+                               Margin="0,5,0,0"
+                               Foreground="#6B7280"/>
 
                         </StackPanel>
-
-
                     </DockPanel>
-
-
                 </Border>
 
-
-
-
                 <!-- NAME -->
-
 
                 <Border Background="White"
                         CornerRadius="12"
@@ -283,27 +274,17 @@
 
 
                     <StackPanel>
-
-
                         <TextBlock Text="Название"
                                    FontWeight="SemiBold"
                                    FontSize="16"/>
-
 
                         <TextBox Height="36"
                                  Margin="0,8,0,0"
                                  Text="{Binding Name,
                                  UpdateSourceTrigger=PropertyChanged}"/>
 
-
                     </StackPanel>
-
-
                 </Border>
-
-
-
-
 
                 <!-- DATA GRID -->
 
@@ -312,21 +293,12 @@
 
 
                     <Grid.ColumnDefinitions>
-
                         <ColumnDefinition Width="*"/>
-
                         <ColumnDefinition Width="15"/>
-
                         <ColumnDefinition Width="*"/>
-
                     </Grid.ColumnDefinitions>
 
-
-
-
-
                     <!-- MATERIALS -->
-
 
                     <Border Grid.Column="0"
                             Background="White"
@@ -337,18 +309,12 @@
 
 
                         <StackPanel>
-
-
                             <TextBlock Text="Материалы"
                                        FontWeight="SemiBold"/>
-
-
                             <TextBox Margin="0,8,0,0"
                                      Height="35"
                                      Text="{Binding Materials,
                                      UpdateSourceTrigger=PropertyChanged}"/>
-
-
                         </StackPanel>
 
 

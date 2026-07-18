@@ -204,6 +204,11 @@ namespace MuseumClient.ViewModels
             CurrentTabView = new AddImageViewModel(this);
         }
 
+        public void ShowEditExhibit(int id)
+        {
+            CurrentTabView = new AddExhibitViewModel(this, id);
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private void OnAuthChanged()

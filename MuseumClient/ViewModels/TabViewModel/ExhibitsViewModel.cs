@@ -57,6 +57,7 @@ namespace MuseumClient.ViewModels
         public RelayCommand OpenExhibitCommand { get; }
         public RelayCommand CreateExhibitCommand { get; }
         public RelayCommand DeleteExhibitCommand { get; }
+        public RelayCommand EditExhibitCommand { get; }
 
         private readonly ContentHubViewModel _hub;
 
@@ -72,6 +73,7 @@ namespace MuseumClient.ViewModels
             OpenExhibitCommand = new RelayCommand(async param => await OpenExhibit(param));
             CreateExhibitCommand = new RelayCommand(async param => await OpenCreateExhibit(param));
             DeleteExhibitCommand = new RelayCommand(async param => await DeleteExhibit(param));
+            EditExhibitCommand = new RelayCommand(async param => await OpenEditExhibit(param));
 
             AuthService.Instance().AuthChanged += OnAuthChanged;
 
@@ -210,6 +212,16 @@ namespace MuseumClient.ViewModels
             {
                 InfoService.Show($"Ошибка удаления: {ex.Message}");
             }
+        }
+
+        private async Task OpenEditExhibit(object? parameter)
+        {
+            if (parameter is not ExhibitDto exhibit)
+                return;
+
+            _hub.ShowEditExhibit(exhibit.ExhibitId);
+
+            await Task.CompletedTask;
         }
 
         private void OnAuthChanged()

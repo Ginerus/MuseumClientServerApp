@@ -115,5 +115,13 @@ namespace MuseumClient.Services
 
             return await response.Content.ReadFromJsonAsync<T>();
         }
+
+        public async Task<T> PutMultipartAsync<T>(string endpoint, MultipartFormDataContent content)
+        {
+            ApplyHeaders();
+            var response = await _client.PutAsync(BuildUrl(endpoint), content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<T>();
+        }
     }
 }

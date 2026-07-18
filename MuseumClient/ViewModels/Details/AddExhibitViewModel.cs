@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,14 @@ namespace MuseumClient.ViewModels.Details
     {
         private readonly ContentHubViewModel _hub;
         private readonly ApiService _apiService;
+
+        // null => режим создания, иначе редактируем экспонат с этим Id
+        private readonly int? _editingId;
+
+        public bool IsEditMode => _editingId.HasValue;
+
+        public string HeaderTitle => IsEditMode ? "Редактировать экспонат" : "Новый экспонат";
+        public string SaveButtonText => IsEditMode ? "Сохранить" : "Добавить";
 
 
         public ObservableCollection<DepartmentDto> Departments { get; } = new();
@@ -39,16 +48,21 @@ namespace MuseumClient.ViewModels.Details
         }
 
 
+        // Создание нового экспоната
         public AddExhibitViewModel(ContentHubViewModel hub)
+            : this(hub, null)
+        {
+        }
+
+        // Создание ИЛИ редактирование (exhibitId != null)
+        public AddExhibitViewModel(ContentHubViewModel hub, int? exhibitId)
         {
             _hub = hub;
+            _editingId = exhibitId;
 
             _apiService = new ApiService(
                 new ConfigService().Server,
                 AuthService.Instance());
-
-            _ = LoadDepartmentsAsync();
-
 
             SelectImageCommand =
                 new RelayCommand(_ =>
@@ -60,6 +74,19 @@ namespace MuseumClient.ViewModels.Details
 
             SaveCommand =
                 new RelayCommand(_ => SaveAsync());
+
+            _ = InitializeAsync();
+        }
+
+
+        private async Task InitializeAsync()
+        {
+            await LoadDepartmentsAsync();
+
+            if (IsEditMode)
+            {
+                await LoadExistingExhibitAsync();
+            }
         }
 
 
@@ -88,6 +115,63 @@ namespace MuseumClient.ViewModels.Details
             {
                 MessageBox.Show(
                     $"Ошибка загрузки отделов:\n{ex.Message}");
+            }
+        }
+
+
+        private async Task LoadExistingExhibitAsync()
+        {
+            if (_editingId == null)
+                return;
+
+            try
+            {
+                var response = await _apiService
+                    .GetAsync<ExhibitResponse>($"Exhibit/{_editingId}");
+
+                var data = response?.Data;
+
+                if (data == null)
+                {
+                    MessageBox.Show("Не удалось загрузить данные экспоната");
+                    return;
+                }
+
+                Name = data.Name;
+                Description = data.Description;
+                Materials = data.Materials;
+                IsPermanent = data.IsPermanent;
+
+                SelectedDepartment = Departments
+                    .FirstOrDefault(d => d.DepartmentId == data.Department?.DepartmentId);
+
+                // подгружаем текущую картинку для превью
+                try
+                {
+                    var bytes = await _apiService.GetBytesAsync($"Exhibit/image/{_editingId}");
+
+                    var bitmap = new BitmapImage();
+
+                    using (var ms = new MemoryStream(bytes))
+                    {
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = ms;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+                    }
+
+                    Image = bitmap;
+                }
+                catch
+                {
+                    // текущей картинки может не быть — не критично
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Ошибка загрузки экспоната:\n{ex.Message}");
             }
         }
 
@@ -246,6 +330,14 @@ namespace MuseumClient.ViewModels.Details
                 }
 
 
+                // При создании картинка обязательна, при редактировании — нет
+                // (сервер сам оставит старую, если новая не пришла)
+                if (!IsEditMode && string.IsNullOrEmpty(SelectedImagePath))
+                {
+                    MessageBox.Show("Выберите изображение");
+                    return;
+                }
+
 
                 using var content =
                     new MultipartFormDataContent();
@@ -328,19 +420,28 @@ namespace MuseumClient.ViewModels.Details
                         Path.GetFileName(
                             SelectedImagePath));
                 }
+                // если файл не выбран заново — поле Image просто не отправляется,
+                // сервер (UpdateExhibitAsync) в этом случае оставит текущую картинку
 
 
+                if (IsEditMode)
+                {
+                    await _apiService
+                        .PutMultipartAsync<ExhibitResponse>(
+                            $"Exhibit/{_editingId}",
+                            content);
 
-                await _apiService
-                    .PostMultipartAsync<ExhibitResponse>(
-                        "Exhibit",
-                        content);
+                    MessageBox.Show("Экспонат успешно обновлён");
+                }
+                else
+                {
+                    await _apiService
+                        .PostMultipartAsync<ExhibitResponse>(
+                            "Exhibit",
+                            content);
 
-
-
-                MessageBox.Show(
-                    "Экспонат успешно создан");
-
+                    MessageBox.Show("Экспонат успешно создан");
+                }
 
 
                 _hub.ShowExhibits();
@@ -348,7 +449,7 @@ namespace MuseumClient.ViewModels.Details
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Ошибка создания:\n{ex.Message}");
+                    $"Ошибка сохранения:\n{ex.Message}");
             }
         }
 
