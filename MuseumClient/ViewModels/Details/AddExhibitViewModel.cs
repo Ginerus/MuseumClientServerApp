@@ -113,7 +113,7 @@ namespace MuseumClient.ViewModels.Details
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
+                InfoService.Show(
                     $"Ошибка загрузки отделов:\n{ex.Message}");
             }
         }
@@ -133,7 +133,7 @@ namespace MuseumClient.ViewModels.Details
 
                 if (data == null)
                 {
-                    MessageBox.Show("Не удалось загрузить данные экспоната");
+                    InfoService.Show("Не удалось загрузить данные экспоната");
                     return;
                 }
 
@@ -170,7 +170,7 @@ namespace MuseumClient.ViewModels.Details
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
+                InfoService.Show(
                     $"Ошибка загрузки экспоната:\n{ex.Message}");
             }
         }
@@ -318,14 +318,14 @@ namespace MuseumClient.ViewModels.Details
             {
                 if (string.IsNullOrWhiteSpace(Name))
                 {
-                    MessageBox.Show("Введите название экспоната");
+                    InfoService.Show("Введите название экспоната");
                     return;
                 }
 
 
                 if (DepartmentId == 0)
                 {
-                    MessageBox.Show("Выберите отдел");
+                    InfoService.Show("Выберите отдел");
                     return;
                 }
 
@@ -334,7 +334,7 @@ namespace MuseumClient.ViewModels.Details
                 // (сервер сам оставит старую, если новая не пришла)
                 if (!IsEditMode && string.IsNullOrEmpty(SelectedImagePath))
                 {
-                    MessageBox.Show("Выберите изображение");
+                    InfoService.Show("Выберите изображение");
                     return;
                 }
 
@@ -431,7 +431,7 @@ namespace MuseumClient.ViewModels.Details
                             $"Exhibit/{_editingId}",
                             content);
 
-                    MessageBox.Show("Экспонат успешно обновлён");
+                    InfoService.Show("Экспонат успешно обновлён");
                 }
                 else
                 {
@@ -440,7 +440,7 @@ namespace MuseumClient.ViewModels.Details
                             "Exhibit",
                             content);
 
-                    MessageBox.Show("Экспонат успешно создан");
+                    InfoService.Show("Экспонат успешно создан");
                 }
 
 
@@ -448,7 +448,7 @@ namespace MuseumClient.ViewModels.Details
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
+                InfoService.Show(
                     $"Ошибка сохранения:\n{ex.Message}");
             }
         }
