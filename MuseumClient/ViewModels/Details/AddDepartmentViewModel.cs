@@ -112,7 +112,7 @@ namespace MuseumClient.ViewModels.Details
             {
                 if (string.IsNullOrWhiteSpace(Name))
                 {
-                    MessageBox.Show("Введите название отдела");
+                    InfoService.Show("Введите название отдела");
                     return;
                 }
 
@@ -153,13 +153,13 @@ namespace MuseumClient.ViewModels.Details
 
                 await _apiService.PostMultipartAsync<DepartmentResponse>("Department", content);
 
-                MessageBox.Show("Отдел успешно создан");
+                InfoService.Show("Отдел успешно создан");
 
                 _hub.ShowDepartments();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка создания:\n{ex.Message}");
+                InfoService.Show($"Ошибка создания:\n{ex.Message}");
             }
         }
 

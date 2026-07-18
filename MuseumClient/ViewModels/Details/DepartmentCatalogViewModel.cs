@@ -25,10 +25,6 @@ namespace MuseumClient.ViewModels.Details
         public ObservableCollection<ExhibitDto> Exhibits { get; } = new();
         public ObservableCollection<DocumentDto> Articles { get; } = new();
 
-        // ВАЖНО: MediaFileDto не содержит DepartmentId, поэтому фильтрация
-        // по отделу для картинок/видео сейчас невозможна на клиенте.
-        // Пока показываем ВСЕ медиафайлы без фильтра.
-        // TODO: добавить DepartmentId в MediaFileDto / эндпоинт MediaFile?departmentId=
         public ObservableCollection<MediaFileDto> Images { get; } = new();
         public ObservableCollection<MediaFileDto> Videos { get; } = new();
 
@@ -119,7 +115,7 @@ namespace MuseumClient.ViewModels.Details
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки каталога отдела: {ex.Message}");
+                InfoService.Show($"Ошибка загрузки каталога отдела: {ex.Message}");
             }
             finally
             {

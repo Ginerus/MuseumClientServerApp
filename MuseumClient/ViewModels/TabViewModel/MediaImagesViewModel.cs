@@ -110,7 +110,7 @@ namespace MuseumClient.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки изображений: {ex.Message}");
+                InfoService.Show($"Ошибка загрузки изображений: {ex.Message}");
             }
             finally
             {

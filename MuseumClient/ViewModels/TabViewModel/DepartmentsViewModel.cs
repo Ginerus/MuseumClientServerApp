@@ -99,7 +99,7 @@ namespace MuseumClient.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки отделов: {ex.Message}");
+                InfoService.Show($"Ошибка загрузки отделов: {ex.Message}");
             }
             finally
             {
@@ -128,7 +128,7 @@ namespace MuseumClient.ViewModels
 
         await Task.Run(() =>
         {
-            MessageBox.Show(
+            InfoService.Show(
                 $"Редактирование отдела:\n{dept.Name}\nID: {dept.DepartmentId}"
             );
         });

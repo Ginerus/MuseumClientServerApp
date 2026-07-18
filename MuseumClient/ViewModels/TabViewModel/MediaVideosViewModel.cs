@@ -108,7 +108,7 @@ namespace MuseumClient.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки видео: {ex.Message}");
+                InfoService.Show($"Ошибка загрузки видео: {ex.Message}");
             }
             finally
             {
