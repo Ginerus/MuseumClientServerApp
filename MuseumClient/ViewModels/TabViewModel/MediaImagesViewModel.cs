@@ -45,6 +45,7 @@ namespace MuseumClient.ViewModels
         public RelayCommand LoadImagesCommand { get; }
         public RelayCommand OpenImageCommand { get; }
         public RelayCommand CreateImageCommand { get; }
+        public RelayCommand DeleteImageCommand { get; }
 
         private readonly ContentHubViewModel _hub;
 
@@ -74,6 +75,7 @@ namespace MuseumClient.ViewModels
             LoadImagesCommand = new RelayCommand(async _ => await LoadImagesAsync());
             OpenImageCommand = new RelayCommand(async p => await OpenImage(p));
             CreateImageCommand = new RelayCommand(async _ => await OpenCreateImage());
+            DeleteImageCommand = new RelayCommand(async param => await DeleteImage(param));
 
             _auth.AuthChanged += OnAuthChanged;
 
@@ -176,6 +178,28 @@ namespace MuseumClient.ViewModels
             _hub.ShowCreateImage();
 
             await Task.CompletedTask;
+        }
+
+        private async Task DeleteImage(object? parameter)
+        {
+            if (parameter is not MediaFileDto image)
+                return;
+
+            var confirmed = ConfirmService.ConfirmDelete(image.Title);
+
+            if (!confirmed)
+                return;
+
+            var success = await _apiService.DeleteAsync($"MediaFile/{image.MediaFileId}");
+
+            if (success)
+            {
+                Images.Remove(image);
+            }
+            else
+            {
+                InfoService.Show("Не удалось удалить изображение.");
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

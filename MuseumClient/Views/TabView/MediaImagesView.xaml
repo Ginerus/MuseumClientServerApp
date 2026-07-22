@@ -235,7 +235,7 @@
                         </Grid>
 
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
+                </ItemsControl.ItemTemplate> 
 
             </ItemsControl>
 
