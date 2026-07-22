@@ -3,14 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:conv="clr-namespace:MuseumClient.Converters"
              mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
 
     <Grid Background="White">
 
         <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
+                      HorizontalScrollBarVisibility="Disabled"
+                      HorizontalContentAlignment="Stretch">
 
-            <StackPanel Margin="20" MaxWidth="700">
+            <StackPanel Margin="20"
+                        HorizontalAlignment="Stretch">
 
                 <!-- HEADER -->
                 <Border Background="White"
@@ -191,6 +198,47 @@
             </StackPanel>
 
         </ScrollViewer>
+
+        <!-- ОВЕРЛЕЙ ЗАГРУЗКИ С РЕАЛЬНЫМ ПРОГРЕССОМ -->
+
+        <Grid Panel.ZIndex="999"
+              Background="#66000000"
+              Visibility="{Binding IsUploading, Converter={StaticResource BoolToVisibilityConverter}}">
+
+            <Border Width="320"
+                    Height="150"
+                    Background="#1F2937"
+                    CornerRadius="16"
+                    Opacity="0.97"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch"
+                            Margin="25,0">
+
+                    <TextBlock Text="Загрузка видео на сервер..."
+                               Foreground="White"
+                               FontSize="14"
+                               TextAlignment="Center"
+                               Margin="0,0,0,12"/>
+
+                    <ProgressBar Height="10"
+                                 Minimum="0"
+                                 Maximum="100"
+                                 Value="{Binding UploadProgress, Mode=OneWay}"/>
+
+                    <TextBlock Text="{Binding UploadProgress, StringFormat={}{0:F0}%}"
+                               Foreground="#9CA3AF"
+                               FontSize="13"
+                               HorizontalAlignment="Center"
+                               Margin="0,8,0,0"/>
+
+                </StackPanel>
+
+            </Border>
+
+        </Grid>
 
     </Grid>
 

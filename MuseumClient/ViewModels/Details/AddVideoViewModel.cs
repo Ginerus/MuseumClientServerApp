@@ -76,6 +76,29 @@ namespace MuseumClient.ViewModels.Details
             }
         }
 
+        // Индикация процесса загрузки на сервер
+        private bool _isUploading;
+        public bool IsUploading
+        {
+            get => _isUploading;
+            set
+            {
+                _isUploading = value;
+                OnPropertyChanged(nameof(IsUploading));
+            }
+        }
+
+        private double _uploadProgress;
+        public double UploadProgress
+        {
+            get => _uploadProgress;
+            set
+            {
+                _uploadProgress = value;
+                OnPropertyChanged(nameof(UploadProgress));
+            }
+        }
+
         public RelayCommand SelectFileCommand { get; }
         public RelayCommand SaveCommand { get; }
 
@@ -135,6 +158,9 @@ namespace MuseumClient.ViewModels.Details
 
         private async Task SaveAsync()
         {
+            if (IsUploading)
+                return; // защита от повторного клика во время загрузки
+
             try
             {
                 if (string.IsNullOrWhiteSpace(Title))
@@ -155,6 +181,9 @@ namespace MuseumClient.ViewModels.Details
                     return;
                 }
 
+                IsUploading = true;
+                UploadProgress = 0;
+
                 using var content = new MultipartFormDataContent();
 
                 content.Add(
@@ -171,8 +200,6 @@ namespace MuseumClient.ViewModels.Details
 
                 var bytes = await File.ReadAllBytesAsync(SelectedFilePath);
 
-                var file = new ByteArrayContent(bytes);
-
                 var extension = Path.GetExtension(SelectedFilePath).ToLower();
 
                 var type = extension switch
@@ -182,6 +209,12 @@ namespace MuseumClient.ViewModels.Details
                     ".avi" => "video/x-msvideo",
                     _ => "application/octet-stream"
                 };
+
+                // IProgress<T> репортит обратно на UI-поток автоматически
+                // (захватывает текущий SynchronizationContext в момент создания)
+                var progress = new Progress<double>(p => UploadProgress = p);
+
+                var file = new ProgressableByteArrayContent(bytes, progress);
 
                 file.Headers.ContentType =
                     new System.Net.Http.Headers.MediaTypeHeaderValue(type);
@@ -200,6 +233,10 @@ namespace MuseumClient.ViewModels.Details
             catch (Exception ex)
             {
                 InfoService.Show($"Ошибка загрузки видео:\n{ex.Message}");
+            }
+            finally
+            {
+                IsUploading = false;
             }
         }
 
