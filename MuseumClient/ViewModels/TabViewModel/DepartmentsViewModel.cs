@@ -126,12 +126,9 @@ namespace MuseumClient.ViewModels
             if (parameter is not DepartmentDto dept)
                 return;
 
-        await Task.Run(() =>
-        {
-            InfoService.Show(
-                $"Редактирование отдела:\n{dept.Name}\nID: {dept.DepartmentId}"
-            );
-        });
+            _hub.ShowEditDepartment(dept.DepartmentId);
+
+            await Task.CompletedTask;
         }
 
         private async Task DeleteDepartment(object? parameter)

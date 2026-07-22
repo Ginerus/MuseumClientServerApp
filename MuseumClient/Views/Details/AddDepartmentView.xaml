@@ -137,7 +137,7 @@
                     <DockPanel LastChildFill="True">
 
                         <Button DockPanel.Dock="Right"
-                                Content="Добавить"
+                                Content="{Binding SaveButtonText}"
                                 Width="130"
                                 Height="38"
                                 Margin="15,0,0,0"
@@ -162,7 +162,7 @@
                         </Button>
 
                         <StackPanel>
-                            <TextBlock Text="Новый отдел"
+                            <TextBlock Text="{Binding HeaderTitle}"
                                        FontSize="26"
                                        FontWeight="Bold"
                                        Foreground="#1F2937"/>

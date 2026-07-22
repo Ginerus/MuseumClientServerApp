@@ -18,6 +18,14 @@ namespace MuseumClient.ViewModels.Details
         private readonly ContentHubViewModel _hub;
         private readonly ApiService _apiService;
 
+        // null => создание нового отдела, иначе редактируем существующий
+        private readonly int? _editingId;
+
+        public bool IsEditMode => _editingId.HasValue;
+
+        public string HeaderTitle => IsEditMode ? "Редактировать отдел" : "Новый отдел";
+        public string SaveButtonText => IsEditMode ? "Сохранить" : "Добавить";
+
         private string _name = "";
         public string Name
         {
@@ -65,9 +73,17 @@ namespace MuseumClient.ViewModels.Details
         public RelayCommand SelectImageCommand { get; }
         public RelayCommand SaveCommand { get; }
 
+        // Создание нового отдела
         public AddDepartmentViewModel(ContentHubViewModel hub)
+            : this(hub, null)
+        {
+        }
+
+        // Создание ИЛИ редактирование (departmentId != null)
+        public AddDepartmentViewModel(ContentHubViewModel hub, int? departmentId)
         {
             _hub = hub;
+            _editingId = departmentId;
 
             _apiService = new ApiService(
                 new ConfigService().Server,
@@ -80,6 +96,61 @@ namespace MuseumClient.ViewModels.Details
             });
 
             SaveCommand = new RelayCommand(_ => SaveAsync());
+
+            if (IsEditMode)
+            {
+                _ = LoadExistingDepartmentAsync();
+            }
+        }
+
+        private async Task LoadExistingDepartmentAsync()
+        {
+            if (_editingId == null)
+                return;
+
+            try
+            {
+                var response = await _apiService
+                    .GetAsync<DepartmentDetailsResponse>($"Department/{_editingId}");
+
+                var data = response?.Data?.Department;
+
+                if (data == null)
+                {
+                    InfoService.Show("Не удалось загрузить данные отдела");
+                    return;
+                }
+
+                Name = data.Name;
+                Description = data.Description ?? "";
+
+                // подгружаем текущую картинку для превью
+                try
+                {
+                    var bytes = await _apiService.GetBytesAsync($"Department/image/{_editingId}");
+
+                    var bitmap = new BitmapImage();
+
+                    using (var ms = new MemoryStream(bytes))
+                    {
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = ms;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+                    }
+
+                    Image = bitmap;
+                }
+                catch
+                {
+                    // текущей картинки может не быть — не критично
+                }
+            }
+            catch (Exception ex)
+            {
+                InfoService.Show($"Ошибка загрузки отдела:\n{ex.Message}");
+            }
         }
 
         private void SelectImage()
@@ -150,16 +221,31 @@ namespace MuseumClient.ViewModels.Details
                         "Image",
                         Path.GetFileName(SelectedImagePath));
                 }
+                // если файл не выбран заново — поле Image не отправляется,
+                // сервер (DepartmentService.UpdateAsync) оставит текущую картинку
 
-                await _apiService.PostMultipartAsync<DepartmentResponse>("Department", content);
+                if (IsEditMode)
+                {
+                    await _apiService.PutMultipartAsync<DepartmentResponse>(
+                        $"Department/{_editingId}",
+                        content);
 
-                InfoService.Show("Отдел успешно создан");
+                    InfoService.Show("Отдел успешно обновлён");
+                }
+                else
+                {
+                    await _apiService.PostMultipartAsync<DepartmentResponse>(
+                        "Department",
+                        content);
+
+                    InfoService.Show("Отдел успешно создан");
+                }
 
                 _hub.ShowDepartments();
             }
             catch (Exception ex)
             {
-                InfoService.Show($"Ошибка создания:\n{ex.Message}");
+                InfoService.Show($"Ошибка сохранения:\n{ex.Message}");
             }
         }
 

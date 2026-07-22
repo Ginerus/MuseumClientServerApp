@@ -17,6 +17,9 @@ namespace MuseumClient.Models
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
 
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+
         private ImageSource? _thumbnailImage;
 
         public ImageSource? ThumbnailImage
