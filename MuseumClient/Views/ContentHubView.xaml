@@ -117,8 +117,13 @@
         <DataTemplate DataType="{x:Type vmDetails:AddDepartmentViewModel}">
             <viewsDetails:AddDepartmentView/>
         </DataTemplate>
+            
         <DataTemplate DataType="{x:Type vmDetails:AddImageViewModel}">
             <viewsDetails:AddImageView/>
+        </DataTemplate>
+            
+        <DataTemplate DataType="{x:Type vmDetails:AddVideoViewModel}">
+            <viewsDetails:AddVideoView/>
         </DataTemplate>
 
     </UserControl.Resources>

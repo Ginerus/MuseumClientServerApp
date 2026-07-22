@@ -79,7 +79,8 @@
                 FontWeight="SemiBold"
                 BorderThickness="0"
                 Cursor="Hand"
-                Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}">
+                Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}"
+                Command="{Binding CreateVideoCommand}">
 
             <Button.Template>
                 <ControlTemplate TargetType="Button">

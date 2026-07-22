@@ -44,8 +44,11 @@ namespace MuseumClient.ViewModels
             }
         }
 
+        // Команды
         public RelayCommand LoadCommand { get; }
         public RelayCommand OpenVideoCommand { get; }
+        public RelayCommand DeleteVideoCommand { get; }
+        public RelayCommand CreateVideoCommand { get; }
 
         private bool _canEdit;
         public bool CanEdit
@@ -69,8 +72,11 @@ namespace MuseumClient.ViewModels
 
             _auth = AuthService.Instance();
 
+            // Команды
             LoadCommand = new RelayCommand(async _ => await LoadVideosListAsync());
             OpenVideoCommand = new RelayCommand(async param => await OpenVideo(param));
+            DeleteVideoCommand = new RelayCommand(async param => await DeleteVideo(param));
+            CreateVideoCommand = new RelayCommand(async _ => await OpenCreateVideo());
 
             _auth.AuthChanged += OnAuthChanged;
 
@@ -174,6 +180,34 @@ namespace MuseumClient.ViewModels
                     // можно поставить дефолтную картинку
                 }
             }
+        }
+
+        private async Task DeleteVideo(object? parameter)
+        {
+            if (parameter is not MediaFileDto video)
+                return;
+
+            var confirmed = ConfirmService.ConfirmDelete(video.Title);
+
+            if (!confirmed)
+                return;
+
+            var success = await _apiService.DeleteAsync($"MediaFile/{video.MediaFileId}");
+
+            if (success)
+            {
+                Videos.Remove(video);
+            }
+            else
+            {
+                InfoService.Show("Не удалось удалить видео.");
+            }
+        }
+
+        private async Task OpenCreateVideo()
+        {
+            _hub.ShowCreateVideo();
+            await Task.CompletedTask;
         }
     }
 }
