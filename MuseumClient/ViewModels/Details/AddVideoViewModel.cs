@@ -77,6 +77,30 @@ namespace MuseumClient.ViewModels.Details
         }
 
         // Индикация процесса загрузки на сервер
+
+        private bool _isServerProcessing;
+
+        public bool IsServerProcessing
+        {
+            get => _isServerProcessing;
+            set
+            {
+                _isServerProcessing = value;
+                OnPropertyChanged(nameof(IsServerProcessing));
+                OnPropertyChanged(nameof(UploadStatusText));
+            }
+        }
+
+        public string UploadStatusText
+        {
+            get
+            {
+                if (IsServerProcessing)
+                    return "Видео загружено.\nСервер обрабатывает файл...";
+
+                return "Загрузка видео на сервер...";
+            }
+        }
         private bool _isUploading;
         public bool IsUploading
         {
@@ -212,7 +236,15 @@ namespace MuseumClient.ViewModels.Details
 
                 // IProgress<T> репортит обратно на UI-поток автоматически
                 // (захватывает текущий SynchronizationContext в момент создания)
-                var progress = new Progress<double>(p => UploadProgress = p);
+                var progress = new Progress<double>(p =>
+                {
+                    UploadProgress = p;
+
+                    if (p >= 99)
+                    {
+                        IsServerProcessing = true;
+                    }
+                });
 
                 var file = new ProgressableByteArrayContent(bytes, progress);
 
@@ -226,6 +258,14 @@ namespace MuseumClient.ViewModels.Details
 
                 await _apiService.PostMultipartAsync<MediaFileSingleResponse>("MediaFile", content);
 
+                IsServerProcessing = true;
+                UploadProgress = 100;
+
+                // здесь мы ждём, пока сервер закончит:
+                // ffmpeg, превью, сохранение в БД
+
+                await Task.Delay(100);
+
                 InfoService.Show("Видео успешно загружено");
 
                 _hub.ShowVideos();
@@ -237,6 +277,7 @@ namespace MuseumClient.ViewModels.Details
             finally
             {
                 IsUploading = false;
+                IsServerProcessing = false;
             }
         }
 

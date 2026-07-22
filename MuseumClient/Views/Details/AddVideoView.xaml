@@ -217,7 +217,7 @@
                             HorizontalAlignment="Stretch"
                             Margin="25,0">
 
-                    <TextBlock Text="Загрузка видео на сервер..."
+                    <TextBlock Text="{Binding UploadStatusText}"
                                Foreground="White"
                                FontSize="14"
                                TextAlignment="Center"
@@ -226,7 +226,8 @@
                     <ProgressBar Height="10"
                                  Minimum="0"
                                  Maximum="100"
-                                 Value="{Binding UploadProgress, Mode=OneWay}"/>
+                                 Value="{Binding UploadProgress, Mode=OneWay}"
+                                 IsIndeterminate="{Binding IsServerProcessing}"/>
 
                     <TextBlock Text="{Binding UploadProgress, StringFormat={}{0:F0}%}"
                                Foreground="#9CA3AF"
