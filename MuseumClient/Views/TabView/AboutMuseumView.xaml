@@ -271,10 +271,40 @@
                                 Focusable="False"
                                 IsTabStop="False"
                                 Panel.ZIndex="10"
-                                Command="{Binding EditDescriptionCommand}"
-                                Visibility="{Binding IsEditing,
-                                                     Converter={StaticResource 
-                                                     InverseBoolToVisibilityConverter}}">
+                                Command="{Binding EditDescriptionCommand}">
+
+                            <Button.Style>
+                                <Style TargetType="Button">
+
+                                    <!-- По умолчанию скрыта -->
+                                    <Setter Property="Visibility"
+                                            Value="Collapsed"/>
+
+                                    <Style.Triggers>
+
+                                        <!-- Показываем только админу, когда НЕ редактируем -->
+                                        <MultiDataTrigger>
+
+                                            <MultiDataTrigger.Conditions>
+
+                                                <Condition Binding="{Binding CanEdit}"
+                                                           Value="True"/>
+
+                                                <Condition Binding="{Binding IsEditing}"
+                                                           Value="False"/>
+
+                                            </MultiDataTrigger.Conditions>
+
+                                            <Setter Property="Visibility"
+                                                    Value="Visible"/>
+
+                                        </MultiDataTrigger>
+
+                                    </Style.Triggers>
+
+                                </Style>
+                            </Button.Style>
+
 
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
@@ -284,7 +314,7 @@
                                             CornerRadius="6">
 
                                         <ContentPresenter HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"/>
+                                                          VerticalAlignment="Center"/>
 
                                     </Border>
 
@@ -308,7 +338,7 @@
                             </Button.Template>
 
                         </Button>
-                        
+
                         <Button Content="✔️"
                                 Width="26"
                                 Height="26"
@@ -324,10 +354,40 @@
                                 Focusable="False"
                                 IsTabStop="False"
                                 Panel.ZIndex="10"
-                                Command="{Binding SaveDescriptionCommand}"
-                                Visibility="{Binding IsEditing,
-                                                     Converter={StaticResource 
-                                                     BoolToVisibilityConverter}}">
+                                Command="{Binding SaveDescriptionCommand}">
+
+                            <Button.Style>
+                                <Style TargetType="Button">
+
+                                    <!-- по умолчанию скрыто -->
+                                    <Setter Property="Visibility"
+                                            Value="Collapsed"/>
+
+                                    <Style.Triggers>
+
+                                        <!-- Показываем только админу в режиме редактирования -->
+                                        <MultiDataTrigger>
+
+                                            <MultiDataTrigger.Conditions>
+
+                                                <Condition Binding="{Binding CanEdit}"
+                                                           Value="True"/>
+
+                                                <Condition Binding="{Binding IsEditing}"
+                                                           Value="True"/>
+
+                                            </MultiDataTrigger.Conditions>
+
+                                            <Setter Property="Visibility"
+                                                    Value="Visible"/>
+
+                                        </MultiDataTrigger>
+
+                                    </Style.Triggers>
+
+                                </Style>
+                            </Button.Style>
+
 
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
@@ -337,22 +397,26 @@
                                             CornerRadius="6">
 
                                         <ContentPresenter HorizontalAlignment="Center"
-                                                            VerticalAlignment="Center"/>
+                                  VerticalAlignment="Center"/>
 
                                     </Border>
 
                                     <ControlTemplate.Triggers>
 
                                         <Trigger Property="IsMouseOver" Value="True">
+
                                             <Setter TargetName="Root"
                                                     Property="Background"
                                                     Value="#224A90E2"/>
+
                                         </Trigger>
 
                                         <Trigger Property="IsPressed" Value="True">
+
                                             <Setter TargetName="Root"
                                                     Property="Background"
                                                     Value="#444A90E2"/>
+
                                         </Trigger>
 
                                     </ControlTemplate.Triggers>
@@ -361,7 +425,7 @@
                             </Button.Template>
 
                         </Button>
-                        
+
                         <Button Content="❌"
                                 Width="26"
                                 Height="26"
@@ -376,10 +440,40 @@
                                 Focusable="False"
                                 IsTabStop="False"
                                 Panel.ZIndex="10"
-                                Command="{Binding CancelDescriptionCommand}"
-                                Visibility="{Binding IsEditing,
-                                                     Converter={StaticResource 
-                                                     BoolToVisibilityConverter}}">
+                                Command="{Binding CancelDescriptionCommand}">
+
+                            <Button.Style>
+                                <Style TargetType="Button">
+
+                                    <!-- По умолчанию скрыта -->
+                                    <Setter Property="Visibility"
+                                            Value="Collapsed"/>
+
+                                    <Style.Triggers>
+
+                                        <!-- Показываем только админу во время редактирования -->
+                                        <MultiDataTrigger>
+
+                                            <MultiDataTrigger.Conditions>
+
+                                                <Condition Binding="{Binding CanEdit}"
+                                                           Value="True"/>
+
+                                                <Condition Binding="{Binding IsEditing}"
+                                                           Value="True"/>
+
+                                            </MultiDataTrigger.Conditions>
+
+                                            <Setter Property="Visibility"
+                                                    Value="Visible"/>
+
+                                        </MultiDataTrigger>
+
+                                    </Style.Triggers>
+
+                                </Style>
+                            </Button.Style>
+
 
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
