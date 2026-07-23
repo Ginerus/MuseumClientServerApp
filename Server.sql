@@ -103,6 +103,21 @@ CREATE TABLE MediaFiles
 GO
 
 -- =========================
+-- Таблица: MuseumInfo (информация о музее, одна строка)
+-- =========================
+CREATE TABLE MuseumInfo
+(
+    MuseumInfoId INT IDENTITY(1,1) PRIMARY KEY,
+    Description NVARCHAR(MAX) NULL
+);
+GO
+
+-- Начальная строка — переносим сюда текущий захардкоженный текст
+INSERT INTO MuseumInfo (Description) VALUES (
+N'Описание музея');
+GO
+
+-- =========================
 -- Индексы (ускорение запросов)
 -- =========================
 CREATE INDEX IX_Exhibits_DepartmentId
