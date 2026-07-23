@@ -185,19 +185,38 @@
                 <!-- INFO SECTION TITLE -->
                 <!-- ========================= -->
 
-                <TextBlock Text="О музее"
-                           FontSize="16"
+                <TextBlock FontSize="16"
                            FontWeight="Bold"
                            Margin="20,15,20,10"
-                           Foreground="#334155"/>
+                           Foreground="#334155">
+
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+
+                            <Setter Property="Text"
+                                    Value="О музее"/>
+
+                            <Style.Triggers>
+
+                                <DataTrigger Binding="{Binding IsEditing}"
+                                         Value="True">
+
+                                    <Setter Property="Text"
+                                    Value="О музее (режим редактирования)"/>
+
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
 
                 <!-- ========================= -->
                 <!-- TEXT CARD -->
                 <!-- ========================= -->
 
                 <Border Margin="20,0,20,30"
-        Padding="5"
-        CornerRadius="16">
+                        Padding="5"
+                        CornerRadius="16">
 
                     <Border.Style>
                         <Style TargetType="Border">
