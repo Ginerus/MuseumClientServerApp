@@ -4,6 +4,14 @@ using MuseumServer.Models;
 
 namespace MuseumServer.Services
 {
+    public enum ChangePasswordResult
+    {
+        Success,
+        OldPasswordInvalid,
+        NewPasswordEmpty,
+        NewPasswordTooShort
+    }
+
     public class MuseumInfoService
     {
         private readonly MuseumContext _context;
@@ -39,26 +47,38 @@ namespace MuseumServer.Services
             return info.Description ?? string.Empty;
         }
 
-        public async Task<bool> ChangeAdminPasswordAsync( string oldPassword, string newPassword)
+        public async Task<ChangePasswordResult> ChangeAdminPasswordAsync( string oldPassword, string newPassword)
         {
+            if (string.IsNullOrWhiteSpace(newPassword))
+                return ChangePasswordResult.NewPasswordEmpty;
+
+
+            if (newPassword.Trim().Length < 6)
+                return ChangePasswordResult.NewPasswordTooShort;
+
+
             var info = await _context.MuseumInfo.FirstOrDefaultAsync();
 
             if (info == null)
-                return false;
+                return ChangePasswordResult.OldPasswordInvalid;
+
 
             if (!BCrypt.Net.BCrypt.Verify(
                 oldPassword,
                 info.AdminPasswordHash))
             {
-                return false;
+                return ChangePasswordResult.OldPasswordInvalid;
             }
+
 
             info.AdminPasswordHash =
                 BCrypt.Net.BCrypt.HashPassword(newPassword);
 
+
             await _context.SaveChangesAsync();
 
-            return true;
+
+            return ChangePasswordResult.Success;
         }
     }
 }

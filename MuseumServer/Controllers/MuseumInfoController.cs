@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MuseumServer.Attributes;
-using MuseumServer.Services;
 using MuseumServer.DTO;
+using MuseumServer.Services;
 
 namespace MuseumServer.Controllers
 {
@@ -44,17 +44,47 @@ namespace MuseumServer.Controllers
                 request.OldPassword,
                 request.NewPassword);
 
-            if (!result)
-                return BadRequest(new
-                {
-                    status = "error",
-                    message = "OLD_PASSWORD_INVALID"
-                });
-
-            return Ok(new
+            switch (result)
             {
-                status = "ok"
-            });
+                case ChangePasswordResult.Success:
+
+                    return Ok(new
+                    {
+                        status = "ok"
+                    });
+
+
+                case ChangePasswordResult.NewPasswordEmpty:
+
+                    return BadRequest(new
+                    {
+                        status = "error",
+                        message = "NEW_PASSWORD_EMPTY"
+                    });
+
+
+                case ChangePasswordResult.NewPasswordTooShort:
+
+                    return BadRequest(new
+                    {
+                        status = "error",
+                        message = "NEW_PASSWORD_TOO_SHORT"
+                    });
+
+
+                case ChangePasswordResult.OldPasswordInvalid:
+
+                    return BadRequest(new
+                    {
+                        status = "error",
+                        message = "OLD_PASSWORD_INVALID"
+                    });
+
+
+                default:
+
+                    return BadRequest();
+            }
         }
     }
 
