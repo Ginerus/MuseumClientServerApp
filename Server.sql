@@ -113,9 +113,11 @@ CREATE TABLE MuseumInfo
 );
 GO
 
--- Начальная строка — переносим сюда текущий захардкоженный текст
-INSERT INTO MuseumInfo (Description) VALUES (
-N'Описание музея');
+-- Начальная строка — переносим сюда текущий текст и пароль по умолчанию
+INSERT INTO MuseumInfo (Description, AdminPasswordHash) VALUES (
+N'Описание музея',
+N'$2a$11$ScyZQGCeneP09uny0pVNCuewMJLP.7axZej92UpqdBTiCiVOeH.5u'
+);
 GO
 
 -- =========================
