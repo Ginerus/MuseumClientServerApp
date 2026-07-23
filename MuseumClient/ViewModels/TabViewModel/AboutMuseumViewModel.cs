@@ -1,11 +1,12 @@
-﻿using MuseumClient.Services;
+﻿using MuseumClient.Commands;
+using MuseumClient.Models;
+using MuseumClient.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MuseumClient.Commands;
 using System.Windows;
 
 namespace MuseumClient.ViewModels
@@ -16,6 +17,7 @@ namespace MuseumClient.ViewModels
         private string _documentCount = "Загрузка...";
         private string _exhibitCount = "Загрузка...";
         private string _mediaFileCount = "Загрузка...";
+        private string _museumDescription = "Загрузка...";
 
         private readonly ApiService _apiService;
 
@@ -72,6 +74,17 @@ namespace MuseumClient.ViewModels
             }
         }
 
+        public string MuseumDescription
+        {
+            get => _museumDescription;
+            set
+            {
+                _museumDescription = value;
+                PropertyChanged?.Invoke(this,
+                    new PropertyChangedEventArgs(nameof(MuseumDescription)));
+            }
+        }
+
         public async Task LoadDepartmentCountAsync()
         {
             try
@@ -80,13 +93,15 @@ namespace MuseumClient.ViewModels
                 var documentTask = _apiService.GetAsync<CountResponse>("Document/count");
                 var exhibitTask = _apiService.GetAsync<CountResponse>("Exhibit/count");
                 var mediaTask = _apiService.GetAsync<CountResponse>("MediaFile/count");
+                var museumTask = _apiService.GetAsync<MuseumInfoResponse>("MuseumInfo");
 
-                await Task.WhenAll(departmentTask, documentTask, exhibitTask, mediaTask);
+                await Task.WhenAll(departmentTask, documentTask, exhibitTask, mediaTask, museumTask);
 
                 DepartmentCount = (await departmentTask).Count.ToString();
                 DocumentCount = (await documentTask).Count.ToString();
                 ExhibitCount = (await exhibitTask).Count.ToString();
                 MediaFileCount = (await mediaTask).Count.ToString();
+                MuseumDescription = (await museumTask).Data?.Description ?? string.Empty;
             }
             catch (Exception ex)
             {
@@ -94,6 +109,7 @@ namespace MuseumClient.ViewModels
                 DocumentCount = $"Ошибка загрузки: {ex.Message}";
                 ExhibitCount = $"Ошибка загрузки: {ex.Message}";
                 MediaFileCount = $"Ошибка загрузки: {ex.Message}";
+                MuseumDescription = $"Ошибка загрузки: {ex.Message}";
             }
         }
 
