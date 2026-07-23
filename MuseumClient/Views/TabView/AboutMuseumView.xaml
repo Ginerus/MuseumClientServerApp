@@ -227,6 +227,7 @@
                                 Focusable="False"
                                 IsTabStop="False"
                                 Panel.ZIndex="10"
+                                Command="{Binding EditDescriptionCommand}"
                                 Visibility="{Binding CanEdit,
                                                      Converter={StaticResource 
                                                      BoolToVisibilityConverter}}">

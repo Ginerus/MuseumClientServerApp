@@ -23,6 +23,7 @@ namespace MuseumClient.ViewModels
 
         // Команды
         public RelayCommand LoadCommand { get; }
+        public RelayCommand EditDescriptionCommand { get; }
 
         private bool _canEdit;
         public bool CanEdit
@@ -44,6 +45,7 @@ namespace MuseumClient.ViewModels
             _apiService = new ApiService(config, AuthService.Instance());
 
             LoadCommand = new RelayCommand(async _ => await LoadDepartmentCountAsync());
+            EditDescriptionCommand = new RelayCommand(async _ => await EditDescription());
 
             AuthService.Instance().AuthChanged += OnAuthChanged;
 
@@ -132,6 +134,11 @@ namespace MuseumClient.ViewModels
                 MediaFileCount = $"Ошибка загрузки: {ex.Message}";
                 MuseumDescription = $"Ошибка загрузки: {ex.Message}";
             }
+        }
+
+        private async Task EditDescription()
+        {
+            InfoService.Show("Редактирование пока не реализовано");
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
