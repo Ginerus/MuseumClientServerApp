@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MuseumServer.Attributes;
 using MuseumServer.Services;
+using MuseumServer.DTO;
 
 namespace MuseumServer.Controllers
 {
@@ -33,6 +34,27 @@ namespace MuseumServer.Controllers
         {
             var updated = await _service.UpdateDescriptionAsync(request.Description ?? string.Empty);
             return Ok(new { status = "ok", data = new { description = updated } });
+        }
+
+        [HttpPut("password")]
+        [SessionAuthorize(adminOnly: true)]
+        public async Task<IActionResult> ChangePassword([FromHeader] string token, [FromBody] ChangePasswordRequest request)
+        {
+            var result = await _service.ChangeAdminPasswordAsync(
+                request.OldPassword,
+                request.NewPassword);
+
+            if (!result)
+                return BadRequest(new
+                {
+                    status = "error",
+                    message = "OLD_PASSWORD_INVALID"
+                });
+
+            return Ok(new
+            {
+                status = "ok"
+            });
         }
     }
 
