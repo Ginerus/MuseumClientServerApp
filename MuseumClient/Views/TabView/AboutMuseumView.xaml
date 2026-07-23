@@ -228,9 +228,9 @@
                                 IsTabStop="False"
                                 Panel.ZIndex="10"
                                 Command="{Binding EditDescriptionCommand}"
-                                Visibility="{Binding CanEdit,
+                                Visibility="{Binding IsEditing,
                                                      Converter={StaticResource 
-                                                     BoolToVisibilityConverter}}">
+                                                     InverseBoolToVisibilityConverter}}">
 
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
@@ -264,6 +264,111 @@
                             </Button.Template>
 
                         </Button>
+                        
+                        <Button Content="✔️"
+                                Width="26"
+                                Height="26"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Margin="0,0,30,0"
+                                Cursor="Hand"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                Foreground="Green"
+                                Focusable="False"
+                                IsTabStop="False"
+                                Panel.ZIndex="10"
+                                Command="{Binding SaveDescriptionCommand}"
+                                Visibility="{Binding IsEditing,
+                                                     Converter={StaticResource 
+                                                     BoolToVisibilityConverter}}">
+
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+
+                                    <Border x:Name="Root"
+                                            Background="Transparent"
+                                            CornerRadius="6">
+
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"/>
+
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Root"
+                                                    Property="Background"
+                                                    Value="#224A90E2"/>
+                                        </Trigger>
+
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="Root"
+                                                    Property="Background"
+                                                    Value="#444A90E2"/>
+                                        </Trigger>
+
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Button.Template>
+
+                        </Button>
+                        
+                        <Button Content="❌"
+                                Width="26"
+                                Height="26"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Cursor="Hand"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                Foreground="Red"
+                                Focusable="False"
+                                IsTabStop="False"
+                                Panel.ZIndex="10"
+                                Command="{Binding CancelDescriptionCommand}"
+                                Visibility="{Binding IsEditing,
+                                                     Converter={StaticResource 
+                                                     BoolToVisibilityConverter}}">
+
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+
+                                    <Border x:Name="Root"
+                                            Background="Transparent"
+                                            CornerRadius="6">
+
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"/>
+
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Root"
+                                                    Property="Background"
+                                                    Value="#224A90E2"/>
+                                        </Trigger>
+
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="Root"
+                                                    Property="Background"
+                                                    Value="#444A90E2"/>
+                                        </Trigger>
+
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Button.Template>
+
+                        </Button>
 
                         <TextBlock
                             Margin="20"
@@ -272,7 +377,17 @@
                             FontSize="14"
                             LineHeight="26"
                             Foreground="#4B5563"
-                            TextAlignment="Justify"/>
+                            TextAlignment="Justify"
+                            Visibility="{Binding IsEditing,
+                                                 Converter={StaticResource 
+                                                            InverseBoolToVisibilityConverter}}"/>
+                        <TextBox Text="{Binding MuseumDescription, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="20"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 FontSize="14"
+                                 Visibility="{Binding IsEditing,
+                                 Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                         <!-- Кнопка редактирования -->
 

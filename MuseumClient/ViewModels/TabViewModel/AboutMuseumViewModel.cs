@@ -24,6 +24,8 @@ namespace MuseumClient.ViewModels
         // Команды
         public RelayCommand LoadCommand { get; }
         public RelayCommand EditDescriptionCommand { get; }
+        public RelayCommand SaveDescriptionCommand { get; }
+        public RelayCommand CancelDescriptionCommand { get; }
 
         private bool _canEdit;
         public bool CanEdit
@@ -44,8 +46,11 @@ namespace MuseumClient.ViewModels
             // Создаём ApiService с токеном из AuthService
             _apiService = new ApiService(config, AuthService.Instance());
 
+            // Команды
             LoadCommand = new RelayCommand(async _ => await LoadDepartmentCountAsync());
-            EditDescriptionCommand = new RelayCommand(async _ => await EditDescription());
+            EditDescriptionCommand = new RelayCommand(async _ => await StartEdit());
+            SaveDescriptionCommand = new RelayCommand(async _ => await SaveDescription());
+            CancelDescriptionCommand = new RelayCommand(async _ => await CancelEdit());
 
             AuthService.Instance().AuthChanged += OnAuthChanged;
 
@@ -136,9 +141,57 @@ namespace MuseumClient.ViewModels
             }
         }
 
-        private async Task EditDescription()
+        private bool _isEditing;
+
+        public bool IsEditing
         {
-            InfoService.Show("Редактирование пока не реализовано");
+            get => _isEditing;
+            set
+            {
+                _isEditing = value;
+                PropertyChanged?.Invoke(this,
+                    new PropertyChangedEventArgs(nameof(IsEditing)));
+            }
+        }
+
+
+        private string _oldDescription = "";
+
+        private Task StartEdit()
+        {
+            _oldDescription = MuseumDescription;
+            IsEditing = true;
+
+            return Task.CompletedTask;
+        }
+
+        private Task CancelEdit()
+        {
+            MuseumDescription = _oldDescription;
+            IsEditing = false;
+
+            return Task.CompletedTask;
+        }
+
+        private async Task SaveDescription()
+        {
+            try
+            {
+                var request = new
+                {
+                    Description = MuseumDescription
+                };
+
+
+                // тут будет PUT запрос через ApiService
+
+
+                IsEditing = false;
+            }
+            catch (Exception ex)
+            {
+                InfoService.Show($"Ошибка сохранения: {ex.Message}");
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
