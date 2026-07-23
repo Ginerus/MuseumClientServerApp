@@ -7,5 +7,6 @@ namespace MuseumServer.Models
         [Key]
         public int MuseumInfoId { get; set; }
         public string? Description { get; set; }
+        public string AdminPasswordHash { get; set; } = null!;
     }
 }
