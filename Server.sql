@@ -108,7 +108,8 @@ GO
 CREATE TABLE MuseumInfo
 (
     MuseumInfoId INT IDENTITY(1,1) PRIMARY KEY,
-    Description NVARCHAR(MAX) NULL
+    Description NVARCHAR(MAX) NULL,
+    AdminPasswordHash NVARCHAR(500) NOT NULL
 );
 GO
 
