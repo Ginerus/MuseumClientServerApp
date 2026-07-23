@@ -183,10 +183,14 @@ namespace MuseumClient.ViewModels
                 };
 
 
-                // тут будет PUT запрос через ApiService
+                await _apiService.PutAsync<MuseumInfoResponse>(
+                    "MuseumInfo",
+                    request);
 
-
+                _oldDescription = MuseumDescription;
                 IsEditing = false;
+
+                InfoService.Show("Описание музея сохранено");
             }
             catch (Exception ex)
             {

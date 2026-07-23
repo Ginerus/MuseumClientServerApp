@@ -268,11 +268,11 @@
                         <Button Content="✔️"
                                 Width="26"
                                 Height="26"
-                                FontSize="14"
+                                FontSize="16"
                                 FontWeight="Bold"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Top"
-                                Margin="0,0,30,0"
+                                Margin="0,-2,30,0"
                                 Cursor="Hand"
                                 BorderThickness="0"
                                 Background="Transparent"
@@ -370,26 +370,35 @@
 
                         </Button>
 
-                        <TextBlock
-                            Margin="20"
-                            Text="{Binding MuseumDescription}"
-                            TextWrapping="Wrap"
-                            FontSize="14"
-                            LineHeight="26"
-                            Foreground="#4B5563"
-                            TextAlignment="Justify"
-                            Visibility="{Binding IsEditing,
-                                                 Converter={StaticResource 
-                                                            InverseBoolToVisibilityConverter}}"/>
-                        <TextBox Text="{Binding MuseumDescription, UpdateSourceTrigger=PropertyChanged}"
-                                 Margin="20"
-                                 TextWrapping="Wrap"
-                                 AcceptsReturn="True"
-                                 FontSize="14"
-                                 Visibility="{Binding IsEditing,
-                                 Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        <TextBlock Text="{Binding MuseumDescription}"
+                                    Margin="20"
+                                    TextWrapping="Wrap"
+                                    FontSize="14"
+                                    LineHeight="26"
+                                    Foreground="#4B5563"
+                                    TextAlignment="Justify"
+                                    Visibility="{Binding IsEditing,
+                                                         Converter={StaticResource 
+                                                         InverseBoolToVisibilityConverter}}"/>
 
-                        <!-- Кнопка редактирования -->
+                        <RichTextBox Margin="15, 20, 15, 20"
+                                     FontSize="14"
+                                     Foreground="#4B5563"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Padding="0"
+                                     VerticalScrollBarVisibility="Auto"
+                                     Visibility="{Binding IsEditing,
+                                     Converter={StaticResource BoolToVisibilityConverter}}">
+
+                            <FlowDocument>
+                                <Paragraph LineHeight="26"
+                                           TextAlignment="Justify">
+                                    <Run Text="{Binding MuseumDescription}"/>
+                                </Paragraph>
+                            </FlowDocument>
+
+                        </RichTextBox>
 
                     </Grid>
                 </Border>
