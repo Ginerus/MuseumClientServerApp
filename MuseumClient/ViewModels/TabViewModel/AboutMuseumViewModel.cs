@@ -21,7 +21,19 @@ namespace MuseumClient.ViewModels
 
         private readonly ApiService _apiService;
 
+        // Команды
         public RelayCommand LoadCommand { get; }
+
+        private bool _canEdit;
+        public bool CanEdit
+        {
+            get => _canEdit;
+            set
+            {
+                _canEdit = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanEdit)));
+            }
+        }
 
         public AboutMuseumViewModel()
         {
@@ -32,6 +44,15 @@ namespace MuseumClient.ViewModels
             _apiService = new ApiService(config, AuthService.Instance());
 
             LoadCommand = new RelayCommand(async _ => await LoadDepartmentCountAsync());
+
+            AuthService.Instance().AuthChanged += OnAuthChanged;
+
+            CanEdit = AuthService.Instance().IsAdmin;
+        }
+
+        private void OnAuthChanged()
+        {
+            CanEdit = AuthService.Instance().IsAdmin;
         }
 
         public string DepartmentCount

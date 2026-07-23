@@ -196,7 +196,7 @@
                 <!-- ========================= -->
 
                 <Border Margin="20,0,20,30"
-                        Padding="25"
+                        Padding="5"
                         Background="White"
                         CornerRadius="16"
                         BorderThickness="2"
@@ -208,16 +208,75 @@
                                           Opacity="0.08"/>
                     </Border.Effect>
 
-                    <TextBlock
-                        Text="{Binding MuseumDescription}"
-                        TextWrapping="Wrap"
-                        FontSize="14"
-                        LineHeight="26"
-                        Foreground="#4B5563"
-                        TextAlignment="Justify"/>
+                    <!-- ========================= -->
+                    <!-- INFO SECTION TITLE -->
+                    <!-- ========================= -->
 
+                    <Grid>
+                        <Button Content="✏"
+                                Width="26"
+                                Height="26"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Cursor="Hand"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                Foreground="Black"
+                                Focusable="False"
+                                IsTabStop="False"
+                                Panel.ZIndex="10"
+                                Visibility="{Binding CanEdit,
+                                                     Converter={StaticResource 
+                                                     BoolToVisibilityConverter}}">
+
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+
+                                    <Border x:Name="Root"
+                                            Background="Transparent"
+                                            CornerRadius="6">
+
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Root"
+                                                    Property="Background"
+                                                    Value="#224A90E2"/>
+                                        </Trigger>
+
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="Root"
+                                                    Property="Background"
+                                                    Value="#444A90E2"/>
+                                        </Trigger>
+
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Button.Template>
+
+                        </Button>
+
+                        <TextBlock
+                            Margin="20"
+                            Text="{Binding MuseumDescription}"
+                            TextWrapping="Wrap"
+                            FontSize="14"
+                            LineHeight="26"
+                            Foreground="#4B5563"
+                            TextAlignment="Justify"/>
+
+                        <!-- Кнопка редактирования -->
+
+                    </Grid>
                 </Border>
-
             </StackPanel>
 
         </Grid>
