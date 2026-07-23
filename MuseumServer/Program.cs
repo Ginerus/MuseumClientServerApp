@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore;
 using MuseumServer.Data;
 using MuseumServer.Services;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace MuseumServer
 {
@@ -9,6 +11,11 @@ namespace MuseumServer
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.Limits.MaxRequestBodySize = 500 * 1024 * 1024;
+            });
 
             // DbContext
             builder.Services.AddDbContextFactory<MuseumContext>(options =>
@@ -24,6 +31,11 @@ namespace MuseumServer
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<ImageProcessor>();
             builder.Services.AddScoped<VideoProcessor>();
+
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 500 * 1024 * 1024;
+            });
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
