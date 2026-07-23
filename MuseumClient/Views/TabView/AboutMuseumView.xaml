@@ -196,16 +196,41 @@
                 <!-- ========================= -->
 
                 <Border Margin="20,0,20,30"
-                        Padding="5"
-                        Background="White"
-                        CornerRadius="16"
-                        BorderThickness="2"
-                        BorderBrush="#DDD">
+        Padding="5"
+        CornerRadius="16">
+
+                    <Border.Style>
+                        <Style TargetType="Border">
+
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="BorderBrush" Value="#DDD"/>
+                            <Setter Property="BorderThickness" Value="2"/>
+
+                            <Style.Triggers>
+
+                                <DataTrigger Binding="{Binding IsEditing}"
+                             Value="True">
+
+                                    <Setter Property="Background"
+                            Value="#F8FBFF"/>
+
+                                    <Setter Property="BorderBrush"
+                            Value="#4A90E2"/>
+
+                                    <Setter Property="BorderThickness"
+                            Value="2"/>
+
+                                </DataTrigger>
+
+                            </Style.Triggers>
+
+                        </Style>
+                    </Border.Style>
 
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="14"
-                                          ShadowDepth="2"
-                                          Opacity="0.08"/>
+                          ShadowDepth="2"
+                          Opacity="0.08"/>
                     </Border.Effect>
 
                     <!-- ========================= -->
